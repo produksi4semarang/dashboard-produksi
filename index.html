@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard Produksi Semarang</title>
   
-  <!-- LINK FAVICON YANG KAMU MINTA -->
-  <link rel="icon" type="image/png" href="favicon.png">
+  <!-- Favicon anti-gagal menggunakan link logo onlinemu -->
+  <link rel="icon" type="image/png" href="https://i.ibb.co.com/RTfNjtZ5/Dashboard-1.png">
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -41,7 +41,6 @@
     
     <div class="header-panel d-flex flex-wrap justify-content-between align-items-center gap-3">
       <div class="d-flex align-items-center gap-3">
-        <!-- LOGO PERSEGI TERBARU DAN TEKS JUDUL -->
         <img src="https://i.ibb.co.com/RTfNjtZ5/Dashboard-1.png" alt="Logo Produksi Semarang" style="height: 50px; width: auto; border-radius: 8px;">
         <h4 class="m-0 text-dark fw-bold">Dashboard Produksi Semarang</h4>
       </div>
@@ -59,12 +58,13 @@
       </div>
     </div>
 
+    <!-- IKON SUDAH DIGANTI EMOJI STANDAR -->
     <div class="row mb-1">
-      <div class="col-lg col-md-4 col-sm-6 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-indigo">識</div><div><p class="kpi-value" id="spDisplay">-</p><p class="kpi-label">Sales Plan</p></div></div></div>
-      <div class="col-lg col-md-4 col-sm-6 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-blue">搭</div><div><p class="kpi-value" id="srqDisplay">-</p><p class="kpi-label">Total SRQ</p></div></div></div>
-      <div class="col-lg col-md-4 col-sm-6 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-green">些</div><div><p class="kpi-value" id="realDisplay">-</p><p class="kpi-label">Total Realisasi</p></div></div></div>
-      <div class="col-lg col-md-6 col-sm-6 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-purple">嶋</div><div><p class="kpi-value" id="avgDisplay">-</p><p class="kpi-label">Rata-rata / Hari</p></div></div></div>
-      <div class="col-lg col-md-6 col-sm-12 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-orange">嘯</div><div><p class="kpi-value" id="amprahanDisplay">-</p><p class="kpi-label">Amprahan Kereta</p></div></div></div>
+      <div class="col-lg col-md-4 col-sm-6 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-indigo">🎯</div><div><p class="kpi-value" id="spDisplay">-</p><p class="kpi-label">Sales Plan</p></div></div></div>
+      <div class="col-lg col-md-4 col-sm-6 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-blue">📋</div><div><p class="kpi-value" id="srqDisplay">-</p><p class="kpi-label">Total SRQ</p></div></div></div>
+      <div class="col-lg col-md-4 col-sm-6 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-green">🍱</div><div><p class="kpi-value" id="realDisplay">-</p><p class="kpi-label">Total Realisasi</p></div></div></div>
+      <div class="col-lg col-md-6 col-sm-6 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-purple">📈</div><div><p class="kpi-value" id="avgDisplay">-</p><p class="kpi-label">Rata-rata / Hari</p></div></div></div>
+      <div class="col-lg col-md-6 col-sm-12 mb-3"><div class="card-kpi h-100"><div class="kpi-icon icon-orange">🚂</div><div><p class="kpi-value" id="amprahanDisplay">-</p><p class="kpi-label">Amprahan Kereta</p></div></div></div>
     </div>
 
     <div class="row">
@@ -149,7 +149,6 @@
       document.getElementById('loadingTxt').style.display = 'inline'; 
       document.getElementById('btnFilter').disabled = true;
 
-      // MENGGUNAKAN METODE FETCH SEBAGAI PENGGANTI google.script.run
       fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
         .then(response => response.json())
         .then(data => {

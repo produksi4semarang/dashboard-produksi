@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard Produksi Semarang</title>
   
-  <!-- Favicon / Ikon Tab Browser DARI GITHUB -->
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e720b413857292f0a33d05e32bbdb78f4f9a2c34/favicon.png">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -35,7 +34,6 @@
     
     <div class="header-panel d-flex flex-wrap justify-content-between align-items-center gap-3">
       <div class="d-flex align-items-center gap-3">
-        <!-- LOGO PERSEGI PANJANG DARI GITHUB -->
         <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/dashboard.png" alt="Logo Produksi Semarang" style="height: 70px; width: auto; object-fit: contain; border-radius: 8px;">
         <h4 class="m-0 text-dark fw-bold">Dashboard Produksi Semarang</h4>
       </div>
@@ -53,35 +51,34 @@
       </div>
     </div>
 
-    <!-- IKON KPI MENGGUNAKAN RAW URL GITHUB YANG BENAR -->
     <div class="row mb-1">
       <div class="col-lg col-md-4 col-sm-6 mb-3">
         <div class="card-kpi h-100">
-          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e720b413857292f0a33d05e32bbdb78f4f9a2c34/sp.png" alt="Sales Plan" class="kpi-icon" style="object-fit: contain;">
+          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/sp.png" alt="Sales Plan" class="kpi-icon" style="object-fit: contain;">
           <div><p class="kpi-value" id="spDisplay">-</p><p class="kpi-label">Sales Plan</p></div>
         </div>
       </div>
       <div class="col-lg col-md-4 col-sm-6 mb-3">
         <div class="card-kpi h-100">
-          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e720b413857292f0a33d05e32bbdb78f4f9a2c34/srq.png" alt="SRQ" class="kpi-icon" style="object-fit: contain;">
+          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/srq.png" alt="SRQ" class="kpi-icon" style="object-fit: contain;">
           <div><p class="kpi-value" id="srqDisplay">-</p><p class="kpi-label">Total SRQ</p></div>
         </div>
       </div>
       <div class="col-lg col-md-4 col-sm-6 mb-3">
         <div class="card-kpi h-100">
-          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e720b413857292f0a33d05e32bbdb78f4f9a2c34/real.png" alt="Realisasi" class="kpi-icon" style="object-fit: contain;">
+          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/real.png" alt="Realisasi" class="kpi-icon" style="object-fit: contain;">
           <div><p class="kpi-value" id="realDisplay">-</p><p class="kpi-label">Total Realisasi</p></div>
         </div>
       </div>
       <div class="col-lg col-md-6 col-sm-6 mb-3">
         <div class="card-kpi h-100">
-          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e720b413857292f0a33d05e32bbdb78f4f9a2c34/rata.png" alt="Rata-rata" class="kpi-icon" style="object-fit: contain;">
+          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/rata.png" alt="Rata-rata" class="kpi-icon" style="object-fit: contain;">
           <div><p class="kpi-value" id="avgDisplay">-</p><p class="kpi-label">Rata-rata / Hari</p></div>
         </div>
       </div>
       <div class="col-lg col-md-6 col-sm-12 mb-3">
         <div class="card-kpi h-100">
-          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e720b413857292f0a33d05e32bbdb78f4f9a2c34/amprahan.png" alt="Amprahan" class="kpi-icon" style="object-fit: contain;">
+          <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/amprahan.png" alt="Amprahan" class="kpi-icon" style="object-fit: contain;">
           <div><p class="kpi-value" id="amprahanDisplay">-</p><p class="kpi-label">Amprahan Kereta</p></div>
         </div>
       </div>
@@ -97,6 +94,33 @@
       <div class="col-lg-4 mb-3"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3">Detail Amprahan Kereta</h6><div class="table-responsive"><table id="tabelAmprahan" class="table table-hover table-bordered w-100"><thead><tr><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div></div>
       <div class="col-lg-8 mb-3"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3">Rincian Produksi Per Menu</h6><div class="table-responsive"><table id="tabelMenu" class="table table-hover table-bordered w-100">
         <thead><tr><th>Kategori</th><th>Nama Menu</th><th>Sales Plan</th><th>SRQ</th><th>Real</th><th>% SRQ</th><th>% SP</th><th>Evaluasi SP</th></tr></thead><tbody></tbody></table></div></div></div>
+    </div>
+
+    <!-- FITUR BARU: KOMPARASI MENU PER KATEGORI -->
+    <div class="row mt-2">
+      <div class="col-12 mb-3">
+        <div class="card-container">
+          <h6 class="text-secondary fw-bold mb-3">Komparasi Realisasi Menu Harian</h6>
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <h6 class="text-success fw-bold text-center mb-2">Fresh Food</h6>
+              <div style="position: relative; height: 250px; width: 100%;"><canvas id="chartFF"></canvas></div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <h6 class="fw-bold text-center mb-2" style="color: #8b5cf6;">Luxury & Fit</h6>
+              <div style="position: relative; height: 250px; width: 100%;"><canvas id="chartLuxFit"></canvas></div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <h6 class="fw-bold text-center mb-2" style="color: #f59e0b;">Suite Class</h6>
+              <div style="position: relative; height: 250px; width: 100%;"><canvas id="chartSuite"></canvas></div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <h6 class="fw-bold text-center mb-2" style="color: #0284c7;">Crew Meal</h6>
+              <div style="position: relative; height: 250px; width: 100%;"><canvas id="chartCrew"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="row mt-2">
@@ -130,6 +154,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxxf_0FcY6jESvg18zMUrtnZ9RNy5Vu-ilHgjVvjRpVUbK_FwAc8uEcJTcj_1MRK9S6rA/exec"; 
 
     let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
+    let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
     let dtAmprahan = null; let dtMenu = null; let dtStok = null;
 
     let today = new Date(); let y = 2026; let m = '05'; let d = '01'; 
@@ -190,6 +215,9 @@
           renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); 
           renderLineChart(data.trendData); 
           renderBarChart(data.trendData); 
+          
+          // RENDER GRAFIK KATEGORI BARU
+          renderCategoryMenuCharts(data.tableMenu);
 
           dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw();
           dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
@@ -202,6 +230,56 @@
           document.getElementById('loadingTxt').style.display = 'none'; 
           document.getElementById('btnFilter').disabled = false;
         });
+    }
+
+    function renderCategoryMenuCharts(tableMenu) {
+      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
+
+      tableMenu.forEach(row => {
+        let kat = row[0];
+        let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); // Bersihkan nama menu
+        let real = parseInt(row[4]) || 0; // Ambil nilai realisasi saja
+
+        if (real > 0) { 
+          if (kat === 'Fresh Food') {
+            dataFF[menu] = (dataFF[menu] || 0) + real;
+          } else if (kat === 'Luxury' || kat === 'Fit') {
+            dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; // Tergabung otomatis karena nama key sama
+          } else if (kat === 'Suite') {
+            dataSuite[menu] = (dataSuite[menu] || 0) + real;
+          } else if (kat === 'Crew Meal') {
+            dataCrew[menu] = (dataCrew[menu] || 0) + real;
+          }
+        }
+      });
+
+      function drawHBarChart(ctxId, chartObj, dataDict, color) {
+        const ctx = document.getElementById(ctxId).getContext('2d');
+        if (chartObj) chartObj.destroy();
+        
+        let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
+        let labels = sortedArray.map(x => x[0]);
+        let values = sortedArray.map(x => x[1]);
+
+        return new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{ label: 'Realisasi (Porsi)', data: values, backgroundColor: color, borderRadius: 4 }]
+          },
+          options: {
+            indexAxis: 'y', // Mengubah menjadi bar horizontal agar nama menu mudah dibaca
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } }
+          }
+        });
+      }
+
+      chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981');
+      chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
+      chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b');
+      chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
     }
 
     function renderGaugeCharts(srq, real, sp) {

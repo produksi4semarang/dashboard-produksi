@@ -89,10 +89,10 @@
   <div class="container-fluid py-4 px-4">
     
     <div class="header-panel d-flex flex-wrap justify-content-between align-items-center gap-3">
-      <div class="d-flex align-items-center gap-3">
+      <a href="#" onclick="window.scrollTo(0,0); location.reload();" class="d-flex align-items-center gap-3 text-decoration-none">
         <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/dashboard.png" alt="Logo Produksi Semarang" style="height: 70px; width: auto; object-fit: contain; border-radius: 8px;">
         <h4 class="m-0 text-dark fw-bold">Dashboard Produksi Semarang</h4>
-      </div>
+      </a>
       <div class="d-flex flex-wrap gap-2 align-items-center">
         <span class="text-secondary fw-bold">Dari:</span>
         <input type="date" id="startTgl" class="form-control" style="width: 140px;">
@@ -229,10 +229,24 @@
       </div>
     </div>
 
+    <div class="row mt-2 reveal-card">
+      <div class="col-12 mb-3">
+        <div class="card-container h-100">
+          <h6 class="text-secondary fw-bold mb-3 text-center">Data Pesanan Rombongan Kereta (Bulan Berjalan & Kedepan)</h6>
+          <div class="table-responsive">
+            <table id="tabelRombongan" class="table table-hover table-bordered w-100">
+              <thead><tr><th>No.</th><th>Nama Rombongan</th><th>Tanggal Berangkat</th><th>Menu Makanan</th><th>QTY</th><th>Status Pembayaran</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="row reveal-card">
       <div class="col-12">
         <div class="dashboard-footer">
-          <p class="mb-0">🍳 Diracik dengan penuh ❤️ oleh Tim Admin Dapur Produksi Semarang</p>
+          <p class="mb-0">🍳 Diracik dengan penuh ❤️ dan data oleh Tim Admin Produksi Semarang</p>
           <p class="footer-names">Romi &bull; Fandi &bull; Milano</p>
           <p class="mt-2 text-muted" style="font-size: 0.75rem;">&copy; 2026 Dapur Produksi Semarang. All rights reserved.</p>
         </div>
@@ -242,14 +256,14 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxxf_0FcY6jESvg18zMUrtnZ9RNy5Vu-ilHgjVvjRpVUbK_FwAc8uEcJTcj_1MRK9S6rA/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbxzD7P95Tl7oYjGHFVtfdK5FJ3u3p8IAKwmeyvLrzPyH9NDb6KgffcPXluvoibnnXhaaQ/exec"; 
 
     window.chartTargets = {};
 
     let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
     let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
     let chartAmprahanKAObj = null; let chartAmprahanMenuObj = null;
-    let dtAmprahan = null; let dtMenu = null; let dtStok = null;
+    let dtAmprahan = null; let dtMenu = null; let dtStok = null; let dtRombongan = null; // Inisialisasi dtRombongan
 
     const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
 
@@ -332,6 +346,24 @@
           ]
         });
 
+        // SETTING DATATABLES UNTUK ROMBONGAN
+        dtRombongan = $('#tabelRombongan').DataTable({
+          pageLength: 10, lengthMenu: [5, 10, 25, 50],
+          columnDefs: [
+            {
+              targets: 5, // Kolom Status Pembayaran
+              render: function(data, type, row) {
+                let s = String(data).toLowerCase();
+                if (s === '') return '-';
+                if (s.includes('lunas') || s.includes('paid')) return `<span class="badge bg-success w-100 py-2">${data}</span>`;
+                if (s.includes('dp') || s.includes('sebagian')) return `<span class="badge bg-warning text-dark w-100 py-2">${data}</span>`;
+                if (s.includes('belum') || s.includes('batal')) return `<span class="badge bg-danger w-100 py-2">${data}</span>`;
+                return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
+              }
+            }
+          ]
+        });
+
         $('#filterStatusStok').on('change', function() {
            dtStok.column(9).search(this.value).draw();
         });
@@ -406,6 +438,9 @@
             
             let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket]);
             dtStok.clear(); dtStok.rows.add(stokRows).draw();
+
+            // POPULASI DATA TABEL ROMBONGAN
+            dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData).draw();
 
             setTimeout(checkVisibleElements, 100);
 

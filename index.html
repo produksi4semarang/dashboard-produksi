@@ -40,19 +40,13 @@
     .table th { background-color: #f8fafc !important; color: #475569; font-size: 0.9rem; text-align: center !important;}
     .table td { font-size: 0.9rem; vertical-align: middle; text-align: center !important; }
     
-    /* Efek Muncul Melayang Saat Di-scroll (Fade-In Up) */
     .reveal-card {
-      opacity: 0;
-      transform: translateY(40px);
+      opacity: 0; transform: translateY(40px);
       transition: opacity 0.8s ease-out, transform 0.8s ease-out;
       will-change: opacity, transform;
     }
-    .reveal-card.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .reveal-card.visible { opacity: 1; transform: translateY(0); }
 
-    /* CSS Layar Loading / Koki Memasak */
     .fullscreen-loader {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(244, 247, 250, 0.75); backdrop-filter: blur(8px); 
@@ -199,13 +193,27 @@
     <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container h-100">
-          <h6 class="text-secondary fw-bold mb-3 text-center">Penjagaan Stok Bahan Baku <i>(Auto-Sync)</i></h6>
+          
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h6 class="text-secondary fw-bold m-0 text-center">Penjagaan Stok Bahan Baku <i>(Auto-Sync)</i></h6>
+            <div class="d-flex flex-wrap gap-2 align-items-center mt-2 mt-md-0">
+              <select id="filterStatusStok" class="form-select form-select-sm" style="width: auto; cursor: pointer; border-color: #cbd5e1; font-weight: bold;">
+                <option value="">Semua Status</option>
+                <option value="Aman">🟢 Aman</option>
+                <option value="Warning">🟡 Warning</option>
+                <option value="Kritis">🔴 Kritis</option>
+              </select>
+              <button class="btn btn-sm btn-primary fw-bold" onclick="aksiKirimStok()" id="btnKirimStok">Kirim Laporan Stok</button>
+            </div>
+          </div>
+
           <div class="table-responsive">
             <table id="tabelStok" class="table table-hover table-bordered w-100">
-              <thead><tr><th>No</th><th>Nama Material</th><th>Satuan</th><th>Fisik</th><th>Masuk</th><th>Keluar</th><th>Akhir</th><th>Rata2/Hr</th><th>Status</th><th>Ket</th></tr></thead>
+              <thead><tr><th>Nomor Material</th><th>Nama Material</th><th>Satuan</th><th>Fisik</th><th>Masuk</th><th>Keluar</th><th>Akhir</th><th>Rata-rata</th><th>Kekuatan (Hari)</th><th>Status</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
+
         </div>
       </div>
     </div>
@@ -213,9 +221,8 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxxf_0FcY6jESvg18zMUrtnZ9RNy5Vu-ilHgjVvjRpVUbK_FwAc8uEcJTcj_1MRK9S6rA/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbxRvCvIBZ3D--k4vWw36WOYc9SNwnndWipZY-tuxL7CYOsMV9Bcq6HAc2dYuEqwZYUmCw/exec"; 
 
-    // Global penyimpanan target chart agar dirender saat di-scroll
     window.chartTargets = {};
 
     let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
@@ -230,10 +237,8 @@
     let nowStr = today.toISOString().split('T')[0];
     document.getElementById('endTgl').value = nowStr > '2026-05-31' ? '2026-05-31' : nowStr;
     
-    // --- OBSERVER UNTUK ANIMASI SCROLL & TRIGGER CHART ---
     function checkVisibleElements() {
       document.querySelectorAll('.reveal-card.visible').forEach(card => {
-        // 1. Tembakkan animasi angka (counter)
         card.querySelectorAll('.counter-anim').forEach(counter => {
           let target = counter.getAttribute('data-target-value');
           if (target !== null && !counter.getAttribute('data-animated')) {
@@ -241,7 +246,6 @@
             counter.setAttribute('data-animated', 'true');
           }
         });
-        // 2. Tembakkan data grafik agar tumbuh dari nol
         card.querySelectorAll('canvas').forEach(canvas => {
           let chartId = canvas.id;
           if (window.chartTargets && window.chartTargets[chartId]) {
@@ -252,7 +256,7 @@
               info.chart.data.datasets.forEach((ds, i) => ds.data = info.data[i]);
             }
             info.chart.update();
-            delete window.chartTargets[chartId]; // Hapus agar tidak diupdate berulang
+            delete window.chartTargets[chartId]; 
           }
         });
       });
@@ -269,7 +273,6 @@
       if (triggered) setTimeout(checkVisibleElements, 50);
     }, { threshold: 0.1 });
 
-    // PERBAIKAN TYPO: Menggunakan $(document).ready
     $(document).ready(function() {
       try {
         document.querySelectorAll('.reveal-card').forEach(card => observer.observe(card));
@@ -279,19 +282,43 @@
           pageLength: 5, lengthMenu: [5, 10, 25],
           columnDefs: [ { targets: 7, render: function(data, type, row) { let selisih = parseInt(data); if (selisih > 0) return `<span class="text-danger fw-bold">+${selisih} (Over)</span>`; if (selisih < 0) return `<span class="text-warning">${selisih} (Under)</span>`; return `<span class="text-success fw-bold">Sesuai</span>`; } } ]
         });
+
+        // PENGATURAN DATATABLES UNTUK STOK
         dtStok = $('#tabelStok').DataTable({
           pageLength: 10, lengthMenu: [5, 10, 25, 50],
           columnDefs: [
-            { targets: 8, render: function(data, type, row) {
+            {
+              targets: 8, // Kolom Kekuatan (Hari)
+              render: function(data, type, row) {
+                let val = String(data).trim();
+                let num = parseFloat(val);
+                let textToShow = val;
+                // Jika isinya angka dan bukan "Stok Utuh", maka tambahkan "Hari"
+                if (!isNaN(num) && val.toLowerCase() !== 'stok utuh' && !val.toLowerCase().includes('hari')) {
+                  textToShow = num + " Hari";
+                }
+                // Style baru: Biru Indigo senada dengan dashboard
+                return `<span class="badge w-100 py-2" style="background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;">${textToShow}</span>`;
+              }
+            },
+            {
+              targets: 9, // Kolom Status (Aman/Warning/Kritis)
+              render: function(data, type, row) {
                 let s = String(data).toLowerCase();
-                if (s === 'aman') return `<span class="badge bg-success w-100 py-2">Aman</span>`;
-                if (s === 'warning') return `<span class="badge bg-warning text-dark w-100 py-2">Warning</span>`;
-                if (s === 'kritis') return `<span class="badge bg-danger w-100 py-2">Kritis</span>`;
+                if (s.includes('aman')) return `<span class="badge bg-success w-100 py-2">🟢 AMAN</span>`;
+                if (s.includes('warning')) return `<span class="badge bg-warning text-dark w-100 py-2">🟡 WARNING</span>`;
+                if (s.includes('kritis')) return `<span class="badge bg-danger w-100 py-2">🔴 KRITIS</span>`;
                 return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
               }
             }
           ]
         });
+
+        // Event Listener untuk Dropdown Filter Stok
+        $('#filterStatusStok').on('change', function() {
+           dtStok.column(9).search(this.value).draw();
+        });
+
         loadData();
       } catch(e) {
         console.error("Error saat inisialisasi: ", e);
@@ -300,21 +327,19 @@
       }
     });
 
-    // --- FUNGSI ANIMASI ANGKA (COUNTER UP) ---
     function animateCounter(elementId, targetValue, duration = 1500, suffix = "") {
       const element = document.getElementById(elementId);
       if(!element) return;
       const target = parseFloat(targetValue);
       if(isNaN(target)) { element.innerText = targetValue + suffix; return; }
       
-      // PERBAIKAN: Menggunakan String() untuk mencegah error properti
       const isFloat = String(targetValue).includes('.'); 
       let startTimestamp = null;
       
       const step = (timestamp) => {
         if (!startTimestamp) startTimestamp = timestamp;
         const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        const easeOut = 1 - Math.pow(1 - progress, 4); // Efek lambat di akhir
+        const easeOut = 1 - Math.pow(1 - progress, 4); 
         const current = easeOut * target;
         
         if(isFloat) { element.innerText = current.toFixed(1) + suffix; } 
@@ -342,7 +367,6 @@
 
             if (data.error) { alert("Gagal menarik data. Error: " + data.error); return; }
 
-            // Set atribut target agar dibaca observer
             document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan);
             document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
             document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi);
@@ -351,10 +375,7 @@
             document.getElementById('persenSrqDisplay').setAttribute('data-target-value', data.persenSrq);
             document.getElementById('persenSpDisplay').setAttribute('data-target-value', data.persenSp);
             
-            // Reset status animasi angka agar jalan lagi saat difilter ulang
             document.querySelectorAll('.counter-anim').forEach(el => el.removeAttribute('data-animated'));
-
-            // Reset Targets
             window.chartTargets = {};
 
             renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); 
@@ -369,7 +390,6 @@
             let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket]);
             dtStok.clear(); dtStok.rows.add(stokRows).draw();
 
-            // Cek manual setelah load selesai
             setTimeout(checkVisibleElements, 100);
 
           }).catch(error => {
@@ -480,6 +500,30 @@
       const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
       document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengekspor Data ke Telegram..."; btn.disabled = true; 
       fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
+    }
+
+    // FUNGSI BARU: KIRIM LAPORAN STOK FILTERED KE TELEGRAM
+    function aksiKirimStok() { 
+      const btn = document.getElementById('btnKirimStok'); 
+      const filterVal = document.getElementById('filterStatusStok').value;
+      
+      document.getElementById('fullScreenLoader').style.display = 'flex'; 
+      document.getElementById('loaderTextInfo').innerText = "Mengecek Stok dan Mengirim ke Telegram..."; 
+      btn.disabled = true; 
+      
+      fetch(`${API_URL}?action=kirimLaporanStok&filter=${filterVal}`)
+        .then(res => res.json())
+        .then(() => { 
+          document.getElementById('fullScreenLoader').style.display = 'none'; 
+          document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; 
+          btn.innerText = "Laporan Terkirim!"; 
+          setTimeout(() => { btn.innerText = "Kirim Laporan Stok"; btn.disabled = false; }, 3000); 
+        })
+        .catch(err => {
+          document.getElementById('fullScreenLoader').style.display = 'none'; 
+          alert("Gagal mengirim laporan stok.");
+          btn.innerText = "Kirim Laporan Stok"; btn.disabled = false;
+        }); 
     }
   </script>
 </body>

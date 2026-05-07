@@ -17,7 +17,6 @@
   <style>
     body { background-color: #f4f7fa; color: #333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
     
-    /* Panel Header Dibuat Mengambang (Sticky) */
     .header-panel { 
       background-color: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
@@ -27,7 +26,7 @@
       margin-bottom: 20px; 
       position: sticky; 
       top: 15px; 
-      z-index: 1040; /* Z-index diturunkan sedikit agar tidak menabrak layar loading */
+      z-index: 1040; 
     }
     
     .card-kpi { background-color: #fff; border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); padding: 15px; display: flex; align-items: center; }
@@ -38,67 +37,56 @@
     .gauge-container { position: relative; width: 100%; display: flex; justify-content: center; }
     .gauge-text { position: absolute; bottom: 0px; text-align: center; font-size: 1.5rem; font-weight: bold; }
     
-    /* Perbaikan Posisi Teks Tabel Menjadi di Tengah */
     .table th { background-color: #f8fafc !important; color: #475569; font-size: 0.9rem; text-align: center !important;}
     .table td { font-size: 0.9rem; vertical-align: middle; text-align: center !important; }
     
-    /* --- CSS UNTUK ANIMASI LAYAR LOADING & BLUR --- */
+    /* --- CSS EFEK MUNCUL SAAT DI-SCROLL (FADE-IN UP) --- */
+    .reveal-card {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      will-change: opacity, transform;
+    }
+    .reveal-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- CSS LAYAR LOADING --- */
     .fullscreen-loader {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(244, 247, 250, 0.75); /* Warna dasar agak transparan */
-      backdrop-filter: blur(8px); /* Efek Kaca Buram */
-      z-index: 9999; /* Selalu di tumpukan paling atas */
+      background: rgba(244, 247, 250, 0.75); 
+      backdrop-filter: blur(8px); 
+      z-index: 9999; 
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
     }
-    .loader-icon-container {
-      position: relative;
-      width: 100px; height: 100px;
-    }
-    .loader-icon {
-      width: 100%; height: 100%;
-      object-fit: contain;
-    }
+    .loader-icon-container { position: relative; width: 100px; height: 100px; }
+    .loader-icon { width: 100%; height: 100%; object-fit: contain; }
     .bouncing-dots {
-      position: absolute;
-      top: -15px; /* Mengatur ketinggian titik pantul di atas topi */
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
+      position: absolute; top: -15px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px;
     }
     .dot {
-      width: 10px; height: 10px;
-      background-color: #ea580c; /* Warna oranye senada */
-      border-radius: 50%;
-      animation: bounce 0.5s infinite alternate;
+      width: 10px; height: 10px; background-color: #ea580c; border-radius: 50%; animation: bounce 0.5s infinite alternate;
     }
     .dot:nth-child(2) { animation-delay: 0.15s; }
     .dot:nth-child(3) { animation-delay: 0.3s; }
     
     @keyframes bounce {
       from { transform: translateY(0); opacity: 0.8; }
-      to { transform: translateY(-15px); opacity: 0.2; } /* Melompat ke atas */
+      to { transform: translateY(-15px); opacity: 0.2; } 
     }
-    .loader-text {
-      margin-top: 20px;
-      font-weight: 800;
-      color: #334155;
-      font-size: 1.1rem;
-      letter-spacing: 1px;
-    }
+    .loader-text { margin-top: 20px; font-weight: 800; color: #334155; font-size: 1.1rem; letter-spacing: 1px; }
   </style>
 </head>
 <body>
 
   <div id="fullScreenLoader" class="fullscreen-loader">
     <div class="loader-icon-container">
-      <div class="bouncing-dots">
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      </div>
+      <div class="bouncing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
       <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png" alt="Loading" class="loader-icon">
     </div>
     <div class="loader-text">Memasak Data...</div>
@@ -125,51 +113,51 @@
     </div>
 
     <div class="row mb-1">
-      <div class="col-lg col-md-4 col-sm-6 mb-3">
+      <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/sp.png" alt="Sales Plan" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="spDisplay">-</p><p class="kpi-label">Sales Plan</p></div>
+          <div><p class="kpi-value" id="spDisplay">0</p><p class="kpi-label">Sales Plan</p></div>
         </div>
       </div>
-      <div class="col-lg col-md-4 col-sm-6 mb-3">
+      <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/srq.png" alt="SRQ" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="srqDisplay">-</p><p class="kpi-label">Total SRQ</p></div>
+          <div><p class="kpi-value" id="srqDisplay">0</p><p class="kpi-label">Total SRQ</p></div>
         </div>
       </div>
-      <div class="col-lg col-md-4 col-sm-6 mb-3">
+      <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/real.png" alt="Realisasi" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="realDisplay">-</p><p class="kpi-label">Total Realisasi</p></div>
+          <div><p class="kpi-value" id="realDisplay">0</p><p class="kpi-label">Total Realisasi</p></div>
         </div>
       </div>
-      <div class="col-lg col-md-6 col-sm-6 mb-3">
+      <div class="col-lg col-md-6 col-sm-6 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/rata.png" alt="Rata-rata" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="avgDisplay">-</p><p class="kpi-label">Rata-rata / Hari</p></div>
+          <div><p class="kpi-value" id="avgDisplay">0</p><p class="kpi-label">Rata-rata / Hari</p></div>
         </div>
       </div>
-      <div class="col-lg col-md-6 col-sm-12 mb-3">
+      <div class="col-lg col-md-6 col-sm-12 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/amprahan.png" alt="Amprahan" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="amprahanDisplay">-</p><p class="kpi-label">Amprahan Kereta</p></div>
+          <div><p class="kpi-value" id="amprahanDisplay">0</p><p class="kpi-label">Amprahan Kereta</p></div>
         </div>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-lg-3 col-md-6"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pencapaian Sales Plan</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSpChart"></canvas><div class="gauge-text" id="persenSpDisplay" style="color: #4f46e5;">0%</div></div></div></div>
-      <div class="col-lg-3 col-md-6"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pemenuhan SRQ</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSrqChart"></canvas><div class="gauge-text" id="persenSrqDisplay" style="color: #0284c7;">0%</div></div></div></div>
-      <div class="col-lg-6 col-md-12"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi (Sesuai Filter)</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
+      <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pencapaian Sales Plan</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSpChart"></canvas><div class="gauge-text" id="persenSpDisplay" style="color: #4f46e5;">0%</div></div></div></div>
+      <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pemenuhan SRQ</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSrqChart"></canvas><div class="gauge-text" id="persenSrqDisplay" style="color: #0284c7;">0%</div></div></div></div>
+      <div class="col-lg-6 col-md-12 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi (Sesuai Filter)</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
     </div>
 
     <div class="row mt-2">
-      <div class="col-lg-4 mb-3"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Detail Amprahan Kereta</h6><div class="table-responsive"><table id="tabelAmprahan" class="table table-hover table-bordered w-100"><thead><tr><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div></div>
-      <div class="col-lg-8 mb-3"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Rincian Produksi Per Menu</h6><div class="table-responsive"><table id="tabelMenu" class="table table-hover table-bordered w-100">
+      <div class="col-lg-4 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Detail Amprahan Kereta</h6><div class="table-responsive"><table id="tabelAmprahan" class="table table-hover table-bordered w-100"><thead><tr><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div></div>
+      <div class="col-lg-8 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Rincian Produksi Per Menu</h6><div class="table-responsive"><table id="tabelMenu" class="table table-hover table-bordered w-100">
         <thead><tr><th>Kategori</th><th>Nama Menu</th><th>Sales Plan</th><th>SRQ</th><th>Real</th><th>% SRQ</th><th>% SP</th><th>Evaluasi SP</th></tr></thead><tbody></tbody></table></div></div></div>
     </div>
 
-    <div class="row mt-2">
+    <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container">
           <h6 class="text-secondary fw-bold mb-3 text-center">Komparasi Realisasi Menu Harian</h6>
@@ -195,7 +183,7 @@
       </div>
     </div>
 
-    <div class="row mt-2">
+    <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container">
           <h6 class="text-secondary fw-bold mb-3 text-center">Analisis Amprahan Kereta</h6>
@@ -213,7 +201,7 @@
       </div>
     </div>
 
-    <div class="row mt-2">
+    <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container">
           <h6 class="text-secondary fw-bold mb-3 text-center">Analisis Beban Kerja Harian (Prediksi Kebutuhan DW)</h6>
@@ -224,7 +212,7 @@
       </div>
     </div>
 
-    <div class="row mt-2">
+    <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container h-100">
           <h6 class="text-secondary fw-bold mb-3 text-center">Penjagaan Stok Bahan Baku <i>(Auto-Sync)</i></h6>
@@ -254,6 +242,12 @@
     document.getElementById('endTgl').value = nowStr > '2026-05-31' ? '2026-05-31' : nowStr;
     
     $(document.ready).ready(function() {
+      // Inisiasi Intersection Observer untuk Scroll Reveal Animation
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal-card').forEach(card => observer.observe(card));
+
       dtAmprahan = $('#tabelAmprahan').DataTable({ pageLength: 5, lengthMenu: [5, 10, 25] });
       dtMenu = $('#tabelMenu').DataTable({ 
         pageLength: 5, lengthMenu: [5, 10, 25],
@@ -277,39 +271,58 @@
       loadData();
     });
 
+    // --- FUNGSI ANIMASI ANGKA (COUNTER UP) ---
+    function animateCounter(elementId, targetValue, duration = 1500, suffix = "") {
+      const element = document.getElementById(elementId);
+      if(!element) return;
+      const target = parseFloat(targetValue);
+      if(isNaN(target)) { element.innerText = targetValue + suffix; return; }
+      
+      const isFloat = target.toString().includes('.');
+      let startTimestamp = null;
+      
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 4); // Efek lambat di akhir
+        const current = easeOut * target;
+        
+        if(isFloat) { element.innerText = current.toFixed(1) + suffix; } 
+        else { element.innerText = Math.floor(current) + suffix; }
+        
+        if (progress < 1) { window.requestAnimationFrame(step); } 
+        else { element.innerText = target + suffix; }
+      };
+      window.requestAnimationFrame(step);
+    }
+
     function loadData() {
       const start = document.getElementById('startTgl').value; 
       const end = document.getElementById('endTgl').value;
       
-      // Tampilkan Layar Blur & Animasi Topi Koki
       document.getElementById('fullScreenLoader').style.display = 'flex'; 
       document.getElementById('btnFilter').disabled = true;
 
       fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
         .then(response => response.json())
         .then(data => {
-          
-          // Sembunyikan Layar Blur setelah data selesai didownload
           document.getElementById('fullScreenLoader').style.display = 'none'; 
           document.getElementById('btnFilter').disabled = false;
 
-          if (data.error) {
-            alert("Gagal menarik data. Error dari API: " + data.error);
-            return;
-          }
+          if (data.error) { alert("Gagal menarik data. Error: " + data.error); return; }
 
-          document.getElementById('spDisplay').innerText = data.salesPlan; 
-          document.getElementById('srqDisplay').innerText = data.srq;
-          document.getElementById('realDisplay').innerText = data.realisasi; 
-          document.getElementById('avgDisplay').innerText = data.avg + " / hr";
-          document.getElementById('amprahanDisplay').innerText = data.amprahan;
-          document.getElementById('persenSrqDisplay').innerText = data.persenSrq + "%"; 
-          document.getElementById('persenSpDisplay').innerText = data.persenSp + "%";
+          // --- TERAPKAN ANIMASI ANGKA ---
+          animateCounter('spDisplay', data.salesPlan, 1500);
+          animateCounter('srqDisplay', data.srq, 1500);
+          animateCounter('realDisplay', data.realisasi, 1500);
+          animateCounter('avgDisplay', data.avg, 1500, " / hr");
+          animateCounter('amprahanDisplay', data.amprahan, 1500);
+          animateCounter('persenSrqDisplay', data.persenSrq, 1500, "%");
+          animateCounter('persenSpDisplay', data.persenSp, 1500, "%");
           
           renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); 
           renderLineChart(data.trendData); 
           renderBarChart(data.trendData); 
-          
           renderCategoryMenuCharts(data.tableMenu);
           renderAmprahanCharts(data.tableAmprahan);
 
@@ -319,31 +332,31 @@
           let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket]);
           dtStok.clear(); dtStok.rows.add(stokRows).draw();
 
+          // Paksa Intersection Observer mengecek ulang elemen yang baru di-refresh
+          document.querySelectorAll('.reveal-card').forEach(el => {
+            if(el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
+          });
+
         }).catch(error => {
-          alert("Gagal menarik data jaringan terputus. Pastikan link API benar.");
+          alert("Gagal menarik data jaringan terputus.");
           document.getElementById('fullScreenLoader').style.display = 'none'; 
           document.getElementById('btnFilter').disabled = false;
         });
     }
 
+    // --- PENGATURAN ANIMASI CHART BERSAMA ---
+    const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
+
     function renderCategoryMenuCharts(tableMenu) {
       let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
 
       tableMenu.forEach(row => {
-        let kat = row[0];
-        let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); 
-        let real = parseInt(row[4]) || 0; 
-
+        let kat = row[0]; let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let real = parseInt(row[4]) || 0; 
         if (real > 0) { 
-          if (kat === 'Fresh Food') {
-            dataFF[menu] = (dataFF[menu] || 0) + real;
-          } else if (kat === 'Luxury' || kat === 'Fit') {
-            dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
-          } else if (kat === 'Suite') {
-            dataSuite[menu] = (dataSuite[menu] || 0) + real;
-          } else if (kat === 'Crew Meal') {
-            dataCrew[menu] = (dataCrew[menu] || 0) + real;
-          }
+          if (kat === 'Fresh Food') dataFF[menu] = (dataFF[menu] || 0) + real;
+          else if (kat === 'Luxury' || kat === 'Fit') dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
+          else if (kat === 'Suite') dataSuite[menu] = (dataSuite[menu] || 0) + real;
+          else if (kat === 'Crew Meal') dataCrew[menu] = (dataCrew[menu] || 0) + real;
         }
       });
 
@@ -354,20 +367,11 @@
     }
 
     function renderAmprahanCharts(tableAmprahan) {
-      let dataKA = {};
-      let dataMenu = {};
-
+      let dataKA = {}; let dataMenu = {};
       tableAmprahan.forEach(row => {
-        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); 
-        let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); 
-        let qty = parseInt(row[3]) || 0;
-
-        if (qty > 0) {
-          dataKA[kereta] = (dataKA[kereta] || 0) + qty;
-          dataMenu[menu] = (dataMenu[menu] || 0) + qty;
-        }
+        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); let qty = parseInt(row[3]) || 0;
+        if (qty > 0) { dataKA[kereta] = (dataKA[kereta] || 0) + qty; dataMenu[menu] = (dataMenu[menu] || 0) + qty; }
       });
-
       chartAmprahanKAObj = drawHBarChart('chartAmprahanKA', chartAmprahanKAObj, dataKA, '#ef4444');
       chartAmprahanMenuObj = drawHBarChart('chartAmprahanMenu', chartAmprahanMenuObj, dataMenu, '#14b8a6');
     }
@@ -377,18 +381,14 @@
       if (chartObj) chartObj.destroy();
       
       let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
-      let labels = sortedArray.map(x => x[0]);
-      let values = sortedArray.map(x => x[1]);
+      let labels = sortedArray.map(x => x[0]); let values = sortedArray.map(x => x[1]);
 
       return new Chart(ctx, {
         type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{ label: 'Total Porsi', data: values, backgroundColor: color, borderRadius: 4 }]
-        },
+        data: { labels: labels, datasets: [{ label: 'Total Porsi', data: values, backgroundColor: color, borderRadius: 4 }] },
         options: {
-          indexAxis: 'y', 
-          responsive: true, maintainAspectRatio: false,
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+          animation: chartAnimOptions, // Animasi tumbuh
           plugins: { legend: { display: false } },
           scales: { x: { beginAtZero: true } }
         }
@@ -396,54 +396,33 @@
     }
 
     function renderGaugeCharts(srq, real, sp) {
-      const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); let colorSrq = (real >= srq) ? '#0284c7' : '#f59e0b'; gaugeSrqChartObj = new Chart(ctxSrq, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [real, (srq-real>0?srq-real:0)], backgroundColor: [colorSrq, '#e2e8f0'], borderWidth: 0 }] }, options: { rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-      const ctxSp = document.getElementById('gaugeSpChart').getContext('2d'); if (gaugeSpChartObj) gaugeSpChartObj.destroy(); let colorSp = (real >= sp) ? '#4f46e5' : '#f59e0b'; gaugeSpChartObj = new Chart(ctxSp, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [real, (sp-real>0?sp-real:0)], backgroundColor: [colorSp, '#e2e8f0'], borderWidth: 0 }] }, options: { rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+      const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); let colorSrq = (real >= srq) ? '#0284c7' : '#f59e0b'; 
+      gaugeSrqChartObj = new Chart(ctxSrq, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [real, (srq-real>0?srq-real:0)], backgroundColor: [colorSrq, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+      
+      const ctxSp = document.getElementById('gaugeSpChart').getContext('2d'); if (gaugeSpChartObj) gaugeSpChartObj.destroy(); let colorSp = (real >= sp) ? '#4f46e5' : '#f59e0b'; 
+      gaugeSpChartObj = new Chart(ctxSp, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [real, (sp-real>0?sp-real:0)], backgroundColor: [colorSp, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
     }
     
     function renderLineChart(trendData) {
-      const ctx = document.getElementById('lineChart').getContext('2d'); if (lineChartObj) lineChartObj.destroy(); lineChartObj = new Chart(ctx, { type: 'line', data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: trendData.srq, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: trendData.real, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
+      const ctx = document.getElementById('lineChart').getContext('2d'); if (lineChartObj) lineChartObj.destroy(); 
+      lineChartObj = new Chart(ctx, { type: 'line', data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: trendData.srq, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: trendData.real, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
     }
     
     function renderBarChart(trendData) {
-      const ctx = document.getElementById('barChart').getContext('2d'); if (barChartObj) barChartObj.destroy(); barChartObj = new Chart(ctx, { type: 'bar', data: { labels: trendData.labels, datasets: [{ label: 'Total Volume Harian', data: trendData.real, backgroundColor: '#ea580c', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+      const ctx = document.getElementById('barChart').getContext('2d'); if (barChartObj) barChartObj.destroy(); 
+      barChartObj = new Chart(ctx, { type: 'bar', data: { labels: trendData.labels, datasets: [{ label: 'Total Volume Harian', data: trendData.real, backgroundColor: '#ea580c', borderRadius: 4 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
     }
 
     function aksiLaporan() { 
-      const btn = document.getElementById('btnTelegram'); 
-      const start = document.getElementById('startTgl').value; 
-      const end = document.getElementById('endTgl').value; 
-      
-      document.getElementById('fullScreenLoader').style.display = 'flex'; 
-      document.querySelector('.loader-text').innerText = "Mengirim Laporan ke Telegram...";
-      btn.disabled = true; 
-      
-      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`)
-        .then(res => res.json())
-        .then(() => { 
-          document.getElementById('fullScreenLoader').style.display = 'none'; 
-          document.querySelector('.loader-text').innerText = "Memasak Data...";
-          btn.innerText = "Terkirim"; 
-          setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); 
-        }); 
+      const btn = document.getElementById('btnTelegram'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.querySelector('.loader-text').innerText = "Mengirim Laporan ke Telegram..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.querySelector('.loader-text').innerText = "Memasak Data..."; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
     }
     
     function aksiExport() { 
-      const btn = document.getElementById('btnExport'); 
-      const start = document.getElementById('startTgl').value; 
-      const end = document.getElementById('endTgl').value; 
-      
-      document.getElementById('fullScreenLoader').style.display = 'flex'; 
-      document.querySelector('.loader-text').innerText = "Mengekspor Data ke Telegram...";
-      btn.disabled = true; 
-      
-      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`)
-        .then(res => res.json())
-        .then(() => { 
-          document.getElementById('fullScreenLoader').style.display = 'none'; 
-          document.querySelector('.loader-text').innerText = "Memasak Data...";
-          btn.innerText = "Terekspor"; 
-          setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); 
-        }); 
+      const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.querySelector('.loader-text').innerText = "Mengekspor Data ke Telegram..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.querySelector('.loader-text').innerText = "Memasak Data..."; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
     }
   </script>
 </body>

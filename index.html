@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard Produksi Semarang</title>
   
-  <!-- Favicon / Ikon Tab Browser DARI GITHUB VERSI TERBARU -->
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -18,17 +17,17 @@
   <style>
     body { background-color: #f4f7fa; color: #333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
     
-    /* MODIFIKASI: Panel Header Dibuat Mengambang (Sticky) */
+    /* Panel Header Dibuat Mengambang (Sticky) */
     .header-panel { 
-      background-color: rgba(255, 255, 255, 0.95); /* Sedikit transparan agar terlihat elegan saat mengambang */
-      backdrop-filter: blur(10px); /* Efek blur ala Mac/iOS */
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
       padding: 15px 20px; 
       border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Bayangan sedikit dipertegas */
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
       margin-bottom: 20px; 
-      position: sticky; /* Membuat elemen mengambang saat di-scroll */
-      top: 15px; /* Jarak mengambang dari atas layar */
-      z-index: 1050; /* Memastikan panel selalu berada DI ATAS elemen lain seperti grafik/tabel */
+      position: sticky; 
+      top: 15px; 
+      z-index: 1050; 
     }
     
     .card-kpi { background-color: #fff; border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); padding: 15px; display: flex; align-items: center; }
@@ -48,7 +47,6 @@
     
     <div class="header-panel d-flex flex-wrap justify-content-between align-items-center gap-3">
       <div class="d-flex align-items-center gap-3">
-        <!-- LOGO PERSEGI PANJANG DARI GITHUB VERSI TERBARU -->
         <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/dashboard.png" alt="Logo Produksi Semarang" style="height: 70px; width: auto; object-fit: contain; border-radius: 8px;">
         <h4 class="m-0 text-dark fw-bold">Dashboard Produksi Semarang</h4>
       </div>
@@ -66,7 +64,6 @@
       </div>
     </div>
 
-    <!-- IKON KPI MENGGUNAKAN RAW URL GITHUB VERSI TERBARU -->
     <div class="row mb-1">
       <div class="col-lg col-md-4 col-sm-6 mb-3">
         <div class="card-kpi h-100">
@@ -112,7 +109,6 @@
         <thead><tr><th>Kategori</th><th>Nama Menu</th><th>Sales Plan</th><th>SRQ</th><th>Real</th><th>% SRQ</th><th>% SP</th><th>Evaluasi SP</th></tr></thead><tbody></tbody></table></div></div></div>
     </div>
 
-    <!-- FITUR BARU: KOMPARASI MENU PER KATEGORI -->
     <div class="row mt-2">
       <div class="col-12 mb-3">
         <div class="card-container">
@@ -133,6 +129,24 @@
             <div class="col-md-6 mb-2">
               <h6 class="fw-bold text-center mb-2" style="color: #0284c7;">Crew Meal</h6>
               <div style="position: relative; height: 250px; width: 100%;"><canvas id="chartCrew"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-12 mb-3">
+        <div class="card-container">
+          <h6 class="text-secondary fw-bold mb-3">Analisis Amprahan Kereta</h6>
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <h6 class="fw-bold text-center mb-2" style="color: #ef4444;">Top Kereta (Paling Sering Amprah)</h6>
+              <div style="position: relative; height: 250px; width: 100%;"><canvas id="chartAmprahanKA"></canvas></div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <h6 class="fw-bold text-center mb-2" style="color: #14b8a6;">Top Menu Amprahan</h6>
+              <div style="position: relative; height: 250px; width: 100%;"><canvas id="chartAmprahanMenu"></canvas></div>
             </div>
           </div>
         </div>
@@ -171,6 +185,7 @@
 
     let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
     let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
+    let chartAmprahanKAObj = null; let chartAmprahanMenuObj = null;
     let dtAmprahan = null; let dtMenu = null; let dtStok = null;
 
     let today = new Date(); let y = 2026; let m = '05'; let d = '01'; 
@@ -232,8 +247,10 @@
           renderLineChart(data.trendData); 
           renderBarChart(data.trendData); 
           
-          // RENDER GRAFIK KATEGORI BARU
           renderCategoryMenuCharts(data.tableMenu);
+          
+          // RENDER GRAFIK ANALISIS AMPRAHAN
+          renderAmprahanCharts(data.tableAmprahan);
 
           dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw();
           dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
@@ -253,14 +270,14 @@
 
       tableMenu.forEach(row => {
         let kat = row[0];
-        let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); // Bersihkan nama menu
-        let real = parseInt(row[4]) || 0; // Ambil nilai realisasi saja
+        let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); 
+        let real = parseInt(row[4]) || 0; 
 
         if (real > 0) { 
           if (kat === 'Fresh Food') {
             dataFF[menu] = (dataFF[menu] || 0) + real;
           } else if (kat === 'Luxury' || kat === 'Fit') {
-            dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; // Tergabung otomatis karena nama key sama
+            dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
           } else if (kat === 'Suite') {
             dataSuite[menu] = (dataSuite[menu] || 0) + real;
           } else if (kat === 'Crew Meal') {
@@ -269,33 +286,52 @@
         }
       });
 
-      function drawHBarChart(ctxId, chartObj, dataDict, color) {
-        const ctx = document.getElementById(ctxId).getContext('2d');
-        if (chartObj) chartObj.destroy();
-        
-        let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
-        let labels = sortedArray.map(x => x[0]);
-        let values = sortedArray.map(x => x[1]);
-
-        return new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: labels,
-            datasets: [{ label: 'Realisasi (Porsi)', data: values, backgroundColor: color, borderRadius: 4 }]
-          },
-          options: {
-            indexAxis: 'y', // Mengubah menjadi bar horizontal agar nama menu mudah dibaca
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { beginAtZero: true } }
-          }
-        });
-      }
-
       chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981');
       chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
       chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b');
       chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
+    }
+
+    function renderAmprahanCharts(tableAmprahan) {
+      let dataKA = {};
+      let dataMenu = {};
+
+      tableAmprahan.forEach(row => {
+        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); 
+        let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); 
+        let qty = parseInt(row[3]) || 0;
+
+        if (qty > 0) {
+          dataKA[kereta] = (dataKA[kereta] || 0) + qty;
+          dataMenu[menu] = (dataMenu[menu] || 0) + qty;
+        }
+      });
+
+      chartAmprahanKAObj = drawHBarChart('chartAmprahanKA', chartAmprahanKAObj, dataKA, '#ef4444');
+      chartAmprahanMenuObj = drawHBarChart('chartAmprahanMenu', chartAmprahanMenuObj, dataMenu, '#14b8a6');
+    }
+
+    function drawHBarChart(ctxId, chartObj, dataDict, color) {
+      const ctx = document.getElementById(ctxId).getContext('2d');
+      if (chartObj) chartObj.destroy();
+      
+      let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
+      let labels = sortedArray.map(x => x[0]);
+      let values = sortedArray.map(x => x[1]);
+
+      return new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{ label: 'Total Porsi', data: values, backgroundColor: color, borderRadius: 4 }]
+        },
+        options: {
+          indexAxis: 'y', 
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true } }
+        }
+      });
     }
 
     function renderGaugeCharts(srq, real, sp) {

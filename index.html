@@ -75,7 +75,7 @@
       <div class="bouncing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
       <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png" alt="Loading" class="loader-icon">
     </div>
-    <div class="loader-text">Memasak Data...</div>
+    <div class="loader-text" id="loaderTextInfo">Memasak Data...</div>
   </div>
 
   <div class="container-fluid py-4 px-4">
@@ -269,28 +269,35 @@
       if (triggered) setTimeout(checkVisibleElements, 50);
     }, { threshold: 0.1 });
 
-    $(document.ready).ready(function() {
-      document.querySelectorAll('.reveal-card').forEach(card => observer.observe(card));
+    // PERBAIKAN TYPO: Menggunakan $(document).ready
+    $(document).ready(function() {
+      try {
+        document.querySelectorAll('.reveal-card').forEach(card => observer.observe(card));
 
-      dtAmprahan = $('#tabelAmprahan').DataTable({ pageLength: 5, lengthMenu: [5, 10, 25] });
-      dtMenu = $('#tabelMenu').DataTable({ 
-        pageLength: 5, lengthMenu: [5, 10, 25],
-        columnDefs: [ { targets: 7, render: function(data, type, row) { let selisih = parseInt(data); if (selisih > 0) return `<span class="text-danger fw-bold">+${selisih} (Over)</span>`; if (selisih < 0) return `<span class="text-warning">${selisih} (Under)</span>`; return `<span class="text-success fw-bold">Sesuai</span>`; } } ]
-      });
-      dtStok = $('#tabelStok').DataTable({
-        pageLength: 10, lengthMenu: [5, 10, 25, 50],
-        columnDefs: [
-          { targets: 8, render: function(data, type, row) {
-              let s = String(data).toLowerCase();
-              if (s === 'aman') return `<span class="badge bg-success w-100 py-2">Aman</span>`;
-              if (s === 'warning') return `<span class="badge bg-warning text-dark w-100 py-2">Warning</span>`;
-              if (s === 'kritis') return `<span class="badge bg-danger w-100 py-2">Kritis</span>`;
-              return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
+        dtAmprahan = $('#tabelAmprahan').DataTable({ pageLength: 5, lengthMenu: [5, 10, 25] });
+        dtMenu = $('#tabelMenu').DataTable({ 
+          pageLength: 5, lengthMenu: [5, 10, 25],
+          columnDefs: [ { targets: 7, render: function(data, type, row) { let selisih = parseInt(data); if (selisih > 0) return `<span class="text-danger fw-bold">+${selisih} (Over)</span>`; if (selisih < 0) return `<span class="text-warning">${selisih} (Under)</span>`; return `<span class="text-success fw-bold">Sesuai</span>`; } } ]
+        });
+        dtStok = $('#tabelStok').DataTable({
+          pageLength: 10, lengthMenu: [5, 10, 25, 50],
+          columnDefs: [
+            { targets: 8, render: function(data, type, row) {
+                let s = String(data).toLowerCase();
+                if (s === 'aman') return `<span class="badge bg-success w-100 py-2">Aman</span>`;
+                if (s === 'warning') return `<span class="badge bg-warning text-dark w-100 py-2">Warning</span>`;
+                if (s === 'kritis') return `<span class="badge bg-danger w-100 py-2">Kritis</span>`;
+                return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
+              }
             }
-          }
-        ]
-      });
-      loadData();
+          ]
+        });
+        loadData();
+      } catch(e) {
+        console.error("Error saat inisialisasi: ", e);
+        document.getElementById('fullScreenLoader').style.display = 'none';
+        alert("Sistem mengalami kendala saat inisialisasi: " + e.message);
+      }
     });
 
     // --- FUNGSI ANIMASI ANGKA (COUNTER UP) ---
@@ -300,7 +307,8 @@
       const target = parseFloat(targetValue);
       if(isNaN(target)) { element.innerText = targetValue + suffix; return; }
       
-      const isFloat = targetValue.toString().includes('.'); 
+      // PERBAIKAN: Menggunakan String() untuk mencegah error properti
+      const isFloat = String(targetValue).includes('.'); 
       let startTimestamp = null;
       
       const step = (timestamp) => {
@@ -319,55 +327,61 @@
     }
 
     function loadData() {
-      const start = document.getElementById('startTgl').value; 
-      const end = document.getElementById('endTgl').value;
-      
-      document.getElementById('fullScreenLoader').style.display = 'flex'; 
-      document.getElementById('btnFilter').disabled = true;
+      try {
+        const start = document.getElementById('startTgl').value; 
+        const end = document.getElementById('endTgl').value;
+        
+        document.getElementById('fullScreenLoader').style.display = 'flex'; 
+        document.getElementById('btnFilter').disabled = true;
 
-      fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('fullScreenLoader').style.display = 'none'; 
-          document.getElementById('btnFilter').disabled = false;
+        fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('fullScreenLoader').style.display = 'none'; 
+            document.getElementById('btnFilter').disabled = false;
 
-          if (data.error) { alert("Gagal menarik data. Error: " + data.error); return; }
+            if (data.error) { alert("Gagal menarik data. Error: " + data.error); return; }
 
-          // Set atribut target agar dibaca observer
-          document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan);
-          document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
-          document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi);
-          document.getElementById('avgDisplay').setAttribute('data-target-value', data.avg);
-          document.getElementById('amprahanDisplay').setAttribute('data-target-value', data.amprahan);
-          document.getElementById('persenSrqDisplay').setAttribute('data-target-value', data.persenSrq);
-          document.getElementById('persenSpDisplay').setAttribute('data-target-value', data.persenSp);
-          
-          // Reset status animasi angka agar jalan lagi
-          document.querySelectorAll('.counter-anim').forEach(el => el.removeAttribute('data-animated'));
+            // Set atribut target agar dibaca observer
+            document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan);
+            document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
+            document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi);
+            document.getElementById('avgDisplay').setAttribute('data-target-value', data.avg);
+            document.getElementById('amprahanDisplay').setAttribute('data-target-value', data.amprahan);
+            document.getElementById('persenSrqDisplay').setAttribute('data-target-value', data.persenSrq);
+            document.getElementById('persenSpDisplay').setAttribute('data-target-value', data.persenSp);
+            
+            // Reset status animasi angka agar jalan lagi saat difilter ulang
+            document.querySelectorAll('.counter-anim').forEach(el => el.removeAttribute('data-animated'));
 
-          // Reset Targets
-          window.chartTargets = {};
+            // Reset Targets
+            window.chartTargets = {};
 
-          renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); 
-          renderLineChart(data.trendData); 
-          renderBarChart(data.trendData); 
-          renderCategoryMenuCharts(data.tableMenu);
-          renderAmprahanCharts(data.tableAmprahan);
+            renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); 
+            renderLineChart(data.trendData); 
+            renderBarChart(data.trendData); 
+            renderCategoryMenuCharts(data.tableMenu);
+            renderAmprahanCharts(data.tableAmprahan);
 
-          dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw();
-          dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
-          
-          let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket]);
-          dtStok.clear(); dtStok.rows.add(stokRows).draw();
+            dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw();
+            dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
+            
+            let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket]);
+            dtStok.clear(); dtStok.rows.add(stokRows).draw();
 
-          // Cek manual setelah load selesai (buat card yg memang sdh muncul tanpa disekrol)
-          setTimeout(checkVisibleElements, 100);
+            // Cek manual setelah load selesai
+            setTimeout(checkVisibleElements, 100);
 
-        }).catch(error => {
-          alert("Gagal menarik data jaringan terputus.");
-          document.getElementById('fullScreenLoader').style.display = 'none'; 
-          document.getElementById('btnFilter').disabled = false;
-        });
+          }).catch(error => {
+            console.error("Fetch Error: ", error);
+            document.getElementById('fullScreenLoader').style.display = 'none'; 
+            document.getElementById('btnFilter').disabled = false;
+            alert("Gagal menarik data. Cek koneksi atau link API Anda.");
+          });
+      } catch(err) {
+        document.getElementById('fullScreenLoader').style.display = 'none'; 
+        alert("Terjadi kesalahan sistem: " + err.message);
+      }
     }
 
     function renderGaugeCharts(srq, real, sp) {
@@ -398,4 +412,75 @@
         data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: zeros, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: zeros, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, 
         options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } 
       });
-      window.chartTargets['lineChart'] = { chart: lineChartObj, type:
+      window.chartTargets['lineChart'] = { chart: lineChartObj, type: 'line', data: [trendData.srq, trendData.real] };
+    }
+    
+    function renderBarChart(trendData) {
+      const ctx = document.getElementById('barChart').getContext('2d'); if (barChartObj) barChartObj.destroy(); 
+      let zeros = trendData.labels.map(() => 0);
+      barChartObj = new Chart(ctx, { 
+        type: 'bar', 
+        data: { labels: trendData.labels, datasets: [{ label: 'Total Volume Harian', data: zeros, backgroundColor: '#ea580c', borderRadius: 4 }] }, 
+        options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } 
+      });
+      window.chartTargets['barChart'] = { chart: barChartObj, type: 'bar', data: [trendData.real] };
+    }
+
+    function renderCategoryMenuCharts(tableMenu) {
+      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
+      tableMenu.forEach(row => {
+        let kat = row[0]; let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let real = parseInt(row[4]) || 0; 
+        if (real > 0) { 
+          if (kat === 'Fresh Food') dataFF[menu] = (dataFF[menu] || 0) + real;
+          else if (kat === 'Luxury' || kat === 'Fit') dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
+          else if (kat === 'Suite') dataSuite[menu] = (dataSuite[menu] || 0) + real;
+          else if (kat === 'Crew Meal') dataCrew[menu] = (dataCrew[menu] || 0) + real;
+        }
+      });
+      chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981');
+      chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
+      chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b');
+      chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
+    }
+
+    function renderAmprahanCharts(tableAmprahan) {
+      let dataKA = {}; let dataMenu = {};
+      tableAmprahan.forEach(row => {
+        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); let qty = parseInt(row[3]) || 0;
+        if (qty > 0) { dataKA[kereta] = (dataKA[kereta] || 0) + qty; dataMenu[menu] = (dataMenu[menu] || 0) + qty; }
+      });
+      chartAmprahanKAObj = drawHBarChart('chartAmprahanKA', chartAmprahanKAObj, dataKA, '#ef4444');
+      chartAmprahanMenuObj = drawHBarChart('chartAmprahanMenu', chartAmprahanMenuObj, dataMenu, '#14b8a6');
+    }
+
+    function drawHBarChart(ctxId, chartObj, dataDict, color) {
+      const ctx = document.getElementById(ctxId).getContext('2d');
+      if (chartObj) chartObj.destroy();
+      
+      let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
+      let labels = sortedArray.map(x => x[0]); let values = sortedArray.map(x => x[1]);
+      let zeros = values.map(() => 0);
+
+      let newChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: labels, datasets: [{ label: 'Total Porsi', data: zeros, backgroundColor: color, borderRadius: 4 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+      });
+      window.chartTargets[ctxId] = { chart: newChart, type: 'barH', data: [values] };
+      return newChart;
+    }
+
+    function aksiLaporan() { 
+      const btn = document.getElementById('btnTelegram'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengirim Laporan ke Telegram..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
+    }
+    
+    function aksiExport() { 
+      const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengekspor Data ke Telegram..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
+    }
+  </script>
+</body>
+</html>

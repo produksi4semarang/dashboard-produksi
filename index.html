@@ -15,7 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
-    body { background-color: #f4f7fa; color: #333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #f4f7fa; color: #333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; }
     
     .header-panel { 
       background-color: rgba(255, 255, 255, 0.95);
@@ -40,7 +40,7 @@
     .table th { background-color: #f8fafc !important; color: #475569; font-size: 0.9rem; text-align: center !important;}
     .table td { font-size: 0.9rem; vertical-align: middle; text-align: center !important; }
     
-    /* --- CSS EFEK MUNCUL SAAT DI-SCROLL (FADE-IN UP) --- */
+    /* Efek Muncul Melayang Saat Di-scroll (Fade-In Up) */
     .reveal-card {
       opacity: 0;
       transform: translateY(40px);
@@ -52,33 +52,19 @@
       transform: translateY(0);
     }
 
-    /* --- CSS LAYAR LOADING --- */
+    /* CSS Layar Loading / Koki Memasak */
     .fullscreen-loader {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(244, 247, 250, 0.75); 
-      backdrop-filter: blur(8px); 
-      z-index: 9999; 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(244, 247, 250, 0.75); backdrop-filter: blur(8px); 
+      z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
     .loader-icon-container { position: relative; width: 100px; height: 100px; }
     .loader-icon { width: 100%; height: 100%; object-fit: contain; }
-    .bouncing-dots {
-      position: absolute; top: -15px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px;
-    }
-    .dot {
-      width: 10px; height: 10px; background-color: #ea580c; border-radius: 50%; animation: bounce 0.5s infinite alternate;
-    }
+    .bouncing-dots { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+    .dot { width: 10px; height: 10px; background-color: #ea580c; border-radius: 50%; animation: bounce 0.5s infinite alternate; }
     .dot:nth-child(2) { animation-delay: 0.15s; }
     .dot:nth-child(3) { animation-delay: 0.3s; }
-    
-    @keyframes bounce {
-      from { transform: translateY(0); opacity: 0.8; }
-      to { transform: translateY(-15px); opacity: 0.2; } 
-    }
+    @keyframes bounce { from { transform: translateY(0); opacity: 0.8; } to { transform: translateY(-15px); opacity: 0.2; } }
     .loader-text { margin-top: 20px; font-weight: 800; color: #334155; font-size: 1.1rem; letter-spacing: 1px; }
   </style>
 </head>
@@ -99,13 +85,11 @@
         <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/dashboard.png" alt="Logo Produksi Semarang" style="height: 70px; width: auto; object-fit: contain; border-radius: 8px;">
         <h4 class="m-0 text-dark fw-bold">Dashboard Produksi Semarang</h4>
       </div>
-
       <div class="d-flex flex-wrap gap-2 align-items-center">
         <span class="text-secondary fw-bold">Dari:</span>
         <input type="date" id="startTgl" class="form-control" style="width: 140px;">
         <span class="text-secondary fw-bold">Sampai:</span>
         <input type="date" id="endTgl" class="form-control" style="width: 140px;">
-        
         <button class="btn btn-outline-secondary" onclick="loadData()" id="btnFilter">Filter</button>
         <button class="btn btn-info text-white fw-bold" onclick="aksiExport()" id="btnExport">Export Data</button>
         <button class="btn btn-primary fw-bold" onclick="aksiLaporan()" id="btnTelegram">Buat Laporan</button>
@@ -116,38 +100,38 @@
       <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/sp.png" alt="Sales Plan" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="spDisplay">0</p><p class="kpi-label">Sales Plan</p></div>
+          <div><p class="kpi-value counter-anim" id="spDisplay" data-suffix="">0</p><p class="kpi-label">Sales Plan</p></div>
         </div>
       </div>
       <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/srq.png" alt="SRQ" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="srqDisplay">0</p><p class="kpi-label">Total SRQ</p></div>
+          <div><p class="kpi-value counter-anim" id="srqDisplay" data-suffix="">0</p><p class="kpi-label">Total SRQ</p></div>
         </div>
       </div>
       <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/real.png" alt="Realisasi" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="realDisplay">0</p><p class="kpi-label">Total Realisasi</p></div>
+          <div><p class="kpi-value counter-anim" id="realDisplay" data-suffix="">0</p><p class="kpi-label">Total Realisasi</p></div>
         </div>
       </div>
       <div class="col-lg col-md-6 col-sm-6 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/rata.png" alt="Rata-rata" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="avgDisplay">0</p><p class="kpi-label">Rata-rata / Hari</p></div>
+          <div><p class="kpi-value counter-anim" id="avgDisplay" data-suffix=" / hr">0 / hr</p><p class="kpi-label">Rata-rata / Hari</p></div>
         </div>
       </div>
       <div class="col-lg col-md-6 col-sm-12 mb-3 reveal-card">
         <div class="card-kpi h-100">
           <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/amprahan.png" alt="Amprahan" class="kpi-icon" style="object-fit: contain;">
-          <div><p class="kpi-value" id="amprahanDisplay">0</p><p class="kpi-label">Amprahan Kereta</p></div>
+          <div><p class="kpi-value counter-anim" id="amprahanDisplay" data-suffix="">0</p><p class="kpi-label">Amprahan Kereta</p></div>
         </div>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pencapaian Sales Plan</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSpChart"></canvas><div class="gauge-text" id="persenSpDisplay" style="color: #4f46e5;">0%</div></div></div></div>
-      <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pemenuhan SRQ</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSrqChart"></canvas><div class="gauge-text" id="persenSrqDisplay" style="color: #0284c7;">0%</div></div></div></div>
+      <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pencapaian Sales Plan</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSpChart"></canvas><div class="gauge-text counter-anim" id="persenSpDisplay" data-suffix="%" style="color: #4f46e5;">0%</div></div></div></div>
+      <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pemenuhan SRQ</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSrqChart"></canvas><div class="gauge-text counter-anim" id="persenSrqDisplay" data-suffix="%" style="color: #0284c7;">0%</div></div></div></div>
       <div class="col-lg-6 col-md-12 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi (Sesuai Filter)</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
     </div>
 
@@ -231,21 +215,61 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxxf_0FcY6jESvg18zMUrtnZ9RNy5Vu-ilHgjVvjRpVUbK_FwAc8uEcJTcj_1MRK9S6rA/exec"; 
 
+    // Global penyimpanan target chart agar dirender saat di-scroll
+    window.chartTargets = {};
+
     let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
     let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
     let chartAmprahanKAObj = null; let chartAmprahanMenuObj = null;
     let dtAmprahan = null; let dtMenu = null; let dtStok = null;
+
+    const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
 
     let today = new Date(); let y = 2026; let m = '05'; let d = '01'; 
     document.getElementById('startTgl').value = `${y}-${m}-${d}`;
     let nowStr = today.toISOString().split('T')[0];
     document.getElementById('endTgl').value = nowStr > '2026-05-31' ? '2026-05-31' : nowStr;
     
+    // --- OBSERVER UNTUK ANIMASI SCROLL & TRIGGER CHART ---
+    function checkVisibleElements() {
+      document.querySelectorAll('.reveal-card.visible').forEach(card => {
+        // 1. Tembakkan animasi angka (counter)
+        card.querySelectorAll('.counter-anim').forEach(counter => {
+          let target = counter.getAttribute('data-target-value');
+          if (target !== null && !counter.getAttribute('data-animated')) {
+            animateCounter(counter.id, target, 1500, counter.getAttribute('data-suffix') || "");
+            counter.setAttribute('data-animated', 'true');
+          }
+        });
+        // 2. Tembakkan data grafik agar tumbuh dari nol
+        card.querySelectorAll('canvas').forEach(canvas => {
+          let chartId = canvas.id;
+          if (window.chartTargets && window.chartTargets[chartId]) {
+            let info = window.chartTargets[chartId];
+            if (info.type === 'doughnut' || info.type === 'barH') {
+              info.chart.data.datasets[0].data = info.data[0];
+            } else if (info.type === 'line' || info.type === 'bar') {
+              info.chart.data.datasets.forEach((ds, i) => ds.data = info.data[i]);
+            }
+            info.chart.update();
+            delete window.chartTargets[chartId]; // Hapus agar tidak diupdate berulang
+          }
+        });
+      });
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      let triggered = false;
+      entries.forEach(entry => { 
+        if (entry.isIntersecting) { 
+          entry.target.classList.add('visible'); 
+          triggered = true;
+        } 
+      });
+      if (triggered) setTimeout(checkVisibleElements, 50);
+    }, { threshold: 0.1 });
+
     $(document.ready).ready(function() {
-      // Inisiasi Intersection Observer untuk Scroll Reveal Animation
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
-      }, { threshold: 0.1 });
       document.querySelectorAll('.reveal-card').forEach(card => observer.observe(card));
 
       dtAmprahan = $('#tabelAmprahan').DataTable({ pageLength: 5, lengthMenu: [5, 10, 25] });
@@ -256,9 +280,7 @@
       dtStok = $('#tabelStok').DataTable({
         pageLength: 10, lengthMenu: [5, 10, 25, 50],
         columnDefs: [
-          {
-            targets: 8, 
-            render: function(data, type, row) {
+          { targets: 8, render: function(data, type, row) {
               let s = String(data).toLowerCase();
               if (s === 'aman') return `<span class="badge bg-success w-100 py-2">Aman</span>`;
               if (s === 'warning') return `<span class="badge bg-warning text-dark w-100 py-2">Warning</span>`;
@@ -278,7 +300,7 @@
       const target = parseFloat(targetValue);
       if(isNaN(target)) { element.innerText = targetValue + suffix; return; }
       
-      const isFloat = target.toString().includes('.');
+      const isFloat = targetValue.toString().includes('.'); 
       let startTimestamp = null;
       
       const step = (timestamp) => {
@@ -291,7 +313,7 @@
         else { element.innerText = Math.floor(current) + suffix; }
         
         if (progress < 1) { window.requestAnimationFrame(step); } 
-        else { element.innerText = target + suffix; }
+        else { element.innerText = targetValue + suffix; }
       };
       window.requestAnimationFrame(step);
     }
@@ -311,15 +333,21 @@
 
           if (data.error) { alert("Gagal menarik data. Error: " + data.error); return; }
 
-          // --- TERAPKAN ANIMASI ANGKA ---
-          animateCounter('spDisplay', data.salesPlan, 1500);
-          animateCounter('srqDisplay', data.srq, 1500);
-          animateCounter('realDisplay', data.realisasi, 1500);
-          animateCounter('avgDisplay', data.avg, 1500, " / hr");
-          animateCounter('amprahanDisplay', data.amprahan, 1500);
-          animateCounter('persenSrqDisplay', data.persenSrq, 1500, "%");
-          animateCounter('persenSpDisplay', data.persenSp, 1500, "%");
+          // Set atribut target agar dibaca observer
+          document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan);
+          document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
+          document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi);
+          document.getElementById('avgDisplay').setAttribute('data-target-value', data.avg);
+          document.getElementById('amprahanDisplay').setAttribute('data-target-value', data.amprahan);
+          document.getElementById('persenSrqDisplay').setAttribute('data-target-value', data.persenSrq);
+          document.getElementById('persenSpDisplay').setAttribute('data-target-value', data.persenSp);
           
+          // Reset status animasi angka agar jalan lagi
+          document.querySelectorAll('.counter-anim').forEach(el => el.removeAttribute('data-animated'));
+
+          // Reset Targets
+          window.chartTargets = {};
+
           renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); 
           renderLineChart(data.trendData); 
           renderBarChart(data.trendData); 
@@ -332,10 +360,8 @@
           let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket]);
           dtStok.clear(); dtStok.rows.add(stokRows).draw();
 
-          // Paksa Intersection Observer mengecek ulang elemen yang baru di-refresh
-          document.querySelectorAll('.reveal-card').forEach(el => {
-            if(el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
-          });
+          // Cek manual setelah load selesai (buat card yg memang sdh muncul tanpa disekrol)
+          setTimeout(checkVisibleElements, 100);
 
         }).catch(error => {
           alert("Gagal menarik data jaringan terputus.");
@@ -344,86 +370,32 @@
         });
     }
 
-    // --- PENGATURAN ANIMASI CHART BERSAMA ---
-    const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
-
-    function renderCategoryMenuCharts(tableMenu) {
-      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
-
-      tableMenu.forEach(row => {
-        let kat = row[0]; let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let real = parseInt(row[4]) || 0; 
-        if (real > 0) { 
-          if (kat === 'Fresh Food') dataFF[menu] = (dataFF[menu] || 0) + real;
-          else if (kat === 'Luxury' || kat === 'Fit') dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
-          else if (kat === 'Suite') dataSuite[menu] = (dataSuite[menu] || 0) + real;
-          else if (kat === 'Crew Meal') dataCrew[menu] = (dataCrew[menu] || 0) + real;
-        }
-      });
-
-      chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981');
-      chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
-      chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b');
-      chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
-    }
-
-    function renderAmprahanCharts(tableAmprahan) {
-      let dataKA = {}; let dataMenu = {};
-      tableAmprahan.forEach(row => {
-        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); let qty = parseInt(row[3]) || 0;
-        if (qty > 0) { dataKA[kereta] = (dataKA[kereta] || 0) + qty; dataMenu[menu] = (dataMenu[menu] || 0) + qty; }
-      });
-      chartAmprahanKAObj = drawHBarChart('chartAmprahanKA', chartAmprahanKAObj, dataKA, '#ef4444');
-      chartAmprahanMenuObj = drawHBarChart('chartAmprahanMenu', chartAmprahanMenuObj, dataMenu, '#14b8a6');
-    }
-
-    function drawHBarChart(ctxId, chartObj, dataDict, color) {
-      const ctx = document.getElementById(ctxId).getContext('2d');
-      if (chartObj) chartObj.destroy();
-      
-      let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
-      let labels = sortedArray.map(x => x[0]); let values = sortedArray.map(x => x[1]);
-
-      return new Chart(ctx, {
-        type: 'bar',
-        data: { labels: labels, datasets: [{ label: 'Total Porsi', data: values, backgroundColor: color, borderRadius: 4 }] },
-        options: {
-          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-          animation: chartAnimOptions, // Animasi tumbuh
-          plugins: { legend: { display: false } },
-          scales: { x: { beginAtZero: true } }
-        }
-      });
-    }
-
     function renderGaugeCharts(srq, real, sp) {
-      const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); let colorSrq = (real >= srq) ? '#0284c7' : '#f59e0b'; 
-      gaugeSrqChartObj = new Chart(ctxSrq, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [real, (srq-real>0?srq-real:0)], backgroundColor: [colorSrq, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
-      
-      const ctxSp = document.getElementById('gaugeSpChart').getContext('2d'); if (gaugeSpChartObj) gaugeSpChartObj.destroy(); let colorSp = (real >= sp) ? '#4f46e5' : '#f59e0b'; 
-      gaugeSpChartObj = new Chart(ctxSp, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [real, (sp-real>0?sp-real:0)], backgroundColor: [colorSp, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+      const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); 
+      let colorSrq = (real >= srq && srq > 0) ? '#0284c7' : '#f59e0b'; 
+      gaugeSrqChartObj = new Chart(ctxSrq, { 
+        type: 'doughnut', 
+        data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, srq || 1], backgroundColor: [colorSrq, '#e2e8f0'], borderWidth: 0 }] }, 
+        options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } 
+      });
+      window.chartTargets['gaugeSrqChart'] = { chart: gaugeSrqChartObj, type: 'doughnut', data: [[real, Math.max(0, srq - real)]] };
+
+      const ctxSp = document.getElementById('gaugeSpChart').getContext('2d'); if (gaugeSpChartObj) gaugeSpChartObj.destroy(); 
+      let colorSp = (real >= sp && sp > 0) ? '#4f46e5' : '#f59e0b'; 
+      gaugeSpChartObj = new Chart(ctxSp, { 
+        type: 'doughnut', 
+        data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, sp || 1], backgroundColor: [colorSp, '#e2e8f0'], borderWidth: 0 }] }, 
+        options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } 
+      });
+      window.chartTargets['gaugeSpChart'] = { chart: gaugeSpChartObj, type: 'doughnut', data: [[real, Math.max(0, sp - real)]] };
     }
     
     function renderLineChart(trendData) {
       const ctx = document.getElementById('lineChart').getContext('2d'); if (lineChartObj) lineChartObj.destroy(); 
-      lineChartObj = new Chart(ctx, { type: 'line', data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: trendData.srq, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: trendData.real, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
-    }
-    
-    function renderBarChart(trendData) {
-      const ctx = document.getElementById('barChart').getContext('2d'); if (barChartObj) barChartObj.destroy(); 
-      barChartObj = new Chart(ctx, { type: 'bar', data: { labels: trendData.labels, datasets: [{ label: 'Total Volume Harian', data: trendData.real, backgroundColor: '#ea580c', borderRadius: 4 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
-    }
-
-    function aksiLaporan() { 
-      const btn = document.getElementById('btnTelegram'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.querySelector('.loader-text').innerText = "Mengirim Laporan ke Telegram..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.querySelector('.loader-text').innerText = "Memasak Data..."; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
-    }
-    
-    function aksiExport() { 
-      const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.querySelector('.loader-text').innerText = "Mengekspor Data ke Telegram..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.querySelector('.loader-text').innerText = "Memasak Data..."; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
-    }
-  </script>
-</body>
-</html>
+      let zeros = trendData.labels.map(() => 0);
+      lineChartObj = new Chart(ctx, { 
+        type: 'line', 
+        data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: zeros, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: zeros, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, 
+        options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } 
+      });
+      window.chartTargets['lineChart'] = { chart: lineChartObj, type:

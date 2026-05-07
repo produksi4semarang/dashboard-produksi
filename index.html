@@ -60,6 +60,20 @@
     .dot:nth-child(3) { animation-delay: 0.3s; }
     @keyframes bounce { from { transform: translateY(0); opacity: 0.8; } to { transform: translateY(-15px); opacity: 0.2; } }
     .loader-text { margin-top: 20px; font-weight: 800; color: #334155; font-size: 1.1rem; letter-spacing: 1px; }
+
+    /* CSS Footer Nyentrik */
+    .dashboard-footer {
+      text-align: center;
+      padding: 25px 0 10px 0;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+    .footer-names {
+      font-weight: 800;
+      color: #ea580c;
+      letter-spacing: 1px;
+      margin-top: 5px;
+    }
   </style>
 </head>
 <body>
@@ -129,12 +143,6 @@
       <div class="col-lg-6 col-md-12 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi (Sesuai Filter)</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
     </div>
 
-    <div class="row mt-2">
-      <div class="col-lg-4 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Detail Amprahan Kereta</h6><div class="table-responsive"><table id="tabelAmprahan" class="table table-hover table-bordered w-100"><thead><tr><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div></div>
-      <div class="col-lg-8 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Rincian Produksi Per Menu</h6><div class="table-responsive"><table id="tabelMenu" class="table table-hover table-bordered w-100">
-        <thead><tr><th>Kategori</th><th>Nama Menu</th><th>Sales Plan</th><th>SRQ</th><th>Real</th><th>% SRQ</th><th>% SP</th><th>Evaluasi SP</th></tr></thead><tbody></tbody></table></div></div></div>
-    </div>
-
     <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container">
@@ -179,6 +187,12 @@
       </div>
     </div>
 
+    <div class="row mt-2">
+      <div class="col-lg-4 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Detail Amprahan Kereta</h6><div class="table-responsive"><table id="tabelAmprahan" class="table table-hover table-bordered w-100"><thead><tr><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div></div>
+      <div class="col-lg-8 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Rincian Produksi Per Menu</h6><div class="table-responsive"><table id="tabelMenu" class="table table-hover table-bordered w-100">
+        <thead><tr><th>Kategori</th><th>Nama Menu</th><th>Sales Plan</th><th>SRQ</th><th>Real</th><th>% SRQ</th><th>% SP</th><th>Evaluasi SP</th></tr></thead><tbody></tbody></table></div></div></div>
+    </div>
+
     <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container">
@@ -193,7 +207,6 @@
     <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container h-100">
-          
           <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
             <h6 class="text-secondary fw-bold m-0 text-center">Penjagaan Stok Bahan Baku <i>(Auto-Sync)</i></h6>
             <div class="d-flex flex-wrap gap-2 align-items-center mt-2 mt-md-0">
@@ -206,14 +219,22 @@
               <button class="btn btn-sm btn-primary fw-bold" onclick="aksiKirimStok()" id="btnKirimStok">Kirim Laporan Stok</button>
             </div>
           </div>
-
           <div class="table-responsive">
             <table id="tabelStok" class="table table-hover table-bordered w-100">
               <thead><tr><th>Nomor Material</th><th>Nama Material</th><th>Satuan</th><th>Fisik</th><th>Masuk</th><th>Keluar</th><th>Akhir</th><th>Rata-rata</th><th>Kekuatan (Hari)</th><th>Status</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
+        </div>
+      </div>
+    </div>
 
+    <div class="row reveal-card">
+      <div class="col-12">
+        <div class="dashboard-footer">
+          <p class="mb-0">🍳 Diracik dengan penuh ❤️ oleh Tim Admin Dapur Produksi Semarang</p>
+          <p class="footer-names">Romi &bull; Fandi &bull; Milano</p>
+          <p class="mt-2 text-muted" style="font-size: 0.75rem;">&copy; 2026 Dapur Produksi Semarang. All rights reserved.</p>
         </div>
       </div>
     </div>
@@ -221,7 +242,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxRvCvIBZ3D--k4vWw36WOYc9SNwnndWipZY-tuxL7CYOsMV9Bcq6HAc2dYuEqwZYUmCw/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbxxf_0FcY6jESvg18zMUrtnZ9RNy5Vu-ilHgjVvjRpVUbK_FwAc8uEcJTcj_1MRK9S6rA/exec"; 
 
     window.chartTargets = {};
 
@@ -283,26 +304,23 @@
           columnDefs: [ { targets: 7, render: function(data, type, row) { let selisih = parseInt(data); if (selisih > 0) return `<span class="text-danger fw-bold">+${selisih} (Over)</span>`; if (selisih < 0) return `<span class="text-warning">${selisih} (Under)</span>`; return `<span class="text-success fw-bold">Sesuai</span>`; } } ]
         });
 
-        // PENGATURAN DATATABLES UNTUK STOK
         dtStok = $('#tabelStok').DataTable({
           pageLength: 10, lengthMenu: [5, 10, 25, 50],
           columnDefs: [
             {
-              targets: 8, // Kolom Kekuatan (Hari)
+              targets: 8, 
               render: function(data, type, row) {
                 let val = String(data).trim();
                 let num = parseFloat(val);
                 let textToShow = val;
-                // Jika isinya angka dan bukan "Stok Utuh", maka tambahkan "Hari"
                 if (!isNaN(num) && val.toLowerCase() !== 'stok utuh' && !val.toLowerCase().includes('hari')) {
                   textToShow = num + " Hari";
                 }
-                // Style baru: Biru Indigo senada dengan dashboard
                 return `<span class="badge w-100 py-2" style="background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;">${textToShow}</span>`;
               }
             },
             {
-              targets: 9, // Kolom Status (Aman/Warning/Kritis)
+              targets: 9, 
               render: function(data, type, row) {
                 let s = String(data).toLowerCase();
                 if (s.includes('aman')) return `<span class="badge bg-success w-100 py-2">🟢 AMAN</span>`;
@@ -314,7 +332,6 @@
           ]
         });
 
-        // Event Listener untuk Dropdown Filter Stok
         $('#filterStatusStok').on('change', function() {
            dtStok.column(9).search(this.value).draw();
         });
@@ -502,7 +519,6 @@
       fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
     }
 
-    // FUNGSI BARU: KIRIM LAPORAN STOK FILTERED KE TELEGRAM
     function aksiKirimStok() { 
       const btn = document.getElementById('btnKirimStok'); 
       const filterVal = document.getElementById('filterStatusStok').value;

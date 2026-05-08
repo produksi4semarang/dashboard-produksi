@@ -54,10 +54,18 @@
     .profile-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     .profile-card img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #1e293b; padding: 3px; cursor: zoom-in; transition: transform 0.2s;}
     .profile-card img:hover { transform: scale(1.05); }
-    .btn-wa { background-color: #25D366; color: white; border: none; }
-    .btn-wa:hover { background-color: #1eb954; color: white;}
-    .btn-ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; border: none; }
-    .btn-ig:hover { filter: brightness(1.1); color: white;}
+    
+    /* Icon Sosial Media Standalone Tanpa Background */
+    .icon-wa { color: #25D366; transition: 0.2s ease; display: inline-block; }
+    .icon-wa:hover { color: #128c7e; transform: scale(1.2); }
+    .icon-ig { 
+      background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      transition: 0.2s ease; 
+      display: inline-block; 
+    }
+    .icon-ig:hover { transform: scale(1.2); filter: brightness(1.1); }
     
     .img-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); z-index: 99999; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; animation: fadeIn 0.3s forwards; }
     .img-lightbox img { max-width: 90%; max-height: 90%; border-radius: 16px; border: 4px solid #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.4); transform: scale(0.7); animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
@@ -241,7 +249,7 @@
       <div class="row reveal-card mb-3">
         <div class="col-12">
           <div class="card-container" style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
-             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-calendar-check text-success"></i> Jadwal Rombongan Terdekat (Hari Ini & Kedepan)</h6>
+             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-calendar-check text-success"></i> Jadwal Rombongan Terdekat</h6>
              <div class="calendar-wrapper" id="rombonganCalendar">
                 </div>
           </div>
@@ -250,7 +258,7 @@
       <div class="row reveal-card">
         <div class="col-12">
           <div class="card-container h-100">
-            <h6 class="text-secondary fw-bold mb-3 text-center">Tabel Riwayat Rombongan Kereta (Sesuai Filter Tanggal)</h6>
+            <h6 class="text-secondary fw-bold mb-3 text-center">Rombongan Kereta</h6>
             <div class="table-responsive">
               <table id="tabelRombongan" class="table table-hover table-bordered w-100">
                 <thead><tr><th>No.</th><th>Nama Rombongan</th><th>Tanggal Berangkat</th><th>Nama Kereta</th><th>Menu Makanan</th><th>QTY</th><th>Status Pembayaran</th></tr></thead>
@@ -264,7 +272,7 @@
 
     <div id="page-profil" class="page-section" style="display:none;">
       <div class="card-container reveal-card bg-transparent shadow-none" style="padding-top: 10px;">
-        <h4 class="fw-bold text-center mb-5" style="color: #1e293b; letter-spacing: -0.5px;">👨‍🍳 Tim Dapur Produksi Semarang</h4>
+        <h4 class="fw-bold text-center mb-5" style="color: #1e293b; letter-spacing: -0.5px;">👨‍🍳 Tim Admin Dapur Produksi Semarang</h4>
         <div class="row justify-content-center">
           
           <div class="col-lg-4 col-md-6 mb-4">
@@ -272,10 +280,10 @@
               <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/529f01685f2af2ab60f9837f1c47516cc56192f4/romi.png" alt="Romi" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
               <h5 class="fw-bold text-dark mb-1">Halim Muhtaromi</h5>
               <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-3">NIPKWT. 10140592</span>
-              <div class="d-flex justify-content-center gap-2">
-                <a href="https://wa.me/6289667787099" target="_blank" class="btn btn-sm btn-wa fw-bold px-3"><i class="fab fa-whatsapp fs-5"></i></a>
-                <a href="https://instagram.com/halimmuhtaromi" target="_blank" class="btn btn-sm btn-ig fw-bold px-3"><i class="fab fa-instagram fs-5"></i></a>
+              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10140592</span>
+              <div class="d-flex justify-content-center gap-3">
+                <a href="https://wa.me/6289667787099" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
+                <a href="https://instagram.com/halimmuhtaromi" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
               </div>
             </div>
           </div>
@@ -285,10 +293,10 @@
               <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/529f01685f2af2ab60f9837f1c47516cc56192f4/fandi.png" alt="Fandi" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
               <h5 class="fw-bold text-dark mb-1">Yusuf Affandi</h5>
               <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-3">NIPKWT. 10140907</span>
-              <div class="d-flex justify-content-center gap-2">
-                <a href="https://wa.me/6285291561034" target="_blank" class="btn btn-sm btn-wa fw-bold px-3"><i class="fab fa-whatsapp fs-5"></i></a>
-                <a href="https://instagram.com/ysufaffandi" target="_blank" class="btn btn-sm btn-ig fw-bold px-3"><i class="fab fa-instagram fs-5"></i></a>
+              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10140907</span>
+              <div class="d-flex justify-content-center gap-3">
+                <a href="https://wa.me/6285291561034" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
+                <a href="https://instagram.com/ysufaffandi" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
               </div>
             </div>
           </div>
@@ -298,10 +306,10 @@
               <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/529f01685f2af2ab60f9837f1c47516cc56192f4/milano.png" alt="Milano" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
               <h5 class="fw-bold text-dark mb-1">Sulistian Milano A.P</h5>
               <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-3">NIPKWT. 10143225</span>
-              <div class="d-flex justify-content-center gap-2">
-                <a href="https://wa.me/6285774425019" target="_blank" class="btn btn-sm btn-wa fw-bold px-3"><i class="fab fa-whatsapp fs-5"></i></a>
-                <a href="https://instagram.com/milanoap_" target="_blank" class="btn btn-sm btn-ig fw-bold px-3"><i class="fab fa-instagram fs-5"></i></a>
+              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10143225</span>
+              <div class="d-flex justify-content-center gap-3">
+                <a href="https://wa.me/6285774425019" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
+                <a href="https://instagram.com/milanoap_" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
               </div>
             </div>
           </div>
@@ -376,10 +384,9 @@
 
        document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
 
-       // LOGIKA RUTING DIPERBAIKI (TIDAK ADA LAGI ERROR NULL)
        let targetId = 'page-' + pageId;
        if (pageId === 'home' || pageId === 'laporan') {
-           targetId = 'page-kombinasi'; // Rute gabungan untuk grafik utama
+           targetId = 'page-kombinasi';
        } else if (['kedatangan', 'pr', 'bukti'].includes(pageId)) {
            targetId = 'page-soon';
        }

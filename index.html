@@ -61,7 +61,6 @@
     @keyframes bounce { from { transform: translateY(0); opacity: 0.8; } to { transform: translateY(-15px); opacity: 0.2; } }
     .loader-text { margin-top: 20px; font-weight: 800; color: #334155; font-size: 1.1rem; letter-spacing: 1px; }
 
-    /* CSS Footer Nyentrik */
     .dashboard-footer {
       text-align: center;
       padding: 25px 0 10px 0;
@@ -210,6 +209,14 @@
           <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
             <h6 class="text-secondary fw-bold m-0 text-center">Penjagaan Stok Bahan Baku <i>(Auto-Sync)</i></h6>
             <div class="d-flex flex-wrap gap-2 align-items-center mt-2 mt-md-0">
+              
+              <select id="filterPengadaanStok" class="form-select form-select-sm" style="width: auto; cursor: pointer; border-color: #cbd5e1; font-weight: bold;">
+                <option value="">Semua Pengadaan</option>
+                <option value="Pusat">Pusat</option>
+                <option value="Wilayah">Wilayah</option>
+                <option value="Sentral">Dapur Sentral</option>
+              </select>
+
               <select id="filterStatusStok" class="form-select form-select-sm" style="width: auto; cursor: pointer; border-color: #cbd5e1; font-weight: bold;">
                 <option value="">Semua Status</option>
                 <option value="Aman">🟢 Aman</option>
@@ -221,7 +228,7 @@
           </div>
           <div class="table-responsive">
             <table id="tabelStok" class="table table-hover table-bordered w-100">
-              <thead><tr><th>Nomor Material</th><th>Nama Material</th><th>Satuan</th><th>Fisik</th><th>Masuk</th><th>Keluar</th><th>Akhir</th><th>Rata-rata</th><th>Kekuatan (Hari)</th><th>Status</th></tr></thead>
+              <thead><tr><th>Nomor Material</th><th>Nama Material</th><th>Satuan</th><th>Fisik</th><th>Masuk</th><th>Keluar</th><th>Akhir</th><th>Rata-rata</th><th>Kekuatan (Hari)</th><th>Status</th><th style="display:none;">Pengadaan</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
@@ -232,10 +239,10 @@
     <div class="row mt-2 reveal-card">
       <div class="col-12 mb-3">
         <div class="card-container h-100">
-          <h6 class="text-secondary fw-bold mb-3 text-center">Data Pesanan Rombongan Kereta</h6>
+          <h6 class="text-secondary fw-bold mb-3 text-center">Data Pesanan Rombongan Kereta (Bulan Berjalan & Kedepan)</h6>
           <div class="table-responsive">
             <table id="tabelRombongan" class="table table-hover table-bordered w-100">
-              <thead><tr><th>No.</th><th>Nama Rombongan</th><th>Tanggal Berangkat</th><th>Menu Makanan</th><th>QTY</th><th>Status Pembayaran</th></tr></thead>
+              <thead><tr><th>No.</th><th>Nama Rombongan</th><th>Tanggal Berangkat</th><th>Nama Kereta</th><th>Menu Makanan</th><th>QTY</th><th>Status Pembayaran</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
@@ -256,14 +263,14 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxzD7P95Tl7oYjGHFVtfdK5FJ3u3p8IAKwmeyvLrzPyH9NDb6KgffcPXluvoibnnXhaaQ/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzmrxNiDHt1Pdt4LI-daVFrlWiRAfgCWWgd2ugHyIQL4BD-WN56FM6woIiejJryA3hHlQ/exec"; 
 
     window.chartTargets = {};
 
     let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
     let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
     let chartAmprahanKAObj = null; let chartAmprahanMenuObj = null;
-    let dtAmprahan = null; let dtMenu = null; let dtStok = null; let dtRombongan = null; // Inisialisasi dtRombongan
+    let dtAmprahan = null; let dtMenu = null; let dtStok = null; let dtRombongan = null;
 
     const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
 
@@ -342,16 +349,16 @@
                 if (s.includes('kritis')) return `<span class="badge bg-danger w-100 py-2">🔴 KRITIS</span>`;
                 return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
               }
-            }
+            },
+            { targets: 10, visible: false } // Kolom Pengadaan disembunyikan
           ]
         });
 
-        // SETTING DATATABLES UNTUK ROMBONGAN
         dtRombongan = $('#tabelRombongan').DataTable({
           pageLength: 10, lengthMenu: [5, 10, 25, 50],
           columnDefs: [
             {
-              targets: 5, // Kolom Status Pembayaran
+              targets: 6, // Index kolom berubah menjadi 6 karena tambah Nama Kereta
               render: function(data, type, row) {
                 let s = String(data).toLowerCase();
                 if (s === '') return '-';
@@ -366,6 +373,11 @@
 
         $('#filterStatusStok').on('change', function() {
            dtStok.column(9).search(this.value).draw();
+        });
+        
+        // Listener Filter Pengadaan
+        $('#filterPengadaanStok').on('change', function() {
+           dtStok.column(10).search(this.value).draw();
         });
 
         loadData();
@@ -436,10 +448,10 @@
             dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw();
             dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
             
-            let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket]);
+            // Map data stok dengan menambahkan kolom Pengadaan ke-11
+            let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket, s.pengadaan]);
             dtStok.clear(); dtStok.rows.add(stokRows).draw();
 
-            // POPULASI DATA TABEL ROMBONGAN
             dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData).draw();
 
             setTimeout(checkVisibleElements, 100);

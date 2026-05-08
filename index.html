@@ -376,12 +376,18 @@
 
        document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
 
+       // LOGIKA RUTING DIPERBAIKI (TIDAK ADA LAGI ERROR NULL)
        let targetId = 'page-' + pageId;
-       if(['kedatangan', 'pr', 'bukti'].includes(pageId)) targetId = 'page-soon';
+       if (pageId === 'home' || pageId === 'laporan') {
+           targetId = 'page-kombinasi'; // Rute gabungan untuk grafik utama
+       } else if (['kedatangan', 'pr', 'bukti'].includes(pageId)) {
+           targetId = 'page-soon';
+       }
+
        document.getElementById(targetId).style.display = 'block';
 
        // Atur Tampilan Filter
-       if(pageId === 'home' || pageId === 'laporan') {
+       if (pageId === 'home' || pageId === 'laporan') {
           document.getElementById('filterRow').style.display = 'flex';
        } else {
           document.getElementById('filterRow').style.display = 'none';
@@ -393,25 +399,18 @@
        const bebanDw = document.getElementById('laporan-beban-dw');
 
        if (pageId === 'home') {
-           document.getElementById('page-kombinasi').style.display = 'block';
            sharedTop.style.display = 'block';
            tablesLaporan.style.display = 'none';
            bebanDw.style.display = 'none';
        } else if (pageId === 'laporan') {
-           document.getElementById('page-kombinasi').style.display = 'block';
            sharedTop.style.display = 'block';
            tablesLaporan.style.display = 'flex';
            bebanDw.style.display = 'flex';
-       } else {
-           document.getElementById('page-kombinasi').style.display = 'none';
        }
 
        setTimeout(() => {
           $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
           document.querySelectorAll('#' + targetId + ' .reveal-card').forEach(card => card.classList.add('visible'));
-          if(pageId === 'home' || pageId === 'laporan'){
-             document.querySelectorAll('#page-kombinasi .reveal-card').forEach(card => card.classList.add('visible'));
-          }
           checkVisibleElements();
        }, 150);
 
@@ -508,7 +507,7 @@
                 return `<span class="badge bg-secondary px-3 py-2">${data}</span>`;
               }
             },
-            { targets: 7, visible: false } // Sembunyikan kolom timestamp
+            { targets: 7, visible: false } 
           ],
           drawCallback: function (settings) {
             var api = this.api(); var rows = api.rows({ page: 'current' }).nodes();
@@ -581,7 +580,6 @@
        });
     }
 
-    /* --- LOGIKA VISUAL KALENDER ROMBONGAN (Hanya Hari Ini & Kedepan) --- */
     function renderCalendarRombongan(dataRombongan) {
        let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
        let upcoming = dataRombongan.filter(r => r[7] >= todayTime);

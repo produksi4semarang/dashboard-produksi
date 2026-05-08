@@ -330,7 +330,15 @@
           pageLength: 10, lengthMenu: [5, 10, 25, 50],
           columnDefs: [
             {
+              // EFEK HIGHLIGHT WARNA BIRU PADA STOK AKHIR (Index 6)
+              targets: 6,
+              render: function(data, type, row) {
+                return `<span style="background-color: #dbeafe; color: #0369a1; padding: 4px 12px; border-radius: 6px; font-weight: 800; border: 1px solid #bae6fd;">${data}</span>`;
+              }
+            },
+            {
               targets: 8, 
+              // w-100 DIHAPUS, DIGANTI px-3 AGAR LEBAR MENGIKUTI TEKS
               render: function(data, type, row) {
                 let val = String(data).trim();
                 let num = parseFloat(val);
@@ -338,17 +346,18 @@
                 if (!isNaN(num) && val.toLowerCase() !== 'stok utuh' && !val.toLowerCase().includes('hari')) {
                   textToShow = num + " Hari";
                 }
-                return `<span class="badge w-100 py-2" style="background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;">${textToShow}</span>`;
+                return `<span class="badge px-3 py-2" style="background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;">${textToShow}</span>`;
               }
             },
             {
               targets: 9, 
+              // w-100 DIHAPUS, DIGANTI px-3 AGAR LEBAR MENGIKUTI TEKS
               render: function(data, type, row) {
                 let s = String(data).toLowerCase();
-                if (s.includes('aman')) return `<span class="badge bg-success w-100 py-2">🟢 AMAN</span>`;
-                if (s.includes('warning')) return `<span class="badge bg-warning text-dark w-100 py-2">🟡 WARNING</span>`;
-                if (s.includes('kritis')) return `<span class="badge bg-danger w-100 py-2">🔴 KRITIS</span>`;
-                return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
+                if (s.includes('aman')) return `<span class="badge bg-success px-3 py-2">🟢 AMAN</span>`;
+                if (s.includes('warning')) return `<span class="badge bg-warning text-dark px-3 py-2">🟡 WARNING</span>`;
+                if (s.includes('kritis')) return `<span class="badge bg-danger px-3 py-2">🔴 KRITIS</span>`;
+                return `<span class="badge bg-secondary px-3 py-2">${data}</span>`;
               }
             },
             { targets: 10, visible: false }
@@ -360,13 +369,14 @@
           columnDefs: [
             {
               targets: 6,
+              // w-100 DIHAPUS, DIGANTI px-3 AGAR LEBAR MENGIKUTI TEKS
               render: function(data, type, row) {
                 let s = String(data).toLowerCase();
                 if (s === '') return '-';
-                if (s.includes('lunas') || s.includes('paid')) return `<span class="badge bg-success w-100 py-2">${data}</span>`;
-                if (s.includes('dp') || s.includes('sebagian')) return `<span class="badge bg-warning text-dark w-100 py-2">${data}</span>`;
-                if (s.includes('belum') || s.includes('batal')) return `<span class="badge bg-danger w-100 py-2">${data}</span>`;
-                return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
+                if (s.includes('lunas') || s.includes('paid')) return `<span class="badge bg-success px-3 py-2">${data}</span>`;
+                if (s.includes('dp') || s.includes('sebagian')) return `<span class="badge bg-warning text-dark px-3 py-2">${data}</span>`;
+                if (s.includes('belum') || s.includes('batal')) return `<span class="badge bg-danger px-3 py-2">${data}</span>`;
+                return `<span class="badge bg-secondary px-3 py-2">${data}</span>`;
               }
             }
           ],

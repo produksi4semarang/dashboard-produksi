@@ -26,6 +26,10 @@
     .sidebar a:hover, .sidebar a.active { color: #ea580c; background-color: #f8fafc; border-left: 4px solid #ea580c; }
     .sidebar-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); z-index: 1045; display: none; opacity: 0; transition: opacity 0.3s; backdrop-filter: blur(2px); }
     .sidebar-backdrop.show { display: block; opacity: 1; }
+    
+    /* STYLE KHUSUS UNTUK ICON MENU */
+    .menu-icon { width: 22px; height: 22px; object-fit: contain; margin-right: 12px; vertical-align: middle; margin-top: -3px; opacity: 0.85; transition: 0.2s; }
+    .sidebar a:hover .menu-icon, .sidebar a.active .menu-icon { opacity: 1; transform: scale(1.05); }
 
     /* --- HAMBURGER ICON --- */
     .hamburger { width: 26px; height: 18px; cursor: pointer; position: relative; z-index: 1060; margin-right: 15px; }
@@ -105,16 +109,32 @@
 
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(true)"></div>
   <div class="sidebar" id="mySidebar">
-    <a href="#" onclick="switchPage('home', this)" class="active">🏠 Home</a>
-    <a href="#" onclick="switchPage('laporan', this)">📊 Laporan Produksi</a>
-    <a href="#" onclick="switchPage('stok', this)">📦 Penjagaan Stok</a>
-    <a href="#" onclick="switchPage('rombongan', this)">🚂 Data Rombongan</a>
+    <a href="#" onclick="switchPage('home', this)" class="active">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-home.png" class="menu-icon"> Home
+    </a>
+    <a href="#" onclick="switchPage('laporan', this)">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-laporan.png" class="menu-icon"> Laporan Produksi
+    </a>
+    <a href="#" onclick="switchPage('stok', this)">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-stok.png" class="menu-icon"> Penjagaan Stok
+    </a>
+    <a href="#" onclick="switchPage('rombongan', this)">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-rombongan.png" class="menu-icon"> Data Rombongan
+    </a>
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
-    <a href="#" onclick="switchPage('kedatangan', this)">📥 Kedatangan Bahan <span class="badge bg-secondary ms-2" style="font-size:0.65rem;">Soon</span></a>
-    <a href="#" onclick="switchPage('pr', this)">📝 Nomor PR <span class="badge bg-secondary ms-2" style="font-size:0.65rem;">Soon</span></a>
-    <a href="#" onclick="switchPage('bukti', this)">🧾 Bukti Pembayaran <span class="badge bg-secondary ms-2" style="font-size:0.65rem;">Soon</span></a>
+    <a href="#" onclick="switchPage('kedatangan', this)">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-kedatangan.png" class="menu-icon"> Kedatangan Bahan <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span>
+    </a>
+    <a href="#" onclick="switchPage('pr', this)">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-pr.png" class="menu-icon"> Nomor PR <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span>
+    </a>
+    <a href="#" onclick="switchPage('bukti', this)">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-bukti.png" class="menu-icon"> Bukti Pembayaran <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span>
+    </a>
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
-    <a href="#" onclick="switchPage('profil', this)">👨‍💼 Profil Tim Admin</a>
+    <a href="#" onclick="switchPage('profil', this)">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-profil.png" class="menu-icon"> Profil Tim Admin
+    </a>
   </div>
 
   <div class="container-fluid py-3 px-3 px-md-4">
@@ -265,7 +285,7 @@
 
     <div id="page-profil" class="page-section" style="display:none;">
       <div class="card-container reveal-card bg-transparent shadow-none" style="padding-top: 10px;">
-        <h4 class="fw-bold text-center mb-5" style="color: #1e293b; letter-spacing: -0.5px;">👨‍🍳 Tim Admin Dapur Produksi Semarang</h4>
+        <h4 class="fw-bold text-center mb-5" style="color: #1e293b; letter-spacing: -0.5px;">Tim Admin Dapur Produksi Semarang</h4>
         <div class="row justify-content-center">
           
           <div class="col-lg-4 col-md-6 mb-4">
@@ -349,7 +369,6 @@
     let nowStr = today.toISOString().split('T')[0];
     document.getElementById('endTgl').value = nowStr > '2026-05-31' ? '2026-05-31' : nowStr;
     
-    /* --- LOGIKA SISTEM PIN ADMIN --- */
     function promptPin() {
       if(isAdmin) {
          isAdmin = false;
@@ -370,7 +389,6 @@
       }
     }
 
-    /* --- LOGIKA SINGLE PAGE APPLICATION (SPA) --- */
     function switchPage(pageId, element = null) {
        document.querySelectorAll('.sidebar a').forEach(el => el.classList.remove('active'));
        if(element) element.classList.add('active');
@@ -386,14 +404,12 @@
 
        document.getElementById(targetId).style.display = 'block';
 
-       // Atur Tampilan Filter
        if (pageId === 'home' || pageId === 'laporan') {
           document.getElementById('filterRow').style.display = 'flex';
        } else {
           document.getElementById('filterRow').style.display = 'none';
        }
 
-       // Atur Pembagian Widget Shared
        const sharedTop = document.getElementById('shared-top-content');
        const tablesLaporan = document.getElementById('laporan-tables');
        const bebanDw = document.getElementById('laporan-beban-dw');
@@ -414,11 +430,9 @@
           checkVisibleElements();
        }, 150);
 
-       // Menutup sidebar otomatis selalu setiap kali menu diklik (di semua layar)
        toggleSidebar(true);
     }
 
-    /* --- LOGIKA SIDEBAR OFFCANVAS --- */
     function toggleSidebar(forceClose = false) {
        const sb = document.getElementById('mySidebar');
        const hb = document.getElementById('hamburgerBtn');

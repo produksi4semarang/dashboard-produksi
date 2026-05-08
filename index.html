@@ -73,6 +73,12 @@
     .calendar-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; }
     .calendar-card { min-width: 220px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.02); align-self: flex-start;}
 
+    /* --- SCROLLBAR CUSTOM UNTUK RESTOCK LIST --- */
+    .restock-list::-webkit-scrollbar { width: 6px; }
+    .restock-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+    .restock-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .restock-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
     /* --- UTILITIES --- */
     .reveal-card { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
     .reveal-card.visible { opacity: 1; transform: translateY(0); }
@@ -224,14 +230,56 @@
     </div>
 
     <div id="page-stok" class="page-section" style="display:none;">
-      <div class="row reveal-card mb-3">
-        <div class="col-md-4 mx-auto">
-          <div class="card-container text-center">
-             <h6 class="text-secondary fw-bold mb-3">Kesehatan Stok Hari Ini</h6>
-             <div style="position: relative; height: 250px; width: 100%;"><canvas id="stokHealthChart"></canvas></div>
+      
+      <div class="row mb-1">
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
+           <div class="card-kpi h-100" style="border-left: 5px solid #64748b;">
+             <div class="kpi-icon bg-light"><i class="fas fa-boxes fs-4 text-secondary"></i></div>
+             <div><p class="kpi-value counter-anim" id="stokTotalDisplay">0</p><p class="kpi-label">Total Material</p></div>
+           </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
+           <div class="card-kpi h-100" style="border-left: 5px solid #10b981;">
+             <div class="kpi-icon" style="background-color:#ecfdf5;"><i class="fas fa-check-circle fs-4 text-success"></i></div>
+             <div><p class="kpi-value counter-anim" id="stokAmanDisplay">0</p><p class="kpi-label">Stok Aman</p></div>
+           </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
+           <div class="card-kpi h-100" style="border-left: 5px solid #f59e0b;">
+             <div class="kpi-icon" style="background-color:#fffbeb;"><i class="fas fa-exclamation-triangle fs-4 text-warning"></i></div>
+             <div><p class="kpi-value counter-anim" id="stokWarnDisplay">0</p><p class="kpi-label">Warning</p></div>
+           </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
+           <div class="card-kpi h-100" style="border-left: 5px solid #ef4444;">
+             <div class="kpi-icon" style="background-color:#fef2f2;"><i class="fas fa-radiation fs-4 text-danger"></i></div>
+             <div><p class="kpi-value counter-anim" id="stokKritDisplay">0</p><p class="kpi-label">Kritis</p></div>
+           </div>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-lg-4 mb-3 reveal-card">
+          <div class="card-container h-100 text-center">
+             <h6 class="text-secondary fw-bold mb-4">Kesehatan Stok Hari Ini</h6>
+             <div style="position: relative; height: 180px; width: 100%;"><canvas id="stokHealthChart"></canvas></div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-3 reveal-card">
+          <div class="card-container h-100">
+             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-clipboard-list text-danger"></i> Prioritas Restock Material</h6>
+             <div id="restockList" class="restock-list" style="max-height: 200px; overflow-y: auto; padding-right: 5px;">
+                </div>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-3 reveal-card">
+          <div class="card-container h-100">
+             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-chart-line text-primary"></i> Fast-Moving Material</h6>
+             <div style="position: relative; height: 200px; width: 100%;"><canvas id="fastMovingChart"></canvas></div>
           </div>
         </div>
       </div>
+
       <div class="row reveal-card">
         <div class="col-12">
           <div class="card-container h-100">
@@ -359,7 +407,7 @@
     let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
     let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
     let chartAmprahanKAObj = null; let chartAmprahanMenuObj = null;
-    let stokHealthChartObj = null;
+    let stokHealthChartObj = null; let fastMovingChartObj = null; // Chart baru Fast-Moving
     let dtAmprahan = null; let dtMenu = null; let dtStok = null; let dtRombongan = null;
 
     const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
@@ -595,6 +643,19 @@
        });
     }
 
+    // FUNGSI RENDER WIDGET FAST-MOVING CHART
+    function renderFastMovingChart(labels, data) {
+       const ctx = document.getElementById('fastMovingChart').getContext('2d');
+       if(fastMovingChartObj) fastMovingChartObj.destroy();
+       
+       let newChart = new Chart(ctx, {
+          type: 'bar',
+          data: { labels: labels, datasets: [{ label: 'Total Keluar', data: data, backgroundColor: '#3b82f6', borderRadius: 4 }] },
+          options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+       });
+       window.chartTargets['fastMovingChart'] = { chart: newChart, type: 'barH', data: [data] };
+    }
+
     function renderCalendarRombongan(dataRombongan) {
        let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
        let upcoming = dataRombongan.filter(r => r[7] >= todayTime);
@@ -657,14 +718,68 @@
 
             dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw(); dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
             
+            // --- LOGIKA WIDGET STOK BARU ---
             let stAman=0, stWarn=0, stKrit=0;
+            let restockCandidates = []; let fastMovingCandidates = [];
+
             let stokRows = data.stokData.map(s => {
-               let st = String(s.status).toLowerCase();
-               if(st.includes('aman')) stAman++; else if(st.includes('warning')) stWarn++; else if(st.includes('kritis')) stKrit++;
+               let st = String(s.ket).toLowerCase();
+               if(st.includes('aman')) { stAman++; } 
+               else if(st.includes('warning')) { stWarn++; restockCandidates.push(s); } 
+               else if(st.includes('kritis')) { stKrit++; restockCandidates.push(s); }
+               
+               fastMovingCandidates.push(s);
                return [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket, s.pengadaan];
             });
-            dtStok.clear(); dtStok.rows.add(stokRows).draw(); renderStokHealthChart(stAman, stWarn, stKrit);
 
+            // Update KPI Stok
+            document.getElementById('stokTotalDisplay').setAttribute('data-target-value', data.stokData.length);
+            document.getElementById('stokAmanDisplay').setAttribute('data-target-value', stAman);
+            document.getElementById('stokWarnDisplay').setAttribute('data-target-value', stWarn);
+            document.getElementById('stokKritDisplay').setAttribute('data-target-value', stKrit);
+
+            // Render Donut Chart
+            renderStokHealthChart(stAman, stWarn, stKrit);
+
+            // Render Restock List (Diurutkan dari Kekuatan Hari Terendah)
+            restockCandidates.sort((a, b) => {
+               let valA = parseFloat(a.status) || 999;
+               let valB = parseFloat(b.status) || 999;
+               return valA - valB;
+            });
+
+            let restockHtml = '';
+            if(restockCandidates.length === 0) {
+                restockHtml = '<div class="text-success text-center mt-5"><i class="fas fa-check-circle fs-1 mb-2"></i><br>Semua stok aman!</div>';
+            } else {
+                restockHtml = '<ul class="list-group list-group-flush mb-0">';
+                restockCandidates.forEach(r => {
+                    let isKritis = String(r.ket).toLowerCase().includes('kritis');
+                    let badgeClass = isKritis ? 'bg-danger' : 'bg-warning text-dark';
+                    let badgeLabel = isKritis ? 'Kritis' : 'Warning';
+                    restockHtml += `
+                    <li class="list-group-item d-flex justify-content-between align-items-start px-0 border-light">
+                        <div>
+                            <div class="fw-bold" style="font-size:0.85rem; color:#1e293b; line-height:1.2;">${r.nama}</div>
+                            <div style="font-size:0.75rem; color:#64748b; margin-top:3px;">Sisa: <b>${r.akhir} ${r.satuan}</b> (${r.status})</div>
+                        </div>
+                        <span class="badge ${badgeClass} rounded-pill ms-2" style="font-size:0.7rem;">${badgeLabel}</span>
+                    </li>`;
+                });
+                restockHtml += '</ul>';
+            }
+            document.getElementById('restockList').innerHTML = restockHtml;
+
+            // Render Fast Moving Chart (Top 5 Keluar Tertinggi)
+            fastMovingCandidates.sort((a,b) => b.keluar - a.keluar);
+            let top5Fast = fastMovingCandidates.slice(0, 5);
+            let fmLabels = top5Fast.map(x => x.nama.substring(0, 15) + '...'); // Potong nama agar muat
+            let fmData = top5Fast.map(x => x.keluar);
+            renderFastMovingChart(fmLabels, fmData);
+
+            // --- END LOGIKA WIDGET STOK BARU ---
+
+            dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
             dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData).draw(); renderCalendarRombongan(data.rombonganData);
 
             setTimeout(checkVisibleElements, 100);

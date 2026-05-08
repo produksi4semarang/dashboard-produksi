@@ -264,7 +264,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzmrxNiDHt1Pdt4LI-daVFrlWiRAfgCWWgd2ugHyIQL4BD-WN56FM6woIiejJryA3hHlQ/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbxxf_0FcY6jESvg18zMUrtnZ9RNy5Vu-ilHgjVvjRpVUbK_FwAc8uEcJTcj_1MRK9S6rA/exec"; 
 
     window.chartTargets = {};
 
@@ -330,15 +330,15 @@
           pageLength: 10, lengthMenu: [5, 10, 25, 50],
           columnDefs: [
             {
-              // EFEK HIGHLIGHT WARNA BIRU PADA STOK AKHIR (Index 6)
+              // KEMBALIKAN KE W-100 AGAR LEBAR PENUH DAN RAPI
               targets: 6,
               render: function(data, type, row) {
-                return `<span style="background-color: #dbeafe; color: #0369a1; padding: 4px 12px; border-radius: 6px; font-weight: 800; border: 1px solid #bae6fd;">${data}</span>`;
+                return `<div class="badge w-100 py-2" style="background-color: #dbeafe; color: #0369a1; border-radius: 6px; font-weight: 800; border: 1px solid #bae6fd; font-size: 0.9rem;">${data}</div>`;
               }
             },
             {
               targets: 8, 
-              // w-100 DIHAPUS, DIGANTI px-3 AGAR LEBAR MENGIKUTI TEKS
+              // KEMBALIKAN KE W-100 AGAR LEBAR PENUH DAN RAPI
               render: function(data, type, row) {
                 let val = String(data).trim();
                 let num = parseFloat(val);
@@ -346,18 +346,18 @@
                 if (!isNaN(num) && val.toLowerCase() !== 'stok utuh' && !val.toLowerCase().includes('hari')) {
                   textToShow = num + " Hari";
                 }
-                return `<span class="badge px-3 py-2" style="background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;">${textToShow}</span>`;
+                return `<span class="badge w-100 py-2" style="background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;">${textToShow}</span>`;
               }
             },
             {
               targets: 9, 
-              // w-100 DIHAPUS, DIGANTI px-3 AGAR LEBAR MENGIKUTI TEKS
+              // KEMBALIKAN KE W-100 AGAR LEBAR PENUH DAN RAPI
               render: function(data, type, row) {
                 let s = String(data).toLowerCase();
-                if (s.includes('aman')) return `<span class="badge bg-success px-3 py-2">🟢 AMAN</span>`;
-                if (s.includes('warning')) return `<span class="badge bg-warning text-dark px-3 py-2">🟡 WARNING</span>`;
-                if (s.includes('kritis')) return `<span class="badge bg-danger px-3 py-2">🔴 KRITIS</span>`;
-                return `<span class="badge bg-secondary px-3 py-2">${data}</span>`;
+                if (s.includes('aman')) return `<span class="badge bg-success w-100 py-2">🟢 AMAN</span>`;
+                if (s.includes('warning')) return `<span class="badge bg-warning text-dark w-100 py-2">🟡 WARNING</span>`;
+                if (s.includes('kritis')) return `<span class="badge bg-danger w-100 py-2">🔴 KRITIS</span>`;
+                return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
               }
             },
             { targets: 10, visible: false }
@@ -369,7 +369,7 @@
           columnDefs: [
             {
               targets: 6,
-              // w-100 DIHAPUS, DIGANTI px-3 AGAR LEBAR MENGIKUTI TEKS
+              // INI TETAP PX-3 KARENA SESUAI REQUEST (TIDAK W-100)
               render: function(data, type, row) {
                 let s = String(data).toLowerCase();
                 if (s === '') return '-';

@@ -55,16 +55,9 @@
     .profile-card img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #1e293b; padding: 3px; cursor: zoom-in; transition: transform 0.2s;}
     .profile-card img:hover { transform: scale(1.05); }
     
-    /* Icon Sosial Media Standalone Tanpa Background */
     .icon-wa { color: #25D366; transition: 0.2s ease; display: inline-block; }
     .icon-wa:hover { color: #128c7e; transform: scale(1.2); }
-    .icon-ig { 
-      background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent; 
-      transition: 0.2s ease; 
-      display: inline-block; 
-    }
+    .icon-ig { background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: 0.2s ease; display: inline-block; }
     .icon-ig:hover { transform: scale(1.2); filter: brightness(1.1); }
     
     .img-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); z-index: 99999; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; animation: fadeIn 0.3s forwards; }
@@ -79,7 +72,7 @@
     /* --- UTILITIES --- */
     .reveal-card { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
     .reveal-card.visible { opacity: 1; transform: translateY(0); }
-    .admin-only { display: none; } /* Tersembunyi sebelum login PIN */
+    .admin-only { display: none; } 
 
     /* --- LOADING SCREEN --- */
     .fullscreen-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(244, 247, 250, 0.75); backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -223,7 +216,7 @@
         <div class="col-12">
           <div class="card-container h-100">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-              <h6 class="text-secondary fw-bold m-0">Penjagaan Stok Bahan Baku <i>(Auto-Sync)</i></h6>
+              <h6 class="text-secondary fw-bold m-0">Penjagaan Stok Bahan Baku</h6>
               <div class="d-flex flex-wrap gap-2 align-items-center mt-2 mt-md-0">
                 <select id="filterPengadaanStok" class="form-select form-select-sm border-secondary fw-bold" style="width: auto; cursor: pointer;">
                   <option value="">Semua Pengadaan</option><option value="Pusat">Pusat</option><option value="Wilayah">Wilayah</option><option value="Dapsen CN">Dapsen CN</option><option value="Dapsen YK">Dapsen YK</option>
@@ -421,7 +414,8 @@
           checkVisibleElements();
        }, 150);
 
-       if(window.innerWidth < 992) toggleSidebar(true);
+       // Menutup sidebar otomatis selalu setiap kali menu diklik (di semua layar)
+       toggleSidebar(true);
     }
 
     /* --- LOGIKA SIDEBAR OFFCANVAS --- */

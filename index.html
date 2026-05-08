@@ -214,7 +214,8 @@
                 <option value="">Semua Pengadaan</option>
                 <option value="Pusat">Pusat</option>
                 <option value="Wilayah">Wilayah</option>
-                <option value="Sentral">Dapur Sentral</option>
+                <option value="Dapsen CN">Dapsen CN</option>
+                <option value="Dapsen YK">Dapsen YK</option>
               </select>
 
               <select id="filterStatusStok" class="form-select form-select-sm" style="width: auto; cursor: pointer; border-color: #cbd5e1; font-weight: bold;">
@@ -253,7 +254,7 @@
     <div class="row reveal-card">
       <div class="col-12">
         <div class="dashboard-footer">
-          <p class="mb-0">🍳 Diracik dengan penuh ❤️ dan data oleh Tim Admin Produksi Semarang</p>
+          <p class="mb-0">🍳 Diracik dengan penuh ❤️ oleh Tim Admin Produksi Semarang</p>
           <p class="footer-names">Romi &bull; Fandi &bull; Milano</p>
           <p class="mt-2 text-muted" style="font-size: 0.75rem;">&copy; 2026 Dapur Produksi Semarang. All rights reserved.</p>
         </div>
@@ -263,7 +264,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzmrxNiDHt1Pdt4LI-daVFrlWiRAfgCWWgd2ugHyIQL4BD-WN56FM6woIiejJryA3hHlQ/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbxxf_0FcY6jESvg18zMUrtnZ9RNy5Vu-ilHgjVvjRpVUbK_FwAc8uEcJTcj_1MRK9S6rA/exec"; 
 
     window.chartTargets = {};
 
@@ -350,7 +351,7 @@
                 return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
               }
             },
-            { targets: 10, visible: false } // Kolom Pengadaan disembunyikan
+            { targets: 10, visible: false }
           ]
         });
 
@@ -358,7 +359,7 @@
           pageLength: 10, lengthMenu: [5, 10, 25, 50],
           columnDefs: [
             {
-              targets: 6, // Index kolom berubah menjadi 6 karena tambah Nama Kereta
+              targets: 6,
               render: function(data, type, row) {
                 let s = String(data).toLowerCase();
                 if (s === '') return '-';
@@ -368,14 +369,53 @@
                 return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
               }
             }
-          ]
+          ],
+          drawCallback: function (settings) {
+            var api = this.api();
+            var rows = api.rows({ page: 'current' }).nodes();
+            var last = null;
+            var referenceRows = []; 
+
+            api.column(1, { page: 'current' }).data().each(function (group, i) {
+              if (last !== group) {
+                referenceRows.push({ index: i, rowspan: 1 });
+                last = group;
+              } else {
+                referenceRows[referenceRows.length - 1].rowspan++;
+              }
+            });
+
+            for (var i = 0; i < rows.length; i++) {
+              var isRefRow = false;
+              for(var j=0; j<referenceRows.length; j++){
+                if(referenceRows[j].index === i){
+                  isRefRow = true;
+                  var rs = referenceRows[j].rowspan;
+                  if (rs > 1) {
+                      $(rows[i]).find('td:eq(0)').attr('rowspan', rs).css('vertical-align', 'middle');
+                      $(rows[i]).find('td:eq(1)').attr('rowspan', rs).css('vertical-align', 'middle');
+                      $(rows[i]).find('td:eq(2)').attr('rowspan', rs).css('vertical-align', 'middle');
+                      $(rows[i]).find('td:eq(3)').attr('rowspan', rs).css('vertical-align', 'middle');
+                      $(rows[i]).find('td:eq(6)').attr('rowspan', rs).css('vertical-align', 'middle');
+                  }
+                  break;
+                }
+              }
+              if (!isRefRow) {
+                $(rows[i]).find('td:eq(0)').hide();
+                $(rows[i]).find('td:eq(1)').hide();
+                $(rows[i]).find('td:eq(2)').hide();
+                $(rows[i]).find('td:eq(3)').hide();
+                $(rows[i]).find('td:eq(6)').hide();
+              }
+            }
+          }
         });
 
         $('#filterStatusStok').on('change', function() {
            dtStok.column(9).search(this.value).draw();
         });
         
-        // Listener Filter Pengadaan
         $('#filterPengadaanStok').on('change', function() {
            dtStok.column(10).search(this.value).draw();
         });
@@ -448,7 +488,6 @@
             dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw();
             dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
             
-            // Map data stok dengan menambahkan kolom Pengadaan ke-11
             let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket, s.pengadaan]);
             dtStok.clear(); dtStok.rows.add(stokRows).draw();
 

@@ -69,7 +69,7 @@
 
     /* --- AGENDA TIMELINE CARDS --- */
     .calendar-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; }
-    .calendar-card { min-width: 250px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.02); align-self: flex-start;}
+    .calendar-card { min-width: 260px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.02); align-self: flex-start;}
     .timeline-item { border-left: 2px solid #cbd5e1; padding-left: 12px; margin-bottom: 12px; position: relative; }
     .timeline-item::before { content: ''; position: absolute; left: -6px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; border: 2px solid #fff; }
     .item-rombongan::before { background: #10b981; }
@@ -105,7 +105,9 @@
 </head>
 <body>
 
-  <div id="imageLightbox" class="img-lightbox" onclick="this.style.display='none'"><img id="lightboxImg" src=""></div>
+  <div id="imageLightbox" class="img-lightbox" onclick="this.style.display='none'">
+     <img id="lightboxImg" src="">
+  </div>
 
   <div id="fullScreenLoader" class="fullscreen-loader">
     <div class="loader-icon-container">
@@ -119,20 +121,15 @@
   <div class="sidebar" id="mySidebar">
     <a href="#" onclick="switchPage('home', this)" class="active"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-home.png" class="menu-icon"> Home</a>
     <a href="#" onclick="switchPage('laporan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-laporan.png" class="menu-icon"> Laporan Produksi</a>
-    <a href="#" onclick="switchPage('stok', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-stok.png" class="menu-icon"> Penjagaan Stok</a>
+    <a href="#" onclick="switchPage('stok', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-stok.png" class="menu-icon"> Penjagaan Stok Bahan Baku</a>
     <a href="#" onclick="switchPage('rombongan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-rombongan.png" class="menu-icon"> Data Rombongan</a>
-    
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
-    
     <a href="#" onclick="switchPage('recipe', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/13763f14a07ee9f6992e1ab10756b3147a6a8b8b/icon-recipe.png" class="menu-icon"> Standard Recipe</a>
     <a href="#" onclick="switchPage('jadwal', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/13763f14a07ee9f6992e1ab10756b3147a6a8b8b/icon-jadwal.png" class="menu-icon"> Jadwal Menu</a>
-    
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
-    
     <a href="#" onclick="switchPage('kedatangan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-kedatangan.png" class="menu-icon"> Kedatangan Bahan Baku <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
     <a href="#" onclick="switchPage('pr', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-pr.png" class="menu-icon"> Nomor PR <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
     <a href="#" onclick="switchPage('bukti', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-bukti.png" class="menu-icon"> Bukti Pembayaran <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
-    
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
     <a href="#" onclick="switchPage('profil', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-profil.png" class="menu-icon"> Profil Tim Admin</a>
   </div>
@@ -141,7 +138,9 @@
     
     <div class="header-panel d-flex justify-content-between align-items-center">
       <a href="#" onclick="switchPage('home', document.querySelector('.sidebar a')); return false;" class="d-flex align-items-center gap-3 text-decoration-none">
-        <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar(false); event.stopPropagation();"><span></span><span></span><span></span></div>
+        <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar(false); event.stopPropagation();">
+          <span></span><span></span><span></span>
+        </div>
         <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/dashboard.png" alt="Logo" style="height: 55px; width: auto; object-fit: contain; border-radius: 6px; margin-right: 12px;">
         <h5 class="m-0 text-dark fw-bold d-none d-sm-block" style="letter-spacing: -0.5px;">Produksi Semarang</h5>
       </a>
@@ -401,7 +400,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyKnqmoIcOrTh-B6PDVkPmi9ZRQEY20Pl2E_jrTsdYXqgBo23GzV4olvei1xs1xbE_qoA/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbwY7JnpJLHzIyULjReG5IVNYgQhr7GpNiG0427uVRzUWTyW6jxFChuC4UnpQtxunFMgWg/exec"; 
 
     window.chartTargets = {};
     let isAdmin = false;
@@ -547,7 +546,7 @@
                 return `<span class="badge bg-secondary px-3 py-2">${data}</span>`;
               }
             },
-            { targets: 7, visible: false } 
+            { targets: 7, visible: false } // Kolom timestamp
           ],
           drawCallback: function (settings) {
             var api = this.api(); var rows = api.rows({ page: 'current' }).nodes();
@@ -621,32 +620,25 @@
     // --- LOGIKA AGENDA TIMELINE (GABUNGAN ROMBONGAN & JADWAL PRODUKSI) ---
     function renderAgendaTimeline(dataRombongan, dataJadwal) {
        let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
-       let twoDaysLaterTime = todayTime + (2 * 24 * 60 * 60 * 1000); // Batas 2 hari kedepan untuk Jadwal Produksi
+       let twoDaysLaterTime = todayTime + (2 * 24 * 60 * 60 * 1000); 
 
-       let grouped = {};
-       let dateArr = []; let tempAdded = new Set();
+       let grouped = {}; let dateArr = []; let tempAdded = new Set();
 
-       // 1. Ekstrak Rombongan (Seluruh masa depan)
        let upcomingRombongan = dataRombongan.filter(r => r[7] >= todayTime);
        upcomingRombongan.forEach(r => {
           let tglStr = r[2]; let tglTime = r[7];
           if(!grouped[tglStr]) { grouped[tglStr] = { rombongan: [], luxury: '', suite: '', cm: '' }; }
-          
           let existingRomb = grouped[tglStr].rombongan.find(x => x.nama === r[1]);
           if(existingRomb) { existingRomb.items.push({menu: r[4], qty: r[5]}); }
           else { grouped[tglStr].rombongan.push({ nama: r[1], kereta: r[3], items: [{menu: r[4], qty: r[5]}] }); }
-
           if(!tempAdded.has(tglStr)) { dateArr.push({ label: tglStr, time: tglTime }); tempAdded.add(tglStr); }
        });
 
-       // 2. Ekstrak Jadwal Produksi (HANYA Hari ini & 2 Hari ke depan)
        let validJadwal = dataJadwal.filter(j => j.time >= todayTime && j.time <= twoDaysLaterTime);
        validJadwal.forEach(j => {
           let tglStr = j.tglStr; let tglTime = j.time;
           if(!grouped[tglStr]) { grouped[tglStr] = { rombongan: [], luxury: '', suite: '', cm: '' }; }
-          
           grouped[tglStr].luxury = j.lux; grouped[tglStr].suite = j.suite; grouped[tglStr].cm = j.cm;
-
           if(!tempAdded.has(tglStr)) { dateArr.push({ label: tglStr, time: tglTime }); tempAdded.add(tglStr); }
        });
 
@@ -657,20 +649,13 @@
           html = '<div class="text-secondary p-3 fst-italic">Tidak ada agenda produksi terdekat.</div>';
        } else {
           dateArr.forEach(dObj => {
-             let tgl = dObj.label; let g = grouped[tgl];
-             let cardsHtml = '';
+             let tgl = dObj.label; let g = grouped[tgl]; let cardsHtml = '';
              
-             // Cetak Rombongan
              g.rombongan.forEach(romb => {
                  let liHtml = romb.items.map(i => `${i.menu} <b>(${i.qty})</b>`).join(', ');
-                 cardsHtml += `<div class="timeline-item item-rombongan">
-                    <div class="fw-bold" style="font-size:0.85rem; color:#1e293b;">${romb.nama}</div>
-                    <div style="font-size:0.75rem; color:#10b981; font-weight:700;"><i class="fas fa-train"></i> ${romb.kereta}</div>
-                    <div style="font-size:0.8rem; color:#475569;">${liHtml}</div>
-                 </div>`;
+                 cardsHtml += `<div class="timeline-item item-rombongan"><div class="fw-bold" style="font-size:0.85rem; color:#1e293b;">${romb.nama}</div><div style="font-size:0.75rem; color:#10b981; font-weight:700;"><i class="fas fa-train"></i> ${romb.kereta}</div><div style="font-size:0.8rem; color:#475569;">${liHtml}</div></div>`;
              });
 
-             // Cetak Jadwal Produksi
              if(g.luxury) { cardsHtml += `<div class="timeline-item item-luxury"><div class="fw-bold" style="font-size:0.8rem; color:#f59e0b;"><i class="fas fa-crown"></i> Luxury</div><div style="font-size:0.8rem; color:#475569;">${g.luxury}</div></div>`; }
              if(g.suite) { cardsHtml += `<div class="timeline-item item-suite"><div class="fw-bold" style="font-size:0.8rem; color:#8b5cf6;"><i class="fas fa-gem"></i> Suite Class</div><div style="font-size:0.8rem; color:#475569;">${g.suite}</div></div>`; }
              if(g.cm) { cardsHtml += `<div class="timeline-item item-crew"><div class="fw-bold" style="font-size:0.8rem; color:#0ea5e9;"><i class="fas fa-users"></i> Crew Meal</div><div style="font-size:0.8rem; color:#475569;">${g.cm}</div></div>`; }
@@ -703,7 +688,6 @@
 
             dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw(); dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
             
-            // --- LOGIKA WIDGET STOK BARU ---
             let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; let fastMovingCandidates = [];
 
             let stokRows = data.stokData.map(s => {
@@ -749,18 +733,17 @@
             dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
             dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData).draw(); 
 
-            // Filter Tabel Jadwal Menu sesuai rentang filter Tgl
             let startTime = new Date(start).getTime(); let endTime = new Date(end); endTime.setHours(23,59,59,999); endTime = endTime.getTime();
             let jadwalFilterTabel = data.jadwalData.filter(j => j.time >= startTime && j.time <= endTime);
             let arrJadwal = jadwalFilterTabel.map(j => [j.tglStr, j.lux || '-', j.suite || '-', j.cm || '-']);
             dtJadwalMenu.clear(); dtJadwalMenu.rows.add(arrJadwal).draw();
 
-            // Render Kalender Gabungan
             renderAgendaTimeline(data.rombonganData, data.jadwalData);
 
             setTimeout(checkVisibleElements, 100);
           }).catch(error => {
             document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('btnFilter').disabled = false;
+            console.error(error); // Untuk membantu analisa kedepan
             alert("Gagal menarik data. Cek koneksi atau link API Anda.");
           });
       } catch(err) {

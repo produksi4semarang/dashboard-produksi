@@ -114,9 +114,7 @@
   </div>
 
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(true)"></div>
-  <a href="#" onclick="switchPage('kedatangan', this)">
-        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-kedatangan.png" class="menu-icon"> Kedatangan Bahan Baku <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span>
-    </a>
+  <div class="sidebar" id="mySidebar">
     <a href="#" onclick="switchPage('home', this)" class="active">
         <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-home.png" class="menu-icon"> Home
     </a>
@@ -698,8 +696,7 @@
        document.getElementById('rombonganCalendar').innerHTML = html;
     }
 
-// Ubah deklarasi fungsinya menjadi seperti ini agar memiliki batasan retry
-    function loadData(retryCount = 1) {
+    function loadData() {
       try {
         const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value;
         document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('btnFilter').disabled = true;
@@ -708,12 +705,7 @@
           .then(response => response.json())
           .then(data => {
             document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('btnFilter').disabled = false;
-            document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; // Kembalikan teks ke awal
-            
-            if (data.error) { 
-                console.error("Error dari server:", data.error);
-                return; 
-            }
+            if (data.error) { alert("Gagal menarik data. Error: " + data.error); return; }
 
             document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan); document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
             document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi); document.getElementById('avgDisplay').setAttribute('data-target-value', data.avg);
@@ -799,25 +791,14 @@
 
             setTimeout(checkVisibleElements, 100);
           }).catch(error => {
-            // Jika gagal (timeout/koneksi terputus), sistem akan mencoba fetch ulang secara otomatis tanpa memunculkan alert
-            if (retryCount > 0) {
-                console.warn("Koneksi awal lambat, mencoba memuat ulang (Auto-Retry)...");
-                document.getElementById('loaderTextInfo').innerText = "Koneksi lambat, mencoba ulang...";
-                setTimeout(() => loadData(retryCount - 1), 1500); // Tunggu 1,5 detik sebelum coba lagi
-            } else {
-                console.error("Gagal menarik data setelah percobaan ulang:", error);
-                document.getElementById('fullScreenLoader').style.display = 'none'; 
-                document.getElementById('btnFilter').disabled = false;
-                document.getElementById('loaderTextInfo').innerText = "Memasak Data...";
-                // Alert dihapus agar tidak muncul false alarm jika data sebenarnya menyusul masuk
-            }
+            document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('btnFilter').disabled = false;
+            alert("Gagal menarik data. Cek koneksi atau link API Anda.");
           });
       } catch(err) {
-        document.getElementById('fullScreenLoader').style.display = 'none'; 
-        console.error("Terjadi kesalahan sistem: " + err.message);
+        document.getElementById('fullScreenLoader').style.display = 'none'; alert("Terjadi kesalahan sistem: " + err.message);
       }
     }
-    
+
     function renderGaugeCharts(srq, real, sp) {
       const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); 
       let colorSrq = (real >= srq && srq > 0) ? '#0284c7' : '#f59e0b'; 

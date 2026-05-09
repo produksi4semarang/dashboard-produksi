@@ -698,7 +698,7 @@
        document.getElementById('rombonganCalendar').innerHTML = html;
     }
 
-    // Ubah deklarasi fungsinya menjadi seperti ini agar memiliki batasan retry
+// Ubah deklarasi fungsinya menjadi seperti ini agar memiliki batasan retry
     function loadData(retryCount = 1) {
       try {
         const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value;
@@ -817,6 +817,7 @@
         console.error("Terjadi kesalahan sistem: " + err.message);
       }
     }
+    
     function renderGaugeCharts(srq, real, sp) {
       const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); 
       let colorSrq = (real >= srq && srq > 0) ? '#0284c7' : '#f59e0b'; 

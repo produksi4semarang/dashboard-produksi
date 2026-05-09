@@ -754,18 +754,25 @@
             } else {
                 restockHtml = '<ul class="list-group list-group-flush mb-0">';
                 restockCandidates.forEach(r => {
-                    let isKritis = String(r.ket).toLowerCase().includes('kritis');
-                    let badgeClass = isKritis ? 'bg-danger' : 'bg-warning text-dark';
-                    let badgeLabel = isKritis ? 'Kritis' : 'Warning';
-                    restockHtml += `
-                    <li class="list-group-item d-flex justify-content-between align-items-start px-0 border-light">
-                        <div>
-                            <div class="fw-bold" style="font-size:0.85rem; color:#1e293b; line-height:1.2;">${r.nama}</div>
-                            <div style="font-size:0.75rem; color:#64748b; margin-top:3px;">Sisa: <b>${r.akhir} ${r.satuan}</b> (${r.status})</div>
-                        </div>
-                        <span class="badge ${badgeClass} rounded-pill ms-2" style="font-size:0.7rem;">${badgeLabel}</span>
-                    </li>`;
-                });
+                let isKritis = String(r.ket).toLowerCase().includes('kritis');
+                let badgeClass = isKritis ? 'bg-danger' : 'bg-warning text-dark';
+                let badgeLabel = isKritis ? 'Kritis' : 'Warning';
+                
+                // Menambahkan kata "Hari" jika hanya berupa angka
+                let kekuatanStr = String(r.status).trim();
+                if (!isNaN(parseFloat(kekuatanStr)) && !kekuatanStr.toLowerCase().includes('hari')) {
+                    kekuatanStr += " Hari";
+                }
+
+                restockHtml += `
+                <li class="list-group-item d-flex justify-content-between align-items-start px-0 border-light">
+                    <div>
+                        <div class="fw-bold" style="font-size:0.85rem; color:#1e293b; line-height:1.2;">${r.nama}</div>
+                        <div style="font-size:0.75rem; color:#64748b; margin-top:3px;">Sisa: <b>${r.akhir} ${r.satuan}</b> (${kekuatanStr})</div>
+                    </div>
+                    <span class="badge ${badgeClass} rounded-pill ms-2" style="font-size:0.7rem;">${badgeLabel}</span>
+                </li>`;
+            });
                 restockHtml += '</ul>';
             }
             document.getElementById('restockList').innerHTML = restockHtml;

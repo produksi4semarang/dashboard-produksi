@@ -400,7 +400,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwL7zUV5scrHVA5_D4f-9hS_NaDRB_Z5L_FeSWxhXFWEzSAa4ESjbRSgt0qKIpo2Hnfdw/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzLp_h_Fg-NkQ3yrV9DzBab7245Kfz0P0uLIItbi2CwMl7futbC0hcScU91UCmGU1qr3A/exec"; 
 
     window.chartTargets = {};
     let isAdmin = false;
@@ -546,7 +546,7 @@
                 return `<span class="badge bg-secondary px-3 py-2">${data}</span>`;
               }
             },
-            { targets: 7, visible: false } // Kolom timestamp
+            { targets: 7, visible: false } 
           ],
           drawCallback: function (settings) {
             var api = this.api(); var rows = api.rows({ page: 'current' }).nodes();
@@ -688,9 +688,11 @@
 
             dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw(); dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
             
+            // --- LOGIKA WIDGET STOK BARU ---
             let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; let fastMovingCandidates = [];
 
             let stokRows = data.stokData.map(s => {
+               // PERBAIKAN BUG 1: MENGGUNAKAN s.ket SEBAGAI INDIKATOR STATUS (Aman/Warning/Kritis)
                let st = String(s.ket).toLowerCase();
                if(st.includes('aman')) { stAman++; } else if(st.includes('warning')) { stWarn++; restockCandidates.push(s); } else if(st.includes('kritis')) { stKrit++; restockCandidates.push(s); }
                fastMovingCandidates.push(s); return [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket, s.pengadaan];
@@ -700,6 +702,7 @@
             document.getElementById('stokWarnDisplay').setAttribute('data-target-value', stWarn); document.getElementById('stokKritDisplay').setAttribute('data-target-value', stKrit);
             renderStokHealthChart(stAman, stWarn, stKrit);
 
+            // PERBAIKAN TAMPILAN RESTOCK KANDIDAT (MENYUNTIKKAN KATA 'HARI')
             restockCandidates.sort((a, b) => { let valA = parseFloat(a.status) || 999; let valB = parseFloat(b.status) || 999; return valA - valB; });
             let restockHtml = '';
             if(restockCandidates.length === 0) {
@@ -708,7 +711,8 @@
                 restockHtml = '<ul class="list-group list-group-flush mb-0">';
                 restockCandidates.forEach(r => {
                     let isKritis = String(r.ket).toLowerCase().includes('kritis');
-                    let badgeClass = isKritis ? 'bg-danger' : 'bg-warning text-dark'; let badgeLabel = isKritis ? 'Kritis' : 'Warning';
+                    let badgeClass = isKritis ? 'bg-danger' : 'bg-warning text-dark'; 
+                    let badgeLabel = isKritis ? 'Kritis' : 'Warning';
                     
                     let kekuatanStr = String(r.status).trim();
                     if (!isNaN(parseFloat(kekuatanStr)) && !kekuatanStr.toLowerCase().includes('hari')) { kekuatanStr += " Hari"; }
@@ -733,17 +737,19 @@
             dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
             dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData).draw(); 
 
+            // Filter Tabel Jadwal Menu sesuai rentang filter Tgl
             let startTime = new Date(start).getTime(); let endTime = new Date(end); endTime.setHours(23,59,59,999); endTime = endTime.getTime();
             let jadwalFilterTabel = data.jadwalData.filter(j => j.time >= startTime && j.time <= endTime);
             let arrJadwal = jadwalFilterTabel.map(j => [j.tglStr, j.lux || '-', j.suite || '-', j.cm || '-']);
             dtJadwalMenu.clear(); dtJadwalMenu.rows.add(arrJadwal).draw();
 
+            // Render Kalender Gabungan
             renderAgendaTimeline(data.rombonganData, data.jadwalData);
 
             setTimeout(checkVisibleElements, 100);
           }).catch(error => {
             document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('btnFilter').disabled = false;
-            console.error(error); // Untuk membantu analisa kedepan
+            console.error(error); 
             alert("Gagal menarik data. Cek koneksi atau link API Anda.");
           });
       } catch(err) {

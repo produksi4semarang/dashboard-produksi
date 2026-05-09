@@ -6,9 +6,7 @@
   <title>Dashboard Produksi Semarang</title>
   
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -48,43 +46,41 @@
     .card-container { background-color: #fff; border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); padding: 20px; margin-bottom: 20px;}
     .kpi-value { font-size: 1.4rem; font-weight: bold; margin: 0; color: #1e293b;}
     .kpi-label { font-size: 0.85rem; color: #64748b; margin: 0;}
-    .gauge-container { position: relative; width: 100%; display: flex; justify-content: center; }
     .gauge-text { position: absolute; bottom: 0px; text-align: center; font-size: 1.5rem; font-weight: bold; }
     .table th { background-color: #f8fafc !important; color: #475569; font-size: 0.9rem; text-align: center !important;}
     .table td { font-size: 0.9rem; vertical-align: middle; text-align: center !important; }
 
-    /* --- PROFIL CARDS & LIGHTBOX --- */
+    /* --- PROFIL CARDS --- */
     .profile-card { background: #fff; border-radius: 15px; padding: 25px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border-bottom: 4px solid #ea580c; }
     .profile-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .profile-card img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #1e293b; padding: 3px; cursor: zoom-in; transition: transform 0.2s;}
-    .profile-card img:hover { transform: scale(1.05); }
+    .profile-card img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #1e293b; padding: 3px; cursor: zoom-in; }
     
     .icon-wa { color: #25D366; transition: 0.2s ease; display: inline-block; }
-    .icon-wa:hover { color: #128c7e; transform: scale(1.2); }
     .icon-ig { background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: 0.2s ease; display: inline-block; }
-    .icon-ig:hover { transform: scale(1.2); filter: brightness(1.1); }
     
-    .img-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); z-index: 99999; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; animation: fadeIn 0.3s forwards; }
-    .img-lightbox img { max-width: 90%; max-height: 90%; border-radius: 16px; border: 4px solid #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.4); transform: scale(0.7); animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    @keyframes fadeIn { to { opacity: 1; } }
-    @keyframes popUp { to { transform: scale(1); } }
+    /* --- JADWAL MENU CARDS --- */
+    .jadwal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .jadwal-card { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; transition: 0.3s; position: relative;}
+    .jadwal-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+    .jadwal-card.today { border: 2px solid #ea580c; }
+    .jadwal-header { background: #f8fafc; padding: 12px 15px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #1e293b; display: flex; justify-content: space-between; align-items: center;}
+    .today-badge { background: #ea580c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; text-transform: uppercase; }
+    .jadwal-body { padding: 15px; }
+    .jadwal-item { margin-bottom: 12px; }
+    .jadwal-item:last-child { margin-bottom: 0; }
+    .jadwal-label { font-size: 0.75rem; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; display: flex; align-items: center; gap: 6px;}
+    .jadwal-val { font-size: 0.95rem; color: #334155; font-weight: 600; padding-left: 20px; line-height: 1.3;}
 
-    /* --- CALENDAR VIEW ROMBONGAN --- */
-    .calendar-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; }
-    .calendar-card { min-width: 220px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.02); align-self: flex-start;}
+    .img-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); z-index: 99999; justify-content: center; align-items: center; cursor: zoom-out; }
+    .img-lightbox img { max-width: 90%; max-height: 90%; border-radius: 16px; border: 4px solid #fff; }
 
-    /* --- SCROLLBAR CUSTOM UNTUK RESTOCK LIST --- */
-    .restock-list::-webkit-scrollbar { width: 6px; }
-    .restock-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
-    .restock-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    .restock-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .calendar-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; }
+    .calendar-card { min-width: 220px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; align-self: flex-start;}
 
-    /* --- UTILITIES --- */
     .reveal-card { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
     .reveal-card.visible { opacity: 1; transform: translateY(0); }
     .admin-only { display: none; } 
 
-    /* --- LOADING SCREEN --- */
     .fullscreen-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(244, 247, 250, 0.75); backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .loader-icon-container { position: relative; width: 100px; height: 100px; }
     .loader-icon { width: 100%; height: 100%; object-fit: contain; }
@@ -127,9 +123,12 @@
     <a href="#" onclick="switchPage('rombongan', this)">
         <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-rombongan.png" class="menu-icon"> Data Rombongan
     </a>
+    <a href="#" onclick="switchPage('jadwal', this)">
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/442b46aa636b67b25727f5391515a693af2c59e9/icon-jadwal.png" class="menu-icon"> Jadwal Menu
+    </a>
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
     <a href="#" onclick="switchPage('kedatangan', this)">
-        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-kedatangan.png" class="menu-icon"> Kedatangan Bahan <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span>
+        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-kedatangan.png" class="menu-icon"> Kedatangan Bahan Baku <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span>
     </a>
     <a href="#" onclick="switchPage('pr', this)">
         <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-pr.png" class="menu-icon"> Nomor PR <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span>
@@ -173,7 +172,6 @@
     </div>
 
     <div id="page-kombinasi" class="page-section">
-      
       <div id="shared-top-content">
           <div class="row mb-1">
             <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card"><div class="card-kpi h-100"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/sp.png" class="kpi-icon"><div><p class="kpi-value counter-anim" id="spDisplay">0</p><p class="kpi-label">Sales Plan</p></div></div></div>
@@ -186,30 +184,6 @@
             <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pencapaian Sales Plan</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSpChart"></canvas><div class="gauge-text counter-anim" id="persenSpDisplay" data-suffix="%" style="color: #4f46e5;">0%</div></div></div></div>
             <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pemenuhan SRQ</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSrqChart"></canvas><div class="gauge-text counter-anim" id="persenSrqDisplay" data-suffix="%" style="color: #0284c7;">0%</div></div></div></div>
             <div class="col-lg-6 col-md-12 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
-          </div>
-          <div class="row mt-2 reveal-card">
-            <div class="col-12 mb-3">
-              <div class="card-container">
-                <h6 class="text-secondary fw-bold mb-3 text-center">Komparasi Realisasi Menu Harian</h6>
-                <div class="row">
-                  <div class="col-md-6 mb-4"><h6 class="text-success fw-bold text-center mb-2">Fresh Food</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartFF"></canvas></div></div>
-                  <div class="col-md-6 mb-4"><h6 class="fw-bold text-center mb-2" style="color: #8b5cf6;">Luxury & Fit</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartLuxFit"></canvas></div></div>
-                  <div class="col-md-6 mb-2"><h6 class="fw-bold text-center mb-2" style="color: #f59e0b;">Suite Class</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartSuite"></canvas></div></div>
-                  <div class="col-md-6 mb-2"><h6 class="fw-bold text-center mb-2" style="color: #0284c7;">Crew Meal</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartCrew"></canvas></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-2 reveal-card">
-            <div class="col-12 mb-3">
-              <div class="card-container">
-                <h6 class="text-secondary fw-bold mb-3 text-center">Analisis Amprahan Kereta</h6>
-                <div class="row">
-                  <div class="col-md-6 mb-4"><h6 class="fw-bold text-center mb-2" style="color: #ef4444;">Top Kereta Amprahan</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartAmprahanKA"></canvas></div></div>
-                  <div class="col-md-6 mb-4"><h6 class="fw-bold text-center mb-2" style="color: #14b8a6;">Top Menu Amprahan</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartAmprahanMenu"></canvas></div></div>
-                </div>
-              </div>
-            </div>
           </div>
       </div>
 
@@ -226,70 +200,19 @@
         <div class="col-lg-4 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Detail Amprahan Kereta</h6><div class="table-responsive"><table id="tabelAmprahan" class="table table-hover table-bordered w-100"><thead><tr><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div></div>
         <div class="col-lg-8 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Rincian Produksi Per Menu</h6><div class="table-responsive"><table id="tabelMenu" class="table table-hover table-bordered w-100"><thead><tr><th>Kategori</th><th>Nama Menu</th><th>Sales Plan</th><th>SRQ</th><th>Real</th><th>% SRQ</th><th>% SP</th><th>Evaluasi SP</th></tr></thead><tbody></tbody></table></div></div></div>
       </div>
-
     </div>
 
     <div id="page-stok" class="page-section" style="display:none;">
-      
       <div class="row mb-1">
-        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
-           <div class="card-kpi h-100" style="border-left: 5px solid #64748b;">
-             <div class="kpi-icon bg-light"><i class="fas fa-boxes fs-4 text-secondary"></i></div>
-             <div><p class="kpi-value counter-anim" id="stokTotalDisplay">0</p><p class="kpi-label">Total Material</p></div>
-           </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
-           <div class="card-kpi h-100" style="border-left: 5px solid #10b981;">
-             <div class="kpi-icon" style="background-color:#ecfdf5;"><i class="fas fa-check-circle fs-4 text-success"></i></div>
-             <div><p class="kpi-value counter-anim" id="stokAmanDisplay">0</p><p class="kpi-label">Stok Aman</p></div>
-           </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
-           <div class="card-kpi h-100" style="border-left: 5px solid #f59e0b;">
-             <div class="kpi-icon" style="background-color:#fffbeb;"><i class="fas fa-exclamation-triangle fs-4 text-warning"></i></div>
-             <div><p class="kpi-value counter-anim" id="stokWarnDisplay">0</p><p class="kpi-label">Warning</p></div>
-           </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
-           <div class="card-kpi h-100" style="border-left: 5px solid #ef4444;">
-             <div class="kpi-icon" style="background-color:#fef2f2;"><i class="fas fa-radiation fs-4 text-danger"></i></div>
-             <div><p class="kpi-value counter-anim" id="stokKritDisplay">0</p><p class="kpi-label">Kritis</p></div>
-           </div>
-        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card"><div class="card-kpi h-100"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/real.png" class="kpi-icon"><div><p class="kpi-value counter-anim" id="stokTotalDisplay">0</p><p class="kpi-label">Total Material</p></div></div></div>
       </div>
-
-      <div class="row mb-2">
-        <div class="col-lg-4 mb-3 reveal-card">
-          <div class="card-container h-100 text-center">
-             <h6 class="text-secondary fw-bold mb-4">Kesehatan Stok Hari Ini</h6>
-             <div style="position: relative; height: 180px; width: 100%;"><canvas id="stokHealthChart"></canvas></div>
-          </div>
-        </div>
-        <div class="col-lg-4 mb-3 reveal-card">
-          <div class="card-container h-100">
-             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-clipboard-list text-danger"></i> Prioritas Restock Material</h6>
-             <div id="restockList" class="restock-list" style="max-height: 200px; overflow-y: auto; padding-right: 5px;">
-                </div>
-          </div>
-        </div>
-        <div class="col-lg-4 mb-3 reveal-card">
-          <div class="card-container h-100">
-             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-chart-line text-primary"></i> Fast-Moving Material</h6>
-             <div style="position: relative; height: 200px; width: 100%;"><canvas id="fastMovingChart"></canvas></div>
-          </div>
-        </div>
-      </div>
-
       <div class="row reveal-card">
         <div class="col-12">
           <div class="card-container h-100">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
               <h6 class="text-secondary fw-bold m-0">Penjagaan Stok Bahan Baku</h6>
               <div class="d-flex flex-wrap gap-2 align-items-center mt-2 mt-md-0">
-                <select id="filterPengadaanStok" class="form-select form-select-sm border-secondary fw-bold" style="width: auto; cursor: pointer;">
-                  <option value="">Semua Pengadaan</option><option value="Pusat">Pusat</option><option value="Wilayah">Wilayah</option><option value="Dapsen CN">Dapsen CN</option><option value="Dapsen YK">Dapsen YK</option>
-                </select>
-                <select id="filterStatusStok" class="form-select form-select-sm border-secondary fw-bold" style="width: auto; cursor: pointer;">
+                <select id="filterStatusStok" class="form-select form-select-sm border-secondary fw-bold" style="width: auto;">
                   <option value="">Semua Status</option><option value="Aman">🟢 Aman</option><option value="Warning">🟡 Warning</option><option value="Kritis">🔴 Kritis</option>
                 </select>
                 <button class="btn btn-sm btn-primary fw-bold admin-only" onclick="aksiKirimStok()" id="btnKirimStok"><i class="fab fa-telegram-plane"></i> Kirim Laporan Stok</button>
@@ -297,7 +220,7 @@
             </div>
             <div class="table-responsive">
               <table id="tabelStok" class="table table-hover table-bordered w-100">
-                <thead><tr><th>Nomor Material</th><th>Nama Material</th><th>Satuan</th><th>Fisik</th><th>Masuk</th><th>Keluar</th><th>Akhir</th><th>Rata-rata</th><th>Kekuatan (Hari)</th><th>Status</th><th style="display:none;">Pengadaan</th></tr></thead>
+                <thead><tr><th>Nomor</th><th>Nama Material</th><th>Satuan</th><th>Fisik</th><th>Masuk</th><th>Keluar</th><th>Akhir</th><th>Rata2</th><th>Kekuatan</th><th>Status</th></tr></thead>
                 <tbody></tbody>
               </table>
             </div>
@@ -311,8 +234,7 @@
         <div class="col-12">
           <div class="card-container" style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
              <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-calendar-check text-success"></i> Jadwal Rombongan Terdekat</h6>
-             <div class="calendar-wrapper" id="rombonganCalendar">
-                </div>
+             <div class="calendar-wrapper" id="rombonganCalendar"></div>
           </div>
         </div>
       </div>
@@ -322,7 +244,7 @@
             <h6 class="text-secondary fw-bold mb-3 text-center">Rombongan Kereta</h6>
             <div class="table-responsive">
               <table id="tabelRombongan" class="table table-hover table-bordered w-100">
-                <thead><tr><th>No.</th><th>Nama Rombongan</th><th>Tanggal Berangkat</th><th>Nama Kereta</th><th>Menu Makanan</th><th>QTY</th><th>Status Pembayaran</th></tr></thead>
+                <thead><tr><th>No.</th><th>Nama Rombongan</th><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>QTY</th><th>Status</th></tr></thead>
                 <tbody></tbody>
               </table>
             </div>
@@ -331,550 +253,208 @@
       </div>
     </div>
 
+    <div id="page-jadwal" class="page-section" style="display:none;">
+      <div class="row mb-4">
+        <div class="col-12 text-center">
+          <h4 class="fw-bold" style="color: #1e293b;"><i class="fas fa-utensils me-2 text-danger"></i> Jadwal Menu Produksi</h4>
+          <p class="text-secondary">Rencana menu harian Luxury, Suite, dan Crew Meal</p>
+        </div>
+      </div>
+      <div class="jadwal-grid" id="jadwalMenuContainer">
+        </div>
+    </div>
+
     <div id="page-profil" class="page-section" style="display:none;">
-      <div class="card-container reveal-card bg-transparent shadow-none" style="padding-top: 10px;">
-        <h4 class="fw-bold text-center mb-5" style="color: #1e293b; letter-spacing: -0.5px;">Tim Admin Produksi Semarang</h4>
+      <div class="card-container reveal-card bg-transparent shadow-none">
+        <h4 class="fw-bold text-center mb-5" style="color: #1e293b;">Tim Admin Produksi Semarang</h4>
         <div class="row justify-content-center">
-          
           <div class="col-lg-4 col-md-6 mb-4">
             <div class="profile-card mx-auto" style="max-width: 320px;">
-              <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/529f01685f2af2ab60f9837f1c47516cc56192f4/romi.png" alt="Romi" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
+              <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/529f01685f2af2ab60f9837f1c47516cc56192f4/romi.png" alt="Romi">
               <h5 class="fw-bold text-dark mb-1">Halim Muhtaromi</h5>
-              <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10140592</span>
-              <div class="d-flex justify-content-center gap-3">
-                <a href="https://wa.me/6289667787099" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
-                <a href="https://instagram.com/halimmuhtaromi" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
+              <p class="text-secondary mb-1">Staff Admin Production</p>
+              <div class="d-flex justify-content-center gap-3 mt-3">
+                <a href="https://wa.me/6289667787099" target="_blank"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
+                <a href="https://instagram.com/halimmuhtaromi" target="_blank"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
               </div>
             </div>
           </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="profile-card mx-auto" style="max-width: 320px;">
-              <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/529f01685f2af2ab60f9837f1c47516cc56192f4/fandi.png" alt="Fandi" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
-              <h5 class="fw-bold text-dark mb-1">Yusuf Affandi</h5>
-              <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10140907</span>
-              <div class="d-flex justify-content-center gap-3">
-                <a href="https://wa.me/6285291561034" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
-                <a href="https://instagram.com/ysufaffandi" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="profile-card mx-auto" style="max-width: 320px;">
-              <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/a4325994d50a388b38de8ab3295c5d085b1fee03/milano.png" alt="Milano" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
-              <h5 class="fw-bold text-dark mb-1">Sulistian Milano A.P</h5>
-              <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10143225</span>
-              <div class="d-flex justify-content-center gap-3">
-                <a href="https://wa.me/6285774425019" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
-                <a href="https://instagram.com/milanoap_" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>
 
     <div id="page-soon" class="page-section" style="display:none; text-align:center; padding: 60px 20px;">
        <h1 style="font-size: 4.5rem; margin-bottom: 20px;">🚧</h1>
-       <h3 class="fw-bold" style="color: #1e293b;">Fitur Sedang Digodok!</h3>
-       <p class="text-secondary mt-3 mx-auto" style="max-width: 500px;">Halaman ini masih dalam tahap pengembangan oleh tim IT Dapur Produksi Semarang. Nantikan kehadiran fiturnya segera!</p>
+       <h3 class="fw-bold">Fitur Sedang Digodok!</h3>
        <button class="btn btn-outline-primary mt-4 fw-bold px-4" onclick="switchPage('home')">Kembali ke Home</button>
     </div>
 
     <div class="row">
       <div class="col-12">
         <div class="dashboard-footer">
-          <p class="mb-0">🍳 Diracik dengan penuh ❤️ oleh Tim Admin Produksi Semarang</p>
+          <p class="mb-0">🍳 Diracik dengan ❤️ oleh Tim Admin Produksi Semarang</p>
           <p class="footer-names">Romi &bull; Fandi &bull; Milano</p>
-          <p class="mt-2 text-muted" style="font-size: 0.75rem;">&copy; 2026 Dapur Produksi Semarang. All rights reserved.</p>
         </div>
       </div>
     </div>
-
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwfMOWnUqftoEGJD1ifI4yu0BvbNpR_Iu9BE6AscxBISuVb0h6DnrWo8O_CodJPPaHggA/exec"; 
-
-    window.chartTargets = {};
+    const API_URL = "https://script.google.com/macros/s/AKfycbwp_QWmXIew_ABb3S2BXbc3Fk2M7YNcCfncr33MvhehcSubLYfcIFXbaABiu9yXzYrNjw/exec"; 
     let isAdmin = false;
+    let dtAmprahan, dtMenu, dtStok, dtRombongan;
+    let gaugeSrqChartObj, gaugeSpChartObj, lineChartObj, barChartObj;
 
-    let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
-    let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
-    let chartAmprahanKAObj = null; let chartAmprahanMenuObj = null;
-    let stokHealthChartObj = null; let fastMovingChartObj = null; // Chart baru Fast-Moving
-    let dtAmprahan = null; let dtMenu = null; let dtStok = null; let dtRombongan = null;
+    $(document).ready(function() {
+      dtAmprahan = $('#tabelAmprahan').DataTable({ pageLength: 5 });
+      dtMenu = $('#tabelMenu').DataTable({ pageLength: 5 });
+      dtStok = $('#tabelStok').DataTable({ pageLength: 10 });
+      dtRombongan = $('#tabelRombongan').DataTable({ pageLength: 10 });
 
-    const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
+      $('#startTgl').val('2026-05-01');
+      $('#endTgl').val(new Date().toISOString().split('T')[0]);
+      
+      switchPage('home'); 
+      loadData();
+    });
 
-    let today = new Date(); let y = 2026; let m = '05'; let d = '01'; 
-    document.getElementById('startTgl').value = `${y}-${m}-${d}`;
-    let nowStr = today.toISOString().split('T')[0];
-    document.getElementById('endTgl').value = nowStr > '2026-05-31' ? '2026-05-31' : nowStr;
-    
     function promptPin() {
-      if(isAdmin) {
-         isAdmin = false;
-         alert("Sesi Admin telah ditutup. Mode pantau diaktifkan.");
-         document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-         document.getElementById('lockIcon').innerHTML = '<i class="fas fa-lock me-1"></i> Login Admin';
-         document.getElementById('lockIcon').classList.replace('btn-danger', 'btn-outline-dark');
-      } else {
-         let pin = prompt("Masukkan PIN Keamanan Admin:");
-         if(pin === "0000") {
-            isAdmin = true;
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
-            document.getElementById('lockIcon').innerHTML = '<i class="fas fa-unlock me-1"></i> Logout Admin';
-            document.getElementById('lockIcon').classList.replace('btn-outline-dark', 'btn-danger');
-         } else if(pin !== null) {
-            alert("PIN Salah! Akses Ditolak.");
-         }
+      let pin = prompt("Masukkan PIN Keamanan Admin:");
+      if(pin === "0000") {
+         isAdmin = !isAdmin;
+         document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? 'inline-block' : 'none');
+         document.getElementById('lockIcon').innerHTML = isAdmin ? '<i class="fas fa-unlock me-1"></i> Logout' : '<i class="fas fa-lock me-1"></i> Login Admin';
       }
     }
 
     function switchPage(pageId, element = null) {
        document.querySelectorAll('.sidebar a').forEach(el => el.classList.remove('active'));
        if(element) element.classList.add('active');
-
        document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
-
+       
        let targetId = 'page-' + pageId;
-       if (pageId === 'home' || pageId === 'laporan') {
-           targetId = 'page-kombinasi';
-       } else if (['kedatangan', 'pr', 'bukti'].includes(pageId)) {
-           targetId = 'page-soon';
-       }
+       if (pageId === 'home' || pageId === 'laporan') targetId = 'page-kombinasi';
+       else if (['kedatangan', 'pr', 'bukti'].includes(pageId)) targetId = 'page-soon';
 
        document.getElementById(targetId).style.display = 'block';
+       document.getElementById('filterRow').style.display = (pageId === 'home' || pageId === 'laporan') ? 'flex' : 'none';
 
-       if (pageId === 'home' || pageId === 'laporan') {
-          document.getElementById('filterRow').style.display = 'flex';
-       } else {
-          document.getElementById('filterRow').style.display = 'none';
-       }
-
-       const sharedTop = document.getElementById('shared-top-content');
-       const tablesLaporan = document.getElementById('laporan-tables');
-       const bebanDw = document.getElementById('laporan-beban-dw');
-
-       if (pageId === 'home') {
-           sharedTop.style.display = 'block';
-           tablesLaporan.style.display = 'none';
-           bebanDw.style.display = 'none';
-       } else if (pageId === 'laporan') {
-           sharedTop.style.display = 'block';
-           tablesLaporan.style.display = 'flex';
-           bebanDw.style.display = 'flex';
-       }
+       if (pageId === 'home') { $('#shared-top-content').show(); $('#laporan-tables, #laporan-beban-dw').hide(); }
+       else if (pageId === 'laporan') { $('#shared-top-content, #laporan-tables, #laporan-beban-dw').show(); }
 
        setTimeout(() => {
-          $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
           document.querySelectorAll('#' + targetId + ' .reveal-card').forEach(card => card.classList.add('visible'));
-          checkVisibleElements();
        }, 150);
-
        toggleSidebar(true);
     }
 
     function toggleSidebar(forceClose = false) {
        const sb = document.getElementById('mySidebar');
-       const hb = document.getElementById('hamburgerBtn');
-       const bd = document.getElementById('sidebarBackdrop');
-       
        if(forceClose || sb.classList.contains('open')) {
-          sb.classList.remove('open'); hb.classList.remove('open'); bd.classList.remove('show');
+          sb.classList.remove('open'); document.getElementById('sidebarBackdrop').classList.remove('show');
        } else {
-          sb.classList.add('open'); hb.classList.add('open'); bd.classList.add('show');
+          sb.classList.add('open'); document.getElementById('sidebarBackdrop').classList.add('show');
        }
     }
 
-    function checkVisibleElements() {
-      document.querySelectorAll('.reveal-card.visible').forEach(card => {
-        card.querySelectorAll('.counter-anim').forEach(counter => {
-          let target = counter.getAttribute('data-target-value');
-          if (target !== null && !counter.getAttribute('data-animated')) {
-            animateCounter(counter.id, target, 1500, counter.getAttribute('data-suffix') || "");
-            counter.setAttribute('data-animated', 'true');
+    function loadData(retryCount = 1) {
+      const start = $('#startTgl').val(); const end = $('#endTgl').val();
+      $('#fullScreenLoader').css('display', 'flex'); $('#btnFilter').prop('disabled', true);
+
+      fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
+        .then(res => res.json())
+        .then(data => {
+          $('#fullScreenLoader').hide(); $('#btnFilter').prop('disabled', false);
+          if (data.error) return;
+
+          animateCounter('spDisplay', data.salesPlan); animateCounter('srqDisplay', data.srq);
+          animateCounter('realDisplay', data.realisasi); animateCounter('avgDisplay', data.avg);
+          animateCounter('amprahanDisplay', data.amprahan);
+          
+          renderGaugeCharts(data.srq, data.realisasi, data.salesPlan);
+          renderLineChart(data.trendData);
+          renderBarChart(data.trendData);
+
+          dtAmprahan.clear().rows.add(data.tableAmprahan).draw();
+          dtMenu.clear().rows.add(data.tableMenu).draw();
+          
+          let stokRows = data.stokData.map(s => [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket]);
+          dtStok.clear().rows.add(stokRows).draw();
+          dtRombongan.clear().rows.add(data.rombonganData).draw();
+          
+          renderJadwalMenuCards(data.jadwalMenuData);
+        })
+        .catch(err => {
+          if (retryCount > 0) {
+              $('#loaderTextInfo').text("Koneksi lambat, mencoba ulang...");
+              setTimeout(() => loadData(retryCount - 1), 1500);
+          } else {
+              $('#fullScreenLoader').hide(); $('#btnFilter').prop('disabled', false);
           }
         });
-        card.querySelectorAll('canvas').forEach(canvas => {
-          let chartId = canvas.id;
-          if (window.chartTargets && window.chartTargets[chartId]) {
-            let info = window.chartTargets[chartId];
-            if (info.type === 'doughnut' || info.type === 'barH') {
-              info.chart.data.datasets[0].data = info.data[0];
-            } else if (info.type === 'line' || info.type === 'bar') {
-              info.chart.data.datasets.forEach((ds, i) => ds.data = info.data[i]);
-            }
-            info.chart.update();
-            delete window.chartTargets[chartId]; 
-          }
-        });
-      });
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      let triggered = false;
-      entries.forEach(entry => { 
-        if (entry.isIntersecting) { entry.target.classList.add('visible'); triggered = true; } 
-      });
-      if (triggered) setTimeout(checkVisibleElements, 50);
-    }, { threshold: 0.1 });
-
-    $(document).ready(function() {
-      try {
-        document.querySelectorAll('.reveal-card').forEach(card => observer.observe(card));
-
-        dtAmprahan = $('#tabelAmprahan').DataTable({ pageLength: 5, lengthMenu: [5, 10, 25] });
-        dtMenu = $('#tabelMenu').DataTable({ 
-          pageLength: 5, lengthMenu: [5, 10, 25],
-          columnDefs: [ { targets: 7, render: function(data, type, row) { let selisih = parseInt(data); if (selisih > 0) return `<span class="text-danger fw-bold">+${selisih} (Over)</span>`; if (selisih < 0) return `<span class="text-warning">${selisih} (Under)</span>`; return `<span class="text-success fw-bold">Sesuai</span>`; } } ]
-        });
-
-        dtStok = $('#tabelStok').DataTable({
-          pageLength: 10, lengthMenu: [5, 10, 25, 50],
-          columnDefs: [
-            { targets: 6, render: function(data, type, row) { return `<div class="badge w-100 py-2" style="background-color: #dbeafe; color: #0369a1; border-radius: 6px; font-weight: 800; border: 1px solid #bae6fd; font-size: 0.9rem;">${data}</div>`; } },
-            { targets: 8, render: function(data, type, row) {
-                let val = String(data).trim(); let num = parseFloat(val); let textToShow = val;
-                if (!isNaN(num) && val.toLowerCase() !== 'stok utuh' && !val.toLowerCase().includes('hari')) { textToShow = num + " Hari"; }
-                return `<span class="badge w-100 py-2" style="background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;">${textToShow}</span>`;
-              }
-            },
-            { targets: 9, render: function(data, type, row) {
-                let s = String(data).toLowerCase();
-                if (s.includes('aman')) return `<span class="badge bg-success w-100 py-2">🟢 AMAN</span>`;
-                if (s.includes('warning')) return `<span class="badge bg-warning text-dark w-100 py-2">🟡 WARNING</span>`;
-                if (s.includes('kritis')) return `<span class="badge bg-danger w-100 py-2">🔴 KRITIS</span>`;
-                return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
-              }
-            },
-            { targets: 10, visible: false }
-          ]
-        });
-
-        dtRombongan = $('#tabelRombongan').DataTable({
-          pageLength: 10, lengthMenu: [5, 10, 25, 50],
-          columnDefs: [
-            { targets: 6, render: function(data, type, row) {
-                let s = String(data).toLowerCase();
-                if (s === '') return '-';
-                if (s.includes('lunas') || s.includes('paid')) return `<span class="badge bg-success px-3 py-2">${data}</span>`;
-                if (s.includes('dp') || s.includes('sebagian')) return `<span class="badge bg-warning text-dark px-3 py-2">${data}</span>`;
-                if (s.includes('belum') || s.includes('batal')) return `<span class="badge bg-danger px-3 py-2">${data}</span>`;
-                return `<span class="badge bg-secondary px-3 py-2">${data}</span>`;
-              }
-            },
-            { targets: 7, visible: false } 
-          ],
-          drawCallback: function (settings) {
-            var api = this.api(); var rows = api.rows({ page: 'current' }).nodes();
-            var last = null; var referenceRows = []; 
-            api.column(1, { page: 'current' }).data().each(function (group, i) {
-              if (last !== group) { referenceRows.push({ index: i, rowspan: 1 }); last = group; } 
-              else { referenceRows[referenceRows.length - 1].rowspan++; }
-            });
-            for (var i = 0; i < rows.length; i++) {
-              var isRefRow = false;
-              for(var j=0; j<referenceRows.length; j++){
-                if(referenceRows[j].index === i){
-                  isRefRow = true; var rs = referenceRows[j].rowspan;
-                  if (rs > 1) {
-                      $(rows[i]).find('td:eq(0)').attr('rowspan', rs).css('vertical-align', 'middle');
-                      $(rows[i]).find('td:eq(1)').attr('rowspan', rs).css('vertical-align', 'middle');
-                      $(rows[i]).find('td:eq(2)').attr('rowspan', rs).css('vertical-align', 'middle');
-                      $(rows[i]).find('td:eq(3)').attr('rowspan', rs).css('vertical-align', 'middle');
-                      $(rows[i]).find('td:eq(6)').attr('rowspan', rs).css('vertical-align', 'middle');
-                  } break;
-                }
-              }
-              if (!isRefRow) {
-                $(rows[i]).find('td:eq(0)').hide(); $(rows[i]).find('td:eq(1)').hide();
-                $(rows[i]).find('td:eq(2)').hide(); $(rows[i]).find('td:eq(3)').hide(); $(rows[i]).find('td:eq(6)').hide();
-              }
-            }
-          }
-        });
-
-        $('#filterStatusStok').on('change', function() { dtStok.column(9).search(this.value).draw(); });
-        $('#filterPengadaanStok').on('change', function() { dtStok.column(10).search(this.value).draw(); });
-
-        switchPage('home'); 
-        loadData();
-      } catch(e) {
-        document.getElementById('fullScreenLoader').style.display = 'none';
-        alert("Sistem mengalami kendala saat inisialisasi: " + e.message);
-      }
-    });
-
-    function animateCounter(elementId, targetValue, duration = 1500, suffix = "") {
-      const element = document.getElementById(elementId);
-      if(!element) return;
-      const target = parseFloat(targetValue);
-      if(isNaN(target)) { element.innerText = targetValue + suffix; return; }
-      const isFloat = String(targetValue).includes('.'); let startTimestamp = null;
-      const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        const easeOut = 1 - Math.pow(1 - progress, 4); const current = easeOut * target;
-        if(isFloat) { element.innerText = current.toFixed(1) + suffix; } else { element.innerText = Math.floor(current) + suffix; }
-        if (progress < 1) { window.requestAnimationFrame(step); } else { element.innerText = targetValue + suffix; }
-      };
-      window.requestAnimationFrame(step);
-    }
-
-    function renderStokHealthChart(aman, warn, krit) {
-       const ctx = document.getElementById('stokHealthChart').getContext('2d');
-       if(stokHealthChartObj) stokHealthChartObj.destroy();
-       let isEmpty = (aman === 0 && warn === 0 && krit === 0);
-       let dataVals = isEmpty ? [1] : [aman, warn, krit];
-       let bgColors = isEmpty ? ['#e2e8f0'] : ['#10b981', '#f59e0b', '#ef4444'];
-       let labels = isEmpty ? ['Tidak Ada Data'] : ['Aman', 'Warning', 'Kritis'];
-
-       stokHealthChartObj = new Chart(ctx, {
-          type: 'doughnut',
-          data: { labels: labels, datasets: [{ data: dataVals, backgroundColor: bgColors, borderWidth: 0 }] },
-          options: { cutout: '70%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: {font: {weight: 'bold'}} } } }
-       });
-    }
-
-    // FUNGSI RENDER WIDGET FAST-MOVING CHART
-    function renderFastMovingChart(labels, data) {
-       const ctx = document.getElementById('fastMovingChart').getContext('2d');
-       if(fastMovingChartObj) fastMovingChartObj.destroy();
-       
-       let newChart = new Chart(ctx, {
-          type: 'bar',
-          data: { labels: labels, datasets: [{ label: 'Total Keluar', data: data, backgroundColor: '#3b82f6', borderRadius: 4 }] },
-          options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
-       });
-       window.chartTargets['fastMovingChart'] = { chart: newChart, type: 'barH', data: [data] };
-    }
-
-    function renderCalendarRombongan(dataRombongan) {
-       let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
-       let upcoming = dataRombongan.filter(r => r[7] >= todayTime);
-
-       let grouped = {};
-       upcoming.forEach(r => {
-          let tgl = r[2]; let nama = r[1]; let kereta = r[3]; let menu = r[4]; let qty = r[5];
-          if(!grouped[tgl]) grouped[tgl] = {};
-          if(!grouped[tgl][nama]) grouped[tgl][nama] = { kereta: kereta, items: [] };
-          grouped[tgl][nama].items.push({menu: menu, qty: qty});
-       });
-
-       let dateArr = []; let tempAdded = new Set();
-       upcoming.forEach(r => {
-          if(!tempAdded.has(r[2])) { dateArr.push({ label: r[2], time: r[7] }); tempAdded.add(r[2]); }
-       });
-       dateArr.sort((a,b) => a.time - b.time);
-
+    function renderJadwalMenuCards(data) {
        let html = '';
-       if(dateArr.length === 0) {
-          html = '<div class="text-secondary p-3 fst-italic">Tidak ada jadwal rombongan hari ini & kedepan.</div>';
+       let todayStr = new Date().toISOString().split('T')[0];
+       
+       if(!data || data.length === 0) {
+          html = '<div class="col-12 text-center text-secondary py-5"><i>Data jadwal tidak tersedia.</i></div>';
        } else {
-          dateArr.forEach(dObj => {
-             let tgl = dObj.label; let cardsHtml = '';
-             for(let rombNama in grouped[tgl]) {
-                let info = grouped[tgl][rombNama];
-                let liHtml = info.items.map(i => `<li style="font-size:0.8rem; color:#475569;">${i.menu} <b>(${i.qty})</b></li>`).join('');
-                cardsHtml += `
-                    <div class="mt-2 text-start p-2 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;">
-                        <div class="fw-bold" style="font-size:0.9rem; color:#1e293b;">${rombNama}</div>
-                        <div style="font-size:0.75rem; color:#ea580c; font-weight:700; margin-bottom:4px;"><i class="fas fa-train"></i> ${info.kereta}</div>
-                        <ul class="mb-0 ps-3" style="margin-top:2px;">${liHtml}</ul>
-                    </div>`;
-             }
-             html += `<div class="calendar-card"><h5 class="mb-2 pb-2" style="border-bottom: 2px dashed #e2e8f0; color:#10b981;"><i class="far fa-calendar-alt"></i> ${tgl}</h5>${cardsHtml}</div>`;
+          data.forEach(item => {
+             let isToday = (item.tgl === todayStr);
+             html += `
+             <div class="jadwal-card reveal-card visible ${isToday ? 'today' : ''}">
+                <div class="jadwal-header">
+                   <span><i class="far fa-calendar-alt me-2"></i> ${item.tglIndo}</span>
+                   ${isToday ? '<span class="today-badge">Hari Ini</span>' : ''}
+                </div>
+                <div class="jadwal-body">
+                   <div class="jadwal-item">
+                      <div class="jadwal-label"><i class="fas fa-crown text-warning"></i> Luxury Class</div>
+                      <div class="jadwal-val">${item.luxury}</div>
+                   </div>
+                   <div class="jadwal-item">
+                      <div class="jadwal-label"><i class="fas fa-star text-info"></i> Suite Class</div>
+                      <div class="jadwal-val">${item.suite}</div>
+                   </div>
+                   <div class="jadwal-item">
+                      <div class="jadwal-label"><i class="fas fa-users text-success"></i> Crew Meal</div>
+                      <div class="jadwal-val">${item.crewmeal}</div>
+                   </div>
+                </div>
+             </div>`;
           });
        }
-       document.getElementById('rombonganCalendar').innerHTML = html;
+       $('#jadwalMenuContainer').html(html);
     }
 
-    function loadData() {
-      try {
-        const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value;
-        document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('btnFilter').disabled = true;
-
-        fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
-          .then(response => response.json())
-          .then(data => {
-            document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('btnFilter').disabled = false;
-            if (data.error) { alert("Gagal menarik data. Error: " + data.error); return; }
-
-            document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan); document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
-            document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi); document.getElementById('avgDisplay').setAttribute('data-target-value', data.avg);
-            document.getElementById('amprahanDisplay').setAttribute('data-target-value', data.amprahan); document.getElementById('persenSrqDisplay').setAttribute('data-target-value', data.persenSrq);
-            document.getElementById('persenSpDisplay').setAttribute('data-target-value', data.persenSp);
-            
-            document.querySelectorAll('.counter-anim').forEach(el => el.removeAttribute('data-animated')); window.chartTargets = {};
-            renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); renderLineChart(data.trendData); renderBarChart(data.trendData); 
-            renderCategoryMenuCharts(data.tableMenu); renderAmprahanCharts(data.tableAmprahan);
-
-            dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw(); dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
-            
-            // --- LOGIKA WIDGET STOK BARU ---
-            let stAman=0, stWarn=0, stKrit=0;
-            let restockCandidates = []; let fastMovingCandidates = [];
-
-            let stokRows = data.stokData.map(s => {
-               let st = String(s.ket).toLowerCase();
-               if(st.includes('aman')) { stAman++; } 
-               else if(st.includes('warning')) { stWarn++; restockCandidates.push(s); } 
-               else if(st.includes('kritis')) { stKrit++; restockCandidates.push(s); }
-               
-               fastMovingCandidates.push(s);
-               return [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket, s.pengadaan];
-            });
-
-            // Update KPI Stok
-            document.getElementById('stokTotalDisplay').setAttribute('data-target-value', data.stokData.length);
-            document.getElementById('stokAmanDisplay').setAttribute('data-target-value', stAman);
-            document.getElementById('stokWarnDisplay').setAttribute('data-target-value', stWarn);
-            document.getElementById('stokKritDisplay').setAttribute('data-target-value', stKrit);
-
-            // Render Donut Chart
-            renderStokHealthChart(stAman, stWarn, stKrit);
-
-            // Render Restock List (Diurutkan dari Kekuatan Hari Terendah)
-            restockCandidates.sort((a, b) => {
-               let valA = parseFloat(a.status) || 999;
-               let valB = parseFloat(b.status) || 999;
-               return valA - valB;
-            });
-
-            let restockHtml = '';
-            if(restockCandidates.length === 0) {
-                restockHtml = '<div class="text-success text-center mt-5"><i class="fas fa-check-circle fs-1 mb-2"></i><br>Semua stok aman!</div>';
-            } else {
-                restockHtml = '<ul class="list-group list-group-flush mb-0">';
-                restockCandidates.forEach(r => {
-                let isKritis = String(r.ket).toLowerCase().includes('kritis');
-                let badgeClass = isKritis ? 'bg-danger' : 'bg-warning text-dark';
-                let badgeLabel = isKritis ? 'Kritis' : 'Warning';
-                
-                // Menambahkan kata "Hari" jika hanya berupa angka
-                let kekuatanStr = String(r.status).trim();
-                if (!isNaN(parseFloat(kekuatanStr)) && !kekuatanStr.toLowerCase().includes('hari')) {
-                    kekuatanStr += " Hari";
-                }
-
-                restockHtml += `
-                <li class="list-group-item d-flex justify-content-between align-items-start px-0 border-light">
-                    <div>
-                        <div class="fw-bold" style="font-size:0.85rem; color:#1e293b; line-height:1.2;">${r.nama}</div>
-                        <div style="font-size:0.75rem; color:#64748b; margin-top:3px;">Sisa: <b>${r.akhir} ${r.satuan}</b> (${kekuatanStr})</div>
-                    </div>
-                    <span class="badge ${badgeClass} rounded-pill ms-2" style="font-size:0.7rem;">${badgeLabel}</span>
-                </li>`;
-            });
-                restockHtml += '</ul>';
-            }
-            document.getElementById('restockList').innerHTML = restockHtml;
-
-            // Render Fast Moving Chart (Top 5 Keluar Tertinggi)
-            fastMovingCandidates.sort((a,b) => b.keluar - a.keluar);
-            let top5Fast = fastMovingCandidates.slice(0, 5);
-            let fmLabels = top5Fast.map(x => x.nama.substring(0, 15) + '...'); // Potong nama agar muat
-            let fmData = top5Fast.map(x => x.keluar);
-            renderFastMovingChart(fmLabels, fmData);
-
-            // --- END LOGIKA WIDGET STOK BARU ---
-
-            dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
-            dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData).draw(); renderCalendarRombongan(data.rombonganData);
-
-            setTimeout(checkVisibleElements, 100);
-          }).catch(error => {
-            document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('btnFilter').disabled = false;
-            alert("Gagal menarik data. Cek koneksi atau link API Anda.");
-          });
-      } catch(err) {
-        document.getElementById('fullScreenLoader').style.display = 'none'; alert("Terjadi kesalahan sistem: " + err.message);
-      }
+    function animateCounter(id, val) {
+      $({ count: 0 }).animate({ count: val }, {
+        duration: 1500, easing: 'swing',
+        step: function() { $('#' + id).text(Math.floor(this.count)); },
+        complete: function() { $('#' + id).text(val); }
+      });
     }
 
     function renderGaugeCharts(srq, real, sp) {
-      const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); 
-      let colorSrq = (real >= srq && srq > 0) ? '#0284c7' : '#f59e0b'; 
-      gaugeSrqChartObj = new Chart(ctxSrq, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, srq || 1], backgroundColor: [colorSrq, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
-      window.chartTargets['gaugeSrqChart'] = { chart: gaugeSrqChartObj, type: 'doughnut', data: [[real, Math.max(0, srq - real)]] };
-
-      const ctxSp = document.getElementById('gaugeSpChart').getContext('2d'); if (gaugeSpChartObj) gaugeSpChartObj.destroy(); 
-      let colorSp = (real >= sp && sp > 0) ? '#4f46e5' : '#f59e0b'; 
-      gaugeSpChartObj = new Chart(ctxSp, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, sp || 1], backgroundColor: [colorSp, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
-      window.chartTargets['gaugeSpChart'] = { chart: gaugeSpChartObj, type: 'doughnut', data: [[real, Math.max(0, sp - real)]] };
-    }
-    
-    function renderLineChart(trendData) {
-      const ctx = document.getElementById('lineChart').getContext('2d'); if (lineChartObj) lineChartObj.destroy(); 
-      let zeros = trendData.labels.map(() => 0);
-      lineChartObj = new Chart(ctx, { type: 'line', data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: zeros, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: zeros, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
-      window.chartTargets['lineChart'] = { chart: lineChartObj, type: 'line', data: [trendData.srq, trendData.real] };
-    }
-    
-    function renderBarChart(trendData) {
-      const ctx = document.getElementById('barChart').getContext('2d'); if (barChartObj) barChartObj.destroy(); 
-      let zeros = trendData.labels.map(() => 0);
-      barChartObj = new Chart(ctx, { type: 'bar', data: { labels: trendData.labels, datasets: [{ label: 'Total Volume Harian', data: zeros, backgroundColor: '#ea580c', borderRadius: 4 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
-      window.chartTargets['barChart'] = { chart: barChartObj, type: 'bar', data: [trendData.real] };
+      const opt = { rotation: -90, circumference: 180, cutout: '75%', plugins: { legend: { display: false } } };
+      if (gaugeSrqChartObj) gaugeSrqChartObj.destroy();
+      gaugeSrqChartObj = new Chart($('#gaugeSrqChart'), { type: 'doughnut', data: { datasets: [{ data: [real, Math.max(0, srq-real)], backgroundColor: ['#0284c7', '#e2e8f0'] }] }, options: opt });
+      if (gaugeSpChartObj) gaugeSpChartObj.destroy();
+      gaugeSpChartObj = new Chart($('#gaugeSpChart'), { type: 'doughnut', data: { datasets: [{ data: [real, Math.max(0, sp-real)], backgroundColor: ['#4f46e5', '#e2e8f0'] }] }, options: opt });
+      $('#persenSrqDisplay').text(((real/srq)*100).toFixed(1) + '%');
+      $('#persenSpDisplay').text(((real/sp)*100).toFixed(1) + '%');
     }
 
-    function renderCategoryMenuCharts(tableMenu) {
-      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
-      tableMenu.forEach(row => {
-        let kat = row[0]; let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let real = parseInt(row[4]) || 0; 
-        if (real > 0) { 
-          if (kat === 'Fresh Food') dataFF[menu] = (dataFF[menu] || 0) + real;
-          else if (kat === 'Luxury' || kat === 'Fit') dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
-          else if (kat === 'Suite') dataSuite[menu] = (dataSuite[menu] || 0) + real;
-          else if (kat === 'Crew Meal') dataCrew[menu] = (dataCrew[menu] || 0) + real;
-        }
-      });
-      chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981'); chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
-      chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
+    function renderLineChart(trend) {
+      if (lineChartObj) lineChartObj.destroy();
+      lineChartObj = new Chart($('#lineChart'), { type: 'line', data: { labels: trend.labels, datasets: [{ label: 'SRQ', data: trend.srq, borderColor: '#0284c7' }, { label: 'Real', data: trend.real, borderColor: '#10b981' }] }, options: { maintainAspectRatio: false } });
     }
 
-    function renderAmprahanCharts(tableAmprahan) {
-      let dataKA = {}; let dataMenu = {};
-      tableAmprahan.forEach(row => {
-        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); let qty = parseInt(row[3]) || 0;
-        if (qty > 0) { dataKA[kereta] = (dataKA[kereta] || 0) + qty; dataMenu[menu] = (dataMenu[menu] || 0) + qty; }
-      });
-      chartAmprahanKAObj = drawHBarChart('chartAmprahanKA', chartAmprahanKAObj, dataKA, '#ef4444'); chartAmprahanMenuObj = drawHBarChart('chartAmprahanMenu', chartAmprahanMenuObj, dataMenu, '#14b8a6');
-    }
-
-    function drawHBarChart(ctxId, chartObj, dataDict, color) {
-      const ctx = document.getElementById(ctxId).getContext('2d'); if (chartObj) chartObj.destroy();
-      let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
-      let labels = sortedArray.map(x => x[0]); let values = sortedArray.map(x => x[1]); let zeros = values.map(() => 0);
-      let newChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Porsi', data: zeros, backgroundColor: color, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
-      window.chartTargets[ctxId] = { chart: newChart, type: 'barH', data: [values] };
-      return newChart;
-    }
-
-    function aksiLaporan() { 
-      const btn = document.getElementById('btnTelegram'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengirim Laporan ke Telegram..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
-    }
-    
-    function aksiExport() { 
-      const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengekspor Data ke Telegram..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
-    }
-
-    function aksiKirimStok() { 
-      const btn = document.getElementById('btnKirimStok'); const filterVal = document.getElementById('filterStatusStok').value;
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengecek Stok dan Mengirim ke Telegram..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporanStok&filter=${filterVal}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Laporan Terkirim!'; setTimeout(() => { btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }, 3000); })
-      .catch(err => { document.getElementById('fullScreenLoader').style.display = 'none'; alert("Gagal mengirim laporan stok."); btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }); 
+    function renderBarChart(trend) {
+      if (barChartObj) barChartObj.destroy();
+      barChartObj = new Chart($('#barChart'), { type: 'bar', data: { labels: trend.labels, datasets: [{ label: 'Total', data: trend.real, backgroundColor: '#ea580c' }] }, options: { maintainAspectRatio: false } });
     }
   </script>
 </body>

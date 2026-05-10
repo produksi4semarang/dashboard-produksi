@@ -1,975 +1,594 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Produksi Semarang</title>
-  
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
-  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-  
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <style>
-    body { background-color: #f4f7fa; color: #333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; margin: 0; padding: 0; }
-    
-    /* --- SIDEBAR OFFCANVAS --- */
-    .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background-color: #ffffff; border-right: 1px solid #e2e8f0; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1050; padding-top: 80px; overflow-y: auto; box-shadow: none; }
-    .sidebar.open { left: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.1); }
-    .sidebar a { display: block; padding: 14px 25px; color: #475569; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.2s; border-left: 4px solid transparent; }
-    .sidebar a:hover, .sidebar a.active { color: #ea580c; background-color: #f8fafc; border-left: 4px solid #ea580c; }
-    .sidebar-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.4); z-index: 1045; display: none; opacity: 0; transition: opacity 0.3s; backdrop-filter: blur(2px); }
-    .sidebar-backdrop.show { display: block; opacity: 1; }
-    
-    .menu-icon { width: 22px; height: 22px; object-fit: contain; margin-right: 12px; vertical-align: middle; margin-top: -3px; opacity: 0.85; transition: 0.2s; }
-    .sidebar a:hover .menu-icon, .sidebar a.active .menu-icon { opacity: 1; transform: scale(1.05); }
+// =========================================================================
+// DATABASE SPREADSHEET 4 TAHUN (2023 - 2026) FULL LENGKAP
+// =========================================================================
+const SPREADSHEETS = {
+  2023: {
+    0: '1ALNULDBH26O9bbZlYlVHiNcz3OmGgAXyAm9l_gGUbuM', 1: '1t6HYad1bbzNyGYoI5QFSW4f97faksyk_60TNamS5fio', 2: '196aqZBeOUlBTl934vJ9VWc2l_CPj3jYeGpolWs-q498', 3: '1ev-oAq6fEiLQjT0mp_GvjmmbqcfhX9f53mLk6qJbRz4',
+    4: '1aflJi87CnDFWHqSmxIMYdTE97gYvpU247-oGx0PQWs4', 5: '1SAw99KEaymfSGZaVUblMEQ1ADJg1R4GM3psrYckgz2I', 6: '1EMgG_xXNjN2GprDEVocQiyTTYU2hk2WEu7SKzjsBHzY', 7: '1k-F-UCCEftEUBL55E8cfd26YjNxzkQNT5DD37JDWSu4',
+    8: '1WnbTUdMwDz9HGkPsB5pglj36fQn7zzMrqlL3UktkRmQ', 9: '19EPzLmm_enUJ0CLCpKvXcnT-zxJQCOfwBwb9m4DdVcM', 10: '1wGMOpGeb82LuDaOs-IdiIh6Nqjb9HFomzR2GB65IeUI', 11: '1sp7tWfgckh65Aa3R5dGBC7fgb4A4Z_u9hkiRxJNoHFE'
+  },
+  2024: {
+    0: '10HislA11bSQtutgKoncC_bvniDR2kl5FjGP__-Gj_q8', 1: '1kB2Ij_JDBhvkqf4Hgx3oLHLfsgoEkYjtQiTNyqgq0WI', 2: '1ms7TkKURV9dRHMvUeZWLUVM5G-0pC3_O0h12QX33rCs', 3: '1J5wlVN_IsEyL73aGAjF9SLsoSBRtqG--bYcgkQDDJqc',
+    4: '1GaV03psa0ksIfNvh4PWhXrO1cHZl5zcQdtJ_QI1a8tY', 5: '1VFqj_H3KVIeLg3ODz06pQrRyd5bZCuBXNaTgbRerkvk', 6: '1yWIKwgOn4DTBPaOoeTHKAesKhm_dY4TQhVxJl0uhSUs', 7: '11-bNxTJWWPkeo1xvUGtKg-STZ2HChIQ2ByhLK5-962A',
+    8: '1OFY7iGBEfwQ5BSjQ0MNwqsIbKbnIBo3IZmhd60gQAW4', 9: '1R9UGHfooXqP_169H-74zfg7GiOac4yMrcBMxXobCOjA', 10: '1MGI_t4a0ItER86Quz5gt7cwdktNtMS1cI_4pEwI9NZY', 11: '1NCLJs4gYjfaCqg72ZtXSAJg6r4DqQ3RHkEU-7NN24yU'
+  },
+  2025: {
+    0: '19xBjSi_7rWXgeV76rhhqxWjNZLlNPyCowNJ8wuYWGrk', 1: '1Ej0wCJkY-joyFRwaXmSJ3o0L3VoQxMAP164wNAilKDo', 2: '1609hUgNb4eNAkvEIhQijRewU8gSAYEsqETqF7IhNJ74', 3: '1SVqvjLjTKC-tkmzF4QEIOfScGWVhywwxspRGw_hitNc',
+    4: '1bEMVeTVZMNICC-u0THh6dYavXSBgkavYuyQKWR9zaOA', 5: '1byAnpvsoA1_9ptUnw9lo74kEc5eKFYZvmlsmOh2riys', 6: '1n6cd0wQus5T4e6z-GWTfyGwSEhcl2IVv4ATC-HOMRrg', 7: '1NAhonyIKWU9moI26ftkatL5rx_2bm5ffSUTGU8ZsDKw',
+    8: '1Yd-P8jsHp0crpJGdZWOsEtUQKXq27PEPKOKz9gqwYWo', 9: '1sc8QtlcIvEL4KAFqugwMyBIzOdgJkawcHjkCex9qSTk', 10: '1vUbCQY75egXQVJEExeaB3OgKdsZv1v28ZN8a47yKPNE', 11: '1QND79pv9rt2Sxs4JphWg4W5XowkxbIjaTRon_dguDf8'
+  },
+  2026: {
+    0: '1aT-5J48cX0ZxYLRPkT-TTSq0EQX-ntLTJoEkRyclIR0', 1: '1OJroyd8gSPXZJJU2GBKoc6jy4fydGPpLVhkliY6Is3A', 2: '1VC8UXHkihA8Mqb8ok_r_0LIkH1Ngo0785gbvdUWRJ78', 3: '1ahfPbmuBUs5HI0REjfbwI77JFxy309x0E23mJPLz2lI',
+    4: '13_eP9CRy8xpwZAReT2WG4jTd-zngYiyif6bWIwLga7Y', 5: '1ET4SjcN11CuDjchMLBcgADa-0_FCiXq_ba0cgR4H9eU', 6: '1lzk1OdcSCGhqkpqJgUAcSymgYtcRL32Z9B7ewZc4QX4', 7: '1yIoyyRDOAlmXpkfOMKtbhOM0YnRz8bn4BmIXYwgY0cw',
+    8: '15qhnNw94L3IEoibUVJkhgQ7jaHwc3QjVw9D_VdLO3n4', 9: '1644l9jyK0LzcIjHLkdnE4zGfRPKK7v0cO9PB5139m58', 10: '1O4PxhHT7d9HTwmp6Ud7xi-3oUaTfnsZdPDrrdIrl68w',11: '1dtMA8TINs4nKHa0KNOhKn6seRLuBg14A76qpNkeLp-U'
+  }
+};
 
-    .hamburger { width: 26px; height: 18px; cursor: pointer; position: relative; z-index: 1060; margin-right: 15px; }
-    .hamburger span { display: block; position: absolute; height: 3px; width: 100%; background: #1e293b; border-radius: 3px; transition: .25s ease-in-out; }
-    .hamburger span:nth-child(1) { top: 0px; }
-    .hamburger span:nth-child(2) { top: 7px; }
-    .hamburger span:nth-child(3) { top: 14px; }
-    .hamburger.open span:nth-child(1) { top: 7px; transform: rotate(135deg); background: #ea580c; }
-    .hamburger.open span:nth-child(2) { opacity: 0; left: -20px; }
-    .hamburger.open span:nth-child(3) { top: 7px; transform: rotate(-135deg); background: #ea580c; }
+const BOT_TOKEN = '8540943299:AAHj97Ocp2XmoW22p2SmwsnD2-xlc4OdhDU';
+const CHAT_ID = '-1003833193710';
+const SPREADSHEET_AMPRAHAN_ID = '15DH249cPP0Eq2CbqUuE6ylx1-7bNqBNa-tH1jYais4k';
+const SPREADSHEET_STOK_ID = '1aTYCHuRhjoM2bA-SpVfN-BYb7-6_CxjM2tcIzFBhm9A'; 
+const SPREADSHEET_ROMBONGAN_ID = '1GDLMGs8yEUN35v4Ymz_e9SgSClISrSuiytFHXZ1uM3Q';
 
-    /* --- HEADER & CARDS --- */
-    .header-panel { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 15px; z-index: 1040; margin-bottom: 20px; }
-    .card-kpi { background-color: #fff; border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); padding: 15px; display: flex; align-items: center; }
-    .kpi-icon { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px; }
-    .card-container { background-color: #fff; border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); padding: 20px; margin-bottom: 20px;}
-    .kpi-value { font-size: 1.4rem; font-weight: bold; margin: 0; color: #1e293b;}
-    .kpi-label { font-size: 0.85rem; color: #64748b; margin: 0;}
-    .gauge-container { position: relative; width: 100%; display: flex; justify-content: center; }
-    .gauge-text { position: absolute; bottom: 0px; text-align: center; font-size: 1.5rem; font-weight: bold; }
-    .table th { background-color: #f8fafc !important; color: #475569; font-size: 0.9rem; text-align: center !important;}
-    .table td { font-size: 0.9rem; vertical-align: middle; text-align: center !important; }
+// URL WEBAPP TERBARU
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbyfqjGc_wpWz9E1GGs770ZxwMj7uazbz_1TrNJMpLTMbx52oNdU-TPgy-BX3M4Fi_lUxQ/exec'; 
 
-    /* --- PROFIL CARDS & LIGHTBOX --- */
-    .profile-card { background: #fff; border-radius: 15px; padding: 25px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border-bottom: 4px solid #ea580c; }
-    .profile-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .profile-card img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #1e293b; padding: 3px; cursor: zoom-in; transition: transform 0.2s;}
-    .profile-card img:hover { transform: scale(1.05); }
-    
-    .icon-wa { color: #25D366; transition: 0.2s ease; display: inline-block; }
-    .icon-wa:hover { color: #128c7e; transform: scale(1.2); }
-    .icon-ig { background: -webkit-linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: 0.2s ease; display: inline-block; }
-    .icon-ig:hover { transform: scale(1.2); filter: brightness(1.1); }
-    
-    .img-lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); z-index: 99999; justify-content: center; align-items: center; cursor: zoom-out; opacity: 0; animation: fadeIn 0.3s forwards; }
-    .img-lightbox img { max-width: 90%; max-height: 90%; border-radius: 16px; border: 4px solid #fff; box-shadow: 0 15px 35px rgba(0,0,0,0.4); transform: scale(0.7); animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-    @keyframes fadeIn { to { opacity: 1; } }
-    @keyframes popUp { to { transform: scale(1); } }
+function getConfig(y, m) {
+  let cfg = { formatLama: false, cats: [] };
+  if (y == 2023 && m == 0) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 19, t: 20 }, { k: 'RTC', s: 26, e: 34, t: 35 }, { k: 'Fit', s: 40, e: 53, t: 54 }, { k: 'Luxury', s: 59, e: 74, t: 75 }, { k: 'Suite', s: 0, e: 0, t: 0 }, { k: 'Catering', s: 80, e: 87, t: 88 }, { k: 'Lainnya', s: 0, e: 0, t: 0 }, { k: 'Crew Meal', s: 92, e: 105, t: 106 }]; }
+  else if (y == 2023 && (m == 1 || m == 2)) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 15, t: 16 }, { k: 'RTC', s: 34, e: 39, t: 40 }, { k: 'Fit', s: 45, e: 58, t: 59 }, { k: 'Luxury', s: 64, e: 79, t: 80 }, { k: 'Suite', s: 0, e: 0, t: 0 }, { k: 'Catering', s: 85, e: 92, t: 93 }, { k: 'Lainnya', s: 0, e: 0, t: 0 }, { k: 'Crew Meal', s: 98, e: 107, t: 108 }]; }
+  else if (y == 2023 && m >= 3 && m <= 5) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 18, t: 19 }, { k: 'RTC', s: 37, e: 43, t: 44 }, { k: 'Fit', s: 49, e: 62, t: 63 }, { k: 'Luxury', s: 68, e: 83, t: 84 }, { k: 'Suite', s: 0, e: 0, t: 0 }, { k: 'Catering', s: 89, e: 96, t: 97 }, { k: 'Lainnya', s: 0, e: 0, t: 0 }, { k: 'Crew Meal', s: 101, e: 113, t: 114 }]; }
+  else if (y == 2023 && m >= 6 && m <= 8) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 18, t: 19 }, { k: 'RTC', s: 37, e: 45, t: 46 }, { k: 'Fit', s: 51, e: 64, t: 65 }, { k: 'Luxury', s: 70, e: 85, t: 86 }, { k: 'Suite', s: 0, e: 0, t: 0 }, { k: 'Catering', s: 91, e: 98, t: 99 }, { k: 'Lainnya', s: 0, e: 0, t: 0 }, { k: 'Crew Meal', s: 103, e: 116, t: 117 }]; }
+  else if ((y == 2023 && m >= 9) || (y == 2024 && m == 0)) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 19, t: 20 }, { k: 'RTC', s: 26, e: 34, t: 35 }, { k: 'Fit', s: 40, e: 53, t: 54 }, { k: 'Luxury', s: 59, e: 74, t: 75 }, { k: 'Suite', s: 80, e: 102, t: 103 }, { k: 'Catering', s: 107, e: 114, t: 115 }, { k: 'Lainnya', s: 0, e: 0, t: 0 }, { k: 'Crew Meal', s: 119, e: 132, t: 133 }]; }
+  else if (y == 2024 && m == 1) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 22, t: 23 }, { k: 'RTC', s: 29, e: 37, t: 38 }, { k: 'Fit', s: 43, e: 56, t: 57 }, { k: 'Luxury', s: 62, e: 77, t: 78 }, { k: 'Suite', s: 83, e: 105, t: 106 }, { k: 'Catering', s: 110, e: 117, t: 118 }, { k: 'Lainnya', s: 0, e: 0, t: 0 }, { k: 'Crew Meal', s: 122, e: 135, t: 136 }]; }
+  else if (y == 2024 && m == 2) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 29, t: 30 }, { k: 'RTC', s: 36, e: 44, t: 45 }, { k: 'Fit', s: 50, e: 63, t: 64 }, { k: 'Luxury', s: 69, e: 84, t: 85 }, { k: 'Suite', s: 90, e: 112, t: 113 }, { k: 'Catering', s: 117, e: 124, t: 125 }, { k: 'Lainnya', s: 0, e: 0, t: 0 }, { k: 'Crew Meal', s: 129, e: 142, t: 143 }]; }
+  else if (y == 2024 && (m == 3 || m == 4)) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 29, t: 30 }, { k: 'RTC', s: 36, e: 44, t: 45 }, { k: 'Fit', s: 50, e: 63, t: 64 }, { k: 'Luxury', s: 69, e: 84, t: 85 }, { k: 'Suite', s: 90, e: 112, t: 113 }, { k: 'Catering', s: 117, e: 124, t: 125 }, { k: 'Lainnya', s: 129, e: 132, t: 133 }, { k: 'Crew Meal', s: 137, e: 150, t: 151 }]; }
+  else if (y == 2024 && (m == 5 || m == 6)) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 29, t: 30 }, { k: 'RTC', s: 36, e: 44, t: 45 }, { k: 'Fit', s: 50, e: 63, t: 64 }, { k: 'Luxury', s: 69, e: 87, t: 88 }, { k: 'Suite', s: 93, e: 115, t: 116 }, { k: 'Catering', s: 120, e: 127, t: 128 }, { k: 'Lainnya', s: 132, e: 135, t: 136 }, { k: 'Crew Meal', s: 140, e: 153, t: 154 }]; }
+  else if ((y == 2024 && m >= 7) || (y == 2025 && m == 0)) { cfg.formatLama = true; cfg.cats = [{ k: 'Fresh Food', s: 5, e: 29, t: 30 }, { k: 'RTC', s: 36, e: 44, t: 45 }, { k: 'Fit', s: 50, e: 63, t: 64 }, { k: 'Luxury', s: 69, e: 87, t: 88 }, { k: 'Suite', s: 93, e: 125, t: 126 }, { k: 'Catering', s: 130, e: 137, t: 138 }, { k: 'Lainnya', s: 142, e: 145, t: 146 }, { k: 'Crew Meal', s: 150, e: 163, t: 164 }]; }
+  else if (y == 2025 && m >= 1) { 
+    cfg.formatLama = false; 
+    cfg.cats = [{ k: 'Fresh Food', s: 5, e: 29, t: 30 }, { k: 'RTC', s: 36, e: 44, t: 45 }, { k: 'Fit', s: 51, e: 64, t: 65 }, { k: 'Luxury', s: 71, e: 89, t: 90 }, { k: 'Suite', s: 96, e: 128, t: 129 }, { k: 'Catering', s: 134, e: 141, t: 142 }, { k: 'Lainnya', s: 147, e: 150, t: 151 }, { k: 'Crew Meal', s: 156, e: 169, t: 170 }]; 
+  }
+  else if (y == 2026 && m == 0) { 
+    cfg.formatLama = false; 
+    cfg.cats = [{ k: 'Fresh Food', s: 5, e: 36, t: 37 }, { k: 'RTC', s: 43, e: 51, t: 52 }, { k: 'Fit', s: 58, e: 71, t: 72 }, { k: 'Luxury', s: 78, e: 96, t: 97 }, { k: 'Suite', s: 103, e: 145, t: 146 }, { k: 'Catering', s: 151, e: 158, t: 159 }, { k: 'Lainnya', s: 164, e: 167, t: 168 }, { k: 'Crew Meal', s: 173, e: 186, t: 187 }]; 
+  }
+  else { 
+    cfg.formatLama = false; 
+    cfg.cats = [{ k: 'Fresh Food', s: 5, e: 36, t: 37 }, { k: 'RTC', s: 43, e: 51, t: 52 }, { k: 'Fit', s: 58, e: 91, t: 92 }, { k: 'Luxury', s: 98, e: 131, t: 132 }, { k: 'Suite', s: 138, e: 180, t: 181 }, { k: 'Catering', s: 186, e: 193, t: 194 }, { k: 'Lainnya', s: 199, e: 202, t: 203 }, { k: 'Crew Meal', s: 208, e: 221, t: 222 }]; 
+  }
+  return cfg;
+}
 
-    /* --- AGENDA TIMELINE CARDS --- */
-    .calendar-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; }
-    .calendar-card { min-width: 260px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.02); align-self: flex-start;}
-    .calendar-card-today { border: 2px solid #ef4444 !important; background-color: #fffcfc !important; }
-    
-    .timeline-item { border-left: 2px solid #cbd5e1; padding-left: 12px; margin-bottom: 12px; position: relative; }
-    .timeline-item::before { content: ''; position: absolute; left: -6px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; border: 2px solid #fff; }
-    .item-rombongan::before { background: #10b981; }
-    .item-luxury::before { background: #f59e0b; }
-    .item-suite::before { background: #8b5cf6; }
-    .item-crew::before { background: #0ea5e9; }
+// === FUNGSI API PENGHUBUNG ===
+function doGet(e) {
+  if (!e?.parameter?.action) {
+    return ContentService.createTextOutput("API Dashboard Produksi Semarang Aktif");
+  }
+  try {
+    const action = e.parameter.action;
+    const start = e.parameter.start;
+    const end = e.parameter.end;
 
-    /* --- SCROLLBAR CUSTOM --- */
-    .restock-list::-webkit-scrollbar { width: 6px; }
-    .restock-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
-    .restock-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    .restock-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    if (action === "getDashboardData") {
+      const data = getDashboardData(start, end);
+      return ContentService.createTextOutput(JSON.stringify(data)).setMimeType(ContentService.MimeType.JSON);
+    } 
+    else if (action === "kirimLaporan") {
+      kirimLaporanTelegram(start, end, CHAT_ID);
+      return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+    } 
+    else if (action === "exportData") {
+      exportKeTelegram(start, end, CHAT_ID);
+      return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+    }
+    else if (action === "kirimLaporanStok") {
+      kirimLaporanStokTelegram(e.parameter.filter || "", CHAT_ID);
+      return ContentService.createTextOutput(JSON.stringify({status: "success"})).setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch (error) {
+    console.error("doGet Error:", error);
+    return ContentService.createTextOutput(JSON.stringify({error: error.message || String(error)})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
 
-    /* --- UTILITIES --- */
-    .reveal-card { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
-    .reveal-card.visible { opacity: 1; transform: translateY(0); }
-    .admin-only { display: none; } 
+function setWebhookTelegram() {
+  UrlFetchApp.fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${WEBAPP_URL}`);
+}
 
-    /* --- LOADING SCREEN --- */
-    .fullscreen-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(244, 247, 250, 0.75); backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .loader-icon-container { position: relative; width: 100px; height: 100px; }
-    .loader-icon { width: 100%; height: 100%; object-fit: contain; }
-    .bouncing-dots { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
-    .dot { width: 10px; height: 10px; background-color: #ea580c; border-radius: 50%; animation: bounce 0.5s infinite alternate; }
-    .dot:nth-child(2) { animation-delay: 0.15s; }
-    .dot:nth-child(3) { animation-delay: 0.3s; }
-    @keyframes bounce { from { transform: translateY(0); opacity: 0.8; } to { transform: translateY(-15px); opacity: 0.2; } }
-    .loader-text { margin-top: 20px; font-weight: 800; color: #334155; font-size: 1.1rem; letter-spacing: 1px; }
-    
-    .dashboard-footer { text-align: center; padding: 20px 0 10px 0; color: #64748b; font-size: 0.9rem; }
-    .footer-names { font-weight: 800; color: #ea580c; letter-spacing: 1px; margin-top: 5px; }
-  </style>
-</head>
-<body>
+function setTelegramMenu() {
+  let payload = { "commands": [ { "command": "laporan", "description": "Laporan Harian. (Cth: /laporan 4/5)" }, { "command": "export", "description": "Export Data. (Cth: /export 1/5/2026 - 5/5/2026)" } ] };
+  UrlFetchApp.fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setMyCommands`, { "method": "post", "contentType": "application/json", "payload": JSON.stringify(payload) });
+}
 
-  <div id="imageLightbox" class="img-lightbox" onclick="this.style.display='none'">
-     <img id="lightboxImg" src="">
-  </div>
+function sendTextToTelegram(msg, chatId) {
+  UrlFetchApp.fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { "method": "post", "contentType": "application/json", "payload": JSON.stringify({ "chat_id": chatId, "text": msg, "parse_mode": "Markdown" }) });
+}
 
-  <div id="fullScreenLoader" class="fullscreen-loader">
-    <div class="loader-icon-container">
-      <div class="bouncing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-      <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png" alt="Loading" class="loader-icon">
-    </div>
-    <div class="loader-text" id="loaderTextInfo">Memasak Data...</div>
-  </div>
+function isCurrentMonth(dObj) {
+  let nowWIB = new Date(Utilities.formatDate(new Date(), "Asia/Jakarta", "yyyy-MM-dd"));
+  let dObjNorm = new Date(Utilities.formatDate(dObj, "Asia/Jakarta", "yyyy-MM-dd"));
+  return dObjNorm.getMonth() === nowWIB.getMonth() && dObjNorm.getFullYear() === nowWIB.getFullYear();
+}
 
-  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(true)"></div>
-  <div class="sidebar" id="mySidebar">
-    <a href="#" onclick="switchPage('home', this)" class="active"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-home.png" class="menu-icon"> Home</a>
-    <a href="#" onclick="switchPage('laporan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-laporan.png" class="menu-icon"> Laporan Produksi</a>
-    <a href="#" onclick="switchPage('stok', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-stok.png" class="menu-icon"> Penjagaan Stok</a>
-    <a href="#" onclick="switchPage('rombongan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-rombongan.png" class="menu-icon"> Data Rombongan</a>
-    <hr style="border-color: #cbd5e1; margin: 15px 25px;">
-    <a href="#" onclick="switchPage('recipe', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/13763f14a07ee9f6992e1ab10756b3147a6a8b8b/icon-recipe.png" class="menu-icon"> Standard Recipe</a>
-    <hr style="border-color: #cbd5e1; margin: 15px 25px;">
-    <a href="#" onclick="switchPage('kedatangan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-kedatangan.png" class="menu-icon"> Kedatangan Bahan Baku <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
-    <a href="#" onclick="switchPage('pr', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-pr.png" class="menu-icon"> Nomor PR <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
-    <a href="#" onclick="switchPage('bukti', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-bukti.png" class="menu-icon"> Bukti Pembayaran <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
-    <hr style="border-color: #cbd5e1; margin: 15px 25px;">
-    <a href="#" onclick="switchPage('profil', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-profil.png" class="menu-icon"> Profil Tim Admin</a>
-  </div>
-
-  <div class="container-fluid py-3 px-3 px-md-4">
-    
-    <div class="header-panel d-flex justify-content-between align-items-center">
-      <a href="#" onclick="switchPage('home', document.querySelector('.sidebar a')); return false;" class="d-flex align-items-center gap-3 text-decoration-none">
-        <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar(false); event.stopPropagation();">
-          <span></span><span></span><span></span>
-        </div>
-        <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/dashboard.png" alt="Logo" style="height: 55px; width: auto; object-fit: contain; border-radius: 6px; margin-right: 12px;">
-        <h5 class="m-0 text-dark fw-bold d-none d-sm-block" style="letter-spacing: -0.5px;">Produksi Semarang</h5>
-      </a>
-      <button class="btn btn-outline-dark btn-sm fw-bold px-3 py-2" onclick="promptPin()" id="lockIcon"><i class="fas fa-lock me-1"></i> Login Admin</button>
-    </div>
-
-    <div class="card-container mb-4 reveal-card" id="filterRow">
-      <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between w-100">
-        <div class="d-flex flex-wrap gap-2 align-items-center">
-          <span class="text-secondary fw-bold">Dari:</span>
-          <input type="date" id="startTgl" class="form-control form-control-sm border-secondary" style="width: 140px; font-weight: bold;">
-          <span class="text-secondary fw-bold">Sampai:</span>
-          <input type="date" id="endTgl" class="form-control form-control-sm border-secondary" style="width: 140px; font-weight: bold;">
-          <button class="btn btn-sm btn-outline-secondary fw-bold px-3" onclick="loadData()" id="btnFilter">Terapkan Filter</button>
-        </div>
-        <div class="d-flex gap-2">
-          <button class="btn btn-sm btn-info text-white fw-bold px-3 admin-only" onclick="aksiExport()" id="btnExport">Export Data</button>
-          <button class="btn btn-sm btn-primary fw-bold px-3 admin-only" onclick="aksiLaporan()" id="btnTelegram">Buat Laporan</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-kombinasi" class="page-section">
-      <div id="shared-top-content">
-          <div class="row mb-1">
-            <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card"><div class="card-kpi h-100"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/sp.png" class="kpi-icon"><div><p class="kpi-value counter-anim" id="spDisplay">0</p><p class="kpi-label">Sales Plan</p></div></div></div>
-            <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card"><div class="card-kpi h-100"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/srq.png" class="kpi-icon"><div><p class="kpi-value counter-anim" id="srqDisplay">0</p><p class="kpi-label">Total SRQ</p></div></div></div>
-            <div class="col-lg col-md-4 col-sm-6 mb-3 reveal-card"><div class="card-kpi h-100"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/real.png" class="kpi-icon"><div><p class="kpi-value counter-anim" id="realDisplay">0</p><p class="kpi-label">Total Realisasi</p></div></div></div>
-            <div class="col-lg col-md-6 col-sm-6 mb-3 reveal-card"><div class="card-kpi h-100"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/rata.png" class="kpi-icon"><div><p class="kpi-value counter-anim" id="avgDisplay" data-suffix=" / hr">0 / hr</p><p class="kpi-label">Rata-rata / Hari</p></div></div></div>
-            <div class="col-lg col-md-6 col-sm-12 mb-3 reveal-card"><div class="card-kpi h-100"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/amprahan.png" class="kpi-icon"><div><p class="kpi-value counter-anim" id="amprahanDisplay">0</p><p class="kpi-label">Amprahan Kereta</p></div></div></div>
-          </div>
-          
-          <div class="row mb-3 reveal-card" id="home-calendar">
-            <div class="col-12">
-              <div class="card-container" style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
-                 <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-calendar-check text-success"></i> Kalender Agenda Produksi</h6>
-                 <div class="calendar-wrapper" id="agendaTimeline">
-                    </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pencapaian Sales Plan</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSpChart"></canvas><div class="gauge-text counter-anim" id="persenSpDisplay" data-suffix="%" style="color: #4f46e5;">0%</div></div></div></div>
-            <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pemenuhan SRQ</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSrqChart"></canvas><div class="gauge-text counter-anim" id="persenSrqDisplay" data-suffix="%" style="color: #0284c7;">0%</div></div></div></div>
-            <div class="col-lg-6 col-md-12 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
-          </div>
-          <div class="row mt-2 reveal-card">
-            <div class="col-12 mb-3">
-              <div class="card-container">
-                <h6 class="text-secondary fw-bold mb-3 text-center">Komparasi Realisasi Menu Harian</h6>
-                <div class="row">
-                  <div class="col-md-6 mb-4"><h6 class="text-success fw-bold text-center mb-2">Fresh Food</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartFF"></canvas></div></div>
-                  <div class="col-md-6 mb-4"><h6 class="fw-bold text-center mb-2" style="color: #8b5cf6;">Luxury & Fit</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartLuxFit"></canvas></div></div>
-                  <div class="col-md-6 mb-2"><h6 class="fw-bold text-center mb-2" style="color: #f59e0b;">Suite Class</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartSuite"></canvas></div></div>
-                  <div class="col-md-6 mb-2"><h6 class="fw-bold text-center mb-2" style="color: #0284c7;">Crew Meal</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartCrew"></canvas></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-2 reveal-card">
-            <div class="col-12 mb-3">
-              <div class="card-container">
-                <h6 class="text-secondary fw-bold mb-3 text-center">Analisis Amprahan Kereta</h6>
-                <div class="row">
-                  <div class="col-md-6 mb-4"><h6 class="fw-bold text-center mb-2" style="color: #ef4444;">Top Kereta Amprahan</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartAmprahanKA"></canvas></div></div>
-                  <div class="col-md-6 mb-4"><h6 class="fw-bold text-center mb-2" style="color: #14b8a6;">Top Menu Amprahan</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartAmprahanMenu"></canvas></div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-      </div>
-      <div id="laporan-beban-dw" class="row mt-2 reveal-card" style="display:none;">
-        <div class="col-12 mb-3">
-          <div class="card-container h-100">
-            <h6 class="text-secondary fw-bold mb-3 text-center">Analisis Beban Kerja Harian</h6>
-            <div style="position: relative; height: 200px; width: 100%;"><canvas id="barChart"></canvas></div>
-          </div>
-        </div>
-      </div>
-      <div id="laporan-tables" class="row mt-2" style="display:none;">
-        <div class="col-lg-4 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Detail Amprahan Kereta</h6><div class="table-responsive"><table id="tabelAmprahan" class="table table-hover table-bordered w-100"><thead><tr><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div></div>
-        <div class="col-lg-8 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Rincian Produksi Per Menu</h6><div class="table-responsive"><table id="tabelMenu" class="table table-hover table-bordered w-100"><thead><tr><th>Kategori</th><th>Nama Menu</th><th>Sales Plan</th><th>SRQ</th><th>Real</th><th>% SRQ</th><th>% SP</th><th>Evaluasi SP</th></tr></thead><tbody></tbody></table></div></div></div>
-      </div>
-    </div>
-
-    <div id="page-stok" class="page-section" style="display:none;">
-      <div class="row mb-1">
-        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
-           <div class="card-kpi h-100" style="border-left: 5px solid #64748b;"><div class="kpi-icon bg-light"><i class="fas fa-boxes fs-4 text-secondary"></i></div><div><p class="kpi-value counter-anim" id="stokTotalDisplay">0</p><p class="kpi-label">Total Material</p></div></div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
-           <div class="card-kpi h-100" style="border-left: 5px solid #10b981;"><div class="kpi-icon" style="background-color:#ecfdf5;"><i class="fas fa-check-circle fs-4 text-success"></i></div><div><p class="kpi-value counter-anim" id="stokAmanDisplay">0</p><p class="kpi-label">Stok Aman</p></div></div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
-           <div class="card-kpi h-100" style="border-left: 5px solid #f59e0b;"><div class="kpi-icon" style="background-color:#fffbeb;"><i class="fas fa-exclamation-triangle fs-4 text-warning"></i></div><div><p class="kpi-value counter-anim" id="stokWarnDisplay">0</p><p class="kpi-label">Warning</p></div></div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 mb-3 reveal-card">
-           <div class="card-kpi h-100" style="border-left: 5px solid #ef4444;"><div class="kpi-icon" style="background-color:#fef2f2;"><i class="fas fa-radiation fs-4 text-danger"></i></div><div><p class="kpi-value counter-anim" id="stokKritDisplay">0</p><p class="kpi-label">Kritis</p></div></div>
-        </div>
-      </div>
-      <div class="row mb-2">
-        <div class="col-lg-4 mb-3 reveal-card">
-          <div class="card-container h-100 text-center"><h6 class="text-secondary fw-bold mb-4">Kesehatan Stok Hari Ini</h6><div style="position: relative; height: 180px; width: 100%;"><canvas id="stokHealthChart"></canvas></div></div>
-        </div>
-        <div class="col-lg-4 mb-3 reveal-card">
-          <div class="card-container h-100">
-             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-clipboard-list text-danger"></i> Prioritas Restock Material</h6>
-             <div id="restockList" class="restock-list" style="max-height: 200px; overflow-y: auto; padding-right: 5px;"></div>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 mb-3 reveal-card">
-          <div class="card-container h-100">
-             <div class="d-flex justify-content-between align-items-center mb-3">
-               <h6 class="text-secondary fw-bold m-0"><i class="fas fa-chart-line text-primary"></i> Fast-Moving</h6>
-               <select id="fmFilterPengadaan" class="form-select form-select-sm border-secondary fw-bold" style="width: auto; font-size: 0.75rem;">
-                  <option value="Semua">Semua Area</option>
-                  <option value="Pusat">Pusat</option>
-                  <option value="Wilayah">Wilayah</option>
-                  <option value="Dapsen CN">Dapsen CN</option>
-                  <option value="Dapsen YK">Dapsen YK</option>
-               </select>
-             </div>
-             <div style="position: relative; height: 185px; width: 100%;"><canvas id="fastMovingChart"></canvas></div>
-          </div>
-        </div>
-      </div>
-      <div class="row reveal-card">
-        <div class="col-12">
-          <div class="card-container h-100">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-              <h6 class="text-secondary fw-bold m-0">Penjagaan Stok</h6>
-              <div class="d-flex flex-wrap gap-2 align-items-center mt-2 mt-md-0">
-                <select id="filterPengadaanStok" class="form-select form-select-sm border-secondary fw-bold" style="width: auto; cursor: pointer;">
-                  <option value="">Semua Pengadaan</option><option value="Pusat">Pusat</option><option value="Wilayah">Wilayah</option><option value="Dapsen CN">Dapsen CN</option><option value="Dapsen YK">Dapsen YK</option>
-                </select>
-                <select id="filterStatusStok" class="form-select form-select-sm border-secondary fw-bold" style="width: auto; cursor: pointer;">
-                  <option value="">Semua Status</option><option value="Aman">🟢 Aman</option><option value="Warning">🟡 Warning</option><option value="Kritis">🔴 Kritis</option>
-                </select>
-                <button class="btn btn-sm btn-primary fw-bold admin-only" onclick="aksiKirimStok()" id="btnKirimStok"><i class="fab fa-telegram-plane"></i> Kirim Laporan Stok</button>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <table id="tabelStok" class="table table-hover table-bordered w-100">
-                <thead><tr><th>Nomor Material</th><th>Nama Material</th><th>Satuan</th><th>Fisik</th><th>Masuk</th><th>Keluar</th><th>Akhir</th><th>Rata-rata</th><th>Kekuatan (Hari)</th><th>Status</th><th style="display:none;">Pengadaan</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-rombongan" class="page-section" style="display:none;">
-      <div class="row reveal-card mb-3">
-        <div class="col-12">
-          <div class="card-container" style="background-color: #f0fdf4; border: 1px dashed #10b981;">
-             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-train text-success"></i> Agenda Rombongan Terdekat</h6>
-             <div class="calendar-wrapper" id="rombonganTimeline">
-                </div>
-          </div>
-        </div>
-      </div>
-      <div class="row reveal-card">
-        <div class="col-12">
-          <div class="card-container h-100">
-            <h6 class="text-secondary fw-bold mb-3 text-center">Rombongan Kereta</h6>
-            <div class="table-responsive">
-              <table id="tabelRombongan" class="table table-hover table-bordered w-100">
-                <thead><tr><th>No.</th><th>Nama Rombongan</th><th>Tanggal Berangkat</th><th>Nama Kereta</th><th>Menu Makanan</th><th>QTY</th><th>Status Pembayaran</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-recipe" class="page-section" style="display:none;">
-      <div class="card-container reveal-card">
-        <h5 class="fw-bold text-dark mb-4 border-bottom pb-3"><i class="fas fa-book-open text-primary"></i> Standard Recipe & BoM</h5>
-        
-        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-          <li class="nav-item" role="presentation"><button class="nav-link active fw-bold px-4" id="pills-pdf-tab" data-bs-toggle="pill" data-bs-target="#pills-pdf" type="button" role="tab">File PDF Recipe</button></li>
-          <li class="nav-item" role="presentation"><button class="nav-link fw-bold px-4" id="pills-bom-tab" data-bs-toggle="pill" data-bs-target="#pills-bom" type="button" role="tab">Build of Material (BoM)</button></li>
-        </ul>
-        
-        <div class="tab-content" id="pills-tabContent">
-          <div class="tab-pane fade show active" id="pills-pdf" role="tabpanel">
-            <div class="alert alert-info border-0 mt-3">
-              <i class="fas fa-info-circle"></i> File PDF Standard Recipe akan ditampilkan secara langsung di sini. Sambil menunggu tautan dari Anda, ini adalah area penempatannya.
-            </div>
-            <div style="width:100%; height:600px; background:#f1f5f9; border-radius:10px; display:flex; align-items:center; justify-content:center; border:2px dashed #cbd5e1;">
-                <h5 class="text-muted"><i class="fas fa-file-pdf"></i> Area Penampil PDF (Menunggu Link)</h5>
-            </div>
-          </div>
-          <div class="tab-pane fade" id="pills-bom" role="tabpanel">
-             <div class="text-center py-5 mt-4">
-                <i class="fas fa-tools fa-4x text-secondary mb-3"></i>
-                <h4 class="fw-bold text-dark">Fitur BoM Sedang Dipersiapkan</h4>
-                <p class="text-muted mx-auto" style="max-width:500px;">Struktur database untuk Build of Material sedang dimatangkan untuk mendukung sistem kalkulator multi-menu yang akurat.</p>
-             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-profil" class="page-section" style="display:none;">
-      <div class="card-container reveal-card bg-transparent shadow-none" style="padding-top: 10px;">
-        <h4 class="fw-bold text-center mb-5" style="color: #1e293b; letter-spacing: -0.5px;">Tim Admin Produksi Semarang</h4>
-        <div class="row justify-content-center">
-          
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="profile-card mx-auto" style="max-width: 320px;">
-              <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/529f01685f2af2ab60f9837f1c47516cc56192f4/romi.png" alt="Romi" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
-              <h5 class="fw-bold text-dark mb-1">Halim Muhtaromi</h5>
-              <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10140592</span>
-              <div class="d-flex justify-content-center gap-3">
-                <a href="https://wa.me/6289667787099" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
-                <a href="https://instagram.com/halimmuhtaromi" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="profile-card mx-auto" style="max-width: 320px;">
-              <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/529f01685f2af2ab60f9837f1c47516cc56192f4/fandi.png" alt="Fandi" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
-              <h5 class="fw-bold text-dark mb-1">Yusuf Affandi</h5>
-              <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10140907</span>
-              <div class="d-flex justify-content-center gap-3">
-                <a href="https://wa.me/6285291561034" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
-                <a href="https://instagram.com/ysufaffandi" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4 col-md-6 mb-4">
-            <div class="profile-card mx-auto" style="max-width: 320px;">
-              <img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/a4325994d50a388b38de8ab3295c5d085b1fee03/milano.png" alt="Milano" onclick="document.getElementById('lightboxImg').src=this.src; document.getElementById('imageLightbox').style.display='flex';">
-              <h5 class="fw-bold text-dark mb-1">Sulistian Milano A.P</h5>
-              <p class="text-secondary mb-1" style="font-size: 0.9rem;">Staff Admin Production</p>
-              <span class="badge bg-light text-dark border mb-4">NIPKWT. 10143225</span>
-              <div class="d-flex justify-content-center gap-3">
-                <a href="https://wa.me/6285774425019" target="_blank" class="text-decoration-none" title="WhatsApp"><i class="fab fa-whatsapp fs-3 icon-wa"></i></a>
-                <a href="https://instagram.com/milanoap_" target="_blank" class="text-decoration-none" title="Instagram"><i class="fab fa-instagram fs-3 icon-ig"></i></a>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div id="page-soon" class="page-section" style="display:none; text-align:center; padding: 60px 20px;">
-       <h1 style="font-size: 4.5rem; margin-bottom: 20px;">🚧</h1>
-       <h3 class="fw-bold" style="color: #1e293b;">Fitur Sedang Digodok!</h3>
-       <p class="text-secondary mt-3 mx-auto" style="max-width: 500px;">Halaman ini masih dalam tahap pengembangan oleh tim IT Dapur Produksi Semarang. Nantikan kehadiran fiturnya segera!</p>
-       <button class="btn btn-outline-primary mt-4 fw-bold px-4" onclick="switchPage('home')">Kembali ke Home</button>
-    </div>
-
-    <div class="row"><div class="col-12"><div class="dashboard-footer"><p class="mb-0">🍳 Diracik dengan penuh ❤️ oleh Tim Admin Produksi Semarang</p><p class="footer-names">Romi &bull; Fandi &bull; Milano</p><p class="mt-2 text-muted" style="font-size: 0.75rem;">&copy; 2026 Dapur Produksi Semarang. All rights reserved.</p></div></div></div>
-  </div>
-
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyfqjGc_wpWz9E1GGs770ZxwMj7uazbz_1TrNJMpLTMbx52oNdU-TPgy-BX3M4Fi_lUxQ/exec"; 
-
-    window.chartTargets = {};
-    window.rawStokData = []; // Menyimpan raw data stok untuk filter fast-moving
-    
-    let isAdmin = false;
-
-    let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
-    let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
-    let chartAmprahanKAObj = null; let chartAmprahanMenuObj = null;
-    let stokHealthChartObj = null; let fastMovingChartObj = null; 
-    let dtAmprahan = null; let dtMenu = null; let dtStok = null; let dtRombongan = null;
-
-    const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
-    
-    // MICROCOPY KULINER UNTUK AUTO-RETRY
-    const loadingTexts = [
-        "Memasak Data...",
-        "Menambahkan bumbu rahasia...",
-        "Sedang dicicipi Koki...",
-        "Mengaduk bahan di wajan...",
-        "Merapikan meja saji..."
-    ];
-
-    let today = new Date(); let y = 2026; let m = '05'; let d = '01'; 
-    document.getElementById('startTgl').value = `${y}-${m}-${d}`;
-    let nowStr = today.toISOString().split('T')[0];
-    document.getElementById('endTgl').value = nowStr > '2026-05-31' ? '2026-05-31' : nowStr;
-    
-    function promptPin() {
-      if(isAdmin) {
-         isAdmin = false;
-         alert("Sesi Admin telah ditutup. Mode pantau diaktifkan.");
-         document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
-         document.getElementById('lockIcon').innerHTML = '<i class="fas fa-lock me-1"></i> Login Admin';
-         document.getElementById('lockIcon').classList.replace('btn-danger', 'btn-outline-dark');
-      } else {
-         let pin = prompt("Masukkan PIN Keamanan Admin:");
-         if(pin === "0000") {
-            isAdmin = true;
-            document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
-            document.getElementById('lockIcon').innerHTML = '<i class="fas fa-unlock me-1"></i> Logout Admin';
-            document.getElementById('lockIcon').classList.replace('btn-outline-dark', 'btn-danger');
-         } else if(pin !== null) { alert("PIN Salah! Akses Ditolak."); }
+function doPost(e) {
+  let chatId = null;
+  try {
+    if (e && e.postData && e.postData.contents) {
+      let update = JSON.parse(e.postData.contents);
+      
+      if (update.update_id) { 
+        let cache = CacheService.getScriptCache(); 
+        if (cache.get(String(update.update_id))) { return ContentService.createTextOutput("OK"); } 
+        cache.put(String(update.update_id), "true", 21600); 
       }
-    }
-
-    function switchPage(pageId, element = null) {
-       document.querySelectorAll('.sidebar a').forEach(el => el.classList.remove('active'));
-       if(element) element.classList.add('active');
-
-       document.querySelectorAll('.page-section').forEach(p => p.style.display = 'none');
-
-       let targetId = 'page-' + pageId;
-       if (pageId === 'home' || pageId === 'laporan') targetId = 'page-kombinasi';
-       else if (['kedatangan', 'pr', 'bukti'].includes(pageId)) targetId = 'page-soon';
-
-       document.getElementById(targetId).style.display = 'block';
-
-       // Atur Filter Display: HANYA tampil di home & laporan
-       if (pageId === 'home' || pageId === 'laporan') {
-          document.getElementById('filterRow').style.display = 'flex';
-       } else {
-          document.getElementById('filterRow').style.display = 'none';
-       }
-
-       const sharedTop = document.getElementById('shared-top-content');
-       const tablesLaporan = document.getElementById('laporan-tables');
-       const bebanDw = document.getElementById('laporan-beban-dw');
-       const homeCalendar = document.getElementById('home-calendar');
-
-       if (pageId === 'home') {
-           sharedTop.style.display = 'block'; tablesLaporan.style.display = 'none'; bebanDw.style.display = 'none';
-           if(homeCalendar) homeCalendar.style.display = 'flex';
-       } else if (pageId === 'laporan') {
-           sharedTop.style.display = 'block'; tablesLaporan.style.display = 'flex'; bebanDw.style.display = 'flex';
-           if(homeCalendar) homeCalendar.style.display = 'none';
-       }
-
-       setTimeout(() => {
-          $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
-          document.querySelectorAll('#' + targetId + ' .reveal-card').forEach(card => card.classList.add('visible'));
-          checkVisibleElements();
-       }, 150);
-
-       toggleSidebar(true);
-    }
-
-    function toggleSidebar(forceClose = false) {
-       const sb = document.getElementById('mySidebar'); const hb = document.getElementById('hamburgerBtn'); const bd = document.getElementById('sidebarBackdrop');
-       if(forceClose || sb.classList.contains('open')) { sb.classList.remove('open'); hb.classList.remove('open'); bd.classList.remove('show'); } 
-       else { sb.classList.add('open'); hb.classList.add('open'); bd.classList.add('show'); }
-    }
-
-    function getTglIndoPendek(dateObj) { 
-        const blnPd = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']; 
-        return `${dateObj.getDate()} ${blnPd[dateObj.getMonth()]} ${dateObj.getFullYear()}`; 
-    }
-
-    function checkVisibleElements() {
-      document.querySelectorAll('.reveal-card.visible').forEach(card => {
-        card.querySelectorAll('.counter-anim').forEach(counter => {
-          let target = counter.getAttribute('data-target-value');
-          if (target !== null && !counter.getAttribute('data-animated')) { animateCounter(counter.id, target, 1500, counter.getAttribute('data-suffix') || ""); counter.setAttribute('data-animated', 'true'); }
-        });
-        card.querySelectorAll('canvas').forEach(canvas => {
-          let chartId = canvas.id;
-          if (window.chartTargets && window.chartTargets[chartId]) {
-            let info = window.chartTargets[chartId];
-            if (info.type === 'doughnut' || info.type === 'barH') { info.chart.data.datasets[0].data = info.data[0]; } 
-            else if (info.type === 'line' || info.type === 'bar') { info.chart.data.datasets.forEach((ds, i) => ds.data = info.data[i]); }
-            info.chart.update(); delete window.chartTargets[chartId]; 
-          }
-        });
-      });
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      let triggered = false; entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); triggered = true; } });
-      if (triggered) setTimeout(checkVisibleElements, 50);
-    }, { threshold: 0.1 });
-
-    $(document).ready(function() {
-      try {
-        document.querySelectorAll('.reveal-card').forEach(card => observer.observe(card));
-
-        dtAmprahan = $('#tabelAmprahan').DataTable({ pageLength: 5, lengthMenu: [5, 10, 25] });
-        dtMenu = $('#tabelMenu').DataTable({ 
-          pageLength: 5, lengthMenu: [5, 10, 25],
-          columnDefs: [ { targets: 7, render: function(data, type, row) { let selisih = parseInt(data); if (selisih > 0) return `<span class="text-danger fw-bold">+${selisih} (Over)</span>`; if (selisih < 0) return `<span class="text-warning">${selisih} (Under)</span>`; return `<span class="text-success fw-bold">Sesuai</span>`; } } ]
-        });
-
-        dtStok = $('#tabelStok').DataTable({
-          pageLength: 10, lengthMenu: [5, 10, 25, 50],
-          columnDefs: [
-            { targets: 6, render: function(data, type, row) { return `<div class="badge w-100 py-2" style="background-color: #dbeafe; color: #0369a1; border-radius: 6px; font-weight: 800; border: 1px solid #bae6fd; font-size: 0.9rem;">${data}</div>`; } },
-            { targets: 8, render: function(data, type, row) {
-                let val = String(data).trim(); let num = parseFloat(val); let textToShow = val;
-                if (!isNaN(num) && val.toLowerCase() !== 'stok utuh' && !val.toLowerCase().includes('hari')) { textToShow = num + " Hari"; }
-                return `<span class="badge w-100 py-2" style="background-color: #e0e7ff; color: #4f46e5; border: 1px solid #c7d2fe;">${textToShow}</span>`;
+      
+      if (update.message && update.message.text) {
+        let text = update.message.text.trim(); 
+        chatId = update.message.chat.id; 
+        let cmdMatch = text.match(/^\/(\w+)/);
+        
+        if (cmdMatch) {
+          let command = cmdMatch[1].toLowerCase(); 
+          let argsStr = text.replace(/^\/\w+(?:@\w+)?/, '').trim();
+          
+          if (command === 'laporan') {
+            let targetDate = new Date();
+            if (argsStr !== "") {
+              let tglParts = argsStr.split("/"); let now = new Date();
+              let d = tglParts[0] ? parseInt(tglParts[0]) : now.getDate(); 
+              let m = tglParts[1] ? parseInt(tglParts[1]) - 1 : now.getMonth(); 
+              let y = tglParts[2] ? parseInt(tglParts[2]) : now.getFullYear();
+              if (y < 100) y += 2000; targetDate = new Date(y, m, d);
+              if (isNaN(targetDate.getTime())) { 
+                sendTextToTelegram("⚠️ *Format Tanggal Salah*\nGunakan angka, contoh: `/laporan 4/5`", chatId); 
+                return ContentService.createTextOutput("OK"); 
               }
-            },
-            { targets: 9, render: function(data, type, row) {
-                let s = String(data).toLowerCase();
-                if (s.includes('aman')) return `<span class="badge bg-success w-100 py-2">🟢 AMAN</span>`;
-                if (s.includes('warning')) return `<span class="badge bg-warning text-dark w-100 py-2">🟡 WARNING</span>`;
-                if (s.includes('kritis')) return `<span class="badge bg-danger w-100 py-2">🔴 KRITIS</span>`;
-                return `<span class="badge bg-secondary w-100 py-2">${data}</span>`;
-              }
-            },
-            { targets: 10, visible: false }
-          ]
-        });
+            }
 
-        dtRombongan = $('#tabelRombongan').DataTable({
-          pageLength: 10, lengthMenu: [5, 10, 25, 50],
-          columnDefs: [
-            { targets: 6, render: function(data, type, row) {
-                let s = String(data).toLowerCase(); if (s === '') return '-';
-                if (s.includes('lunas') || s.includes('paid')) return `<span class="badge bg-success px-3 py-2">${data}</span>`;
-                if (s.includes('dp') || s.includes('sebagian')) return `<span class="badge bg-warning text-dark px-3 py-2">${data}</span>`;
-                if (s.includes('belum') || s.includes('batal')) return `<span class="badge bg-danger px-3 py-2">${data}</span>`;
-                return `<span class="badge bg-secondary px-3 py-2">${data}</span>`;
-              }
-            },
-            { targets: 7, visible: false } 
-          ],
-          drawCallback: function (settings) {
-            var api = this.api(); var rows = api.rows({ page: 'current' }).nodes();
-            var last = null; var referenceRows = []; 
-            api.column(1, { page: 'current' }).data().each(function (group, i) {
-              if (last !== group) { referenceRows.push({ index: i, rowspan: 1 }); last = group; } 
-              else { referenceRows[referenceRows.length - 1].rowspan++; }
-            });
-            for (var i = 0; i < rows.length; i++) {
-              var isRefRow = false;
-              for(var j=0; j<referenceRows.length; j++){
-                if(referenceRows[j].index === i){
-                  isRefRow = true; var rs = referenceRows[j].rowspan;
-                  if (rs > 1) {
-                      $(rows[i]).find('td:eq(0)').attr('rowspan', rs).css('vertical-align', 'middle');
-                      $(rows[i]).find('td:eq(1)').attr('rowspan', rs).css('vertical-align', 'middle');
-                      $(rows[i]).find('td:eq(2)').attr('rowspan', rs).css('vertical-align', 'middle');
-                      $(rows[i]).find('td:eq(3)').attr('rowspan', rs).css('vertical-align', 'middle');
-                      $(rows[i]).find('td:eq(6)').attr('rowspan', rs).css('vertical-align', 'middle');
-                  } break;
-                }
-              }
-              if (!isRefRow) {
-                $(rows[i]).find('td:eq(0)').hide(); $(rows[i]).find('td:eq(1)').hide();
-                $(rows[i]).find('td:eq(2)').hide(); $(rows[i]).find('td:eq(3)').hide(); $(rows[i]).find('td:eq(6)').hide();
+            if (!isCurrentMonth(targetDate)) {
+              sendTextToTelegram("⚠️ *Pemberitahuan*\nUntuk mencegah server lambat, bot Telegram saat ini hanya melayani permintaan data untuk *Bulan Berjalan*.\n\nUntuk melihat laporan bulan sebelumnya, silakan akses melalui tombol di *Web Dashboard* karena server di sana lebih optimal. 🙏", chatId);
+              return ContentService.createTextOutput("OK");
+            }
+
+            sendTextToTelegram("⏳ _Sedang membaca data Excel, mohon tunggu..._", chatId);
+            let dateStr = formatDate(targetDate); 
+            kirimLaporanTelegram(dateStr, dateStr, chatId);
+          } 
+          else if (command === 'export') {
+            if (argsStr === "") { 
+              sendTextToTelegram("⏳ _Sedang menyusun export data, mohon tunggu..._", chatId);
+              let dateStr = formatDate(new Date()); 
+              exportKeTelegram(dateStr, dateStr, chatId);
+            } else {
+              let parts = argsStr.split("-").map(s => s.trim()); let dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/; 
+              if (parts.length === 1) {
+                let match = parts[0].match(dateRegex);
+                if (match) { 
+                  let tDateObj = new Date(match[3], parseInt(match[2]) - 1, match[1]);
+                  if (!isCurrentMonth(tDateObj)) {
+                    sendTextToTelegram("⚠️ *Pemberitahuan*\nBot Telegram hanya melayani export data untuk *Bulan Berjalan*. Silakan gunakan Web Dashboard untuk bulan lainnya.", chatId);
+                    return ContentService.createTextOutput("OK");
+                  }
+                  sendTextToTelegram("⏳ _Sedang menyusun export data, mohon tunggu..._", chatId);
+                  let tDate = formatDate(tDateObj); 
+                  exportKeTelegram(tDate, tDate, chatId); 
+                } 
+                else { sendTextToTelegram("⚠️ *Format Tanggal Salah*\nCth: `/export 01/05/2026`", chatId); }
+              } else if (parts.length === 2) {
+                let match1 = parts[0].match(dateRegex); let match2 = parts[1].match(dateRegex);
+                if (match1 && match2) { 
+                  let d1Obj = new Date(match1[3], parseInt(match1[2]) - 1, match1[1]); 
+                  let d2Obj = new Date(match2[3], parseInt(match2[2]) - 1, match2[1]);
+                  if (!isCurrentMonth(d1Obj) || !isCurrentMonth(d2Obj)) {
+                    sendTextToTelegram("⚠️ *Pemberitahuan*\nBot Telegram hanya melayani export rentang data untuk *Bulan Berjalan*. Silakan gunakan Web Dashboard untuk bulan lainnya.", chatId);
+                    return ContentService.createTextOutput("OK");
+                  }
+                  sendTextToTelegram("⏳ _Sedang menyusun export data, mohon tunggu..._", chatId);
+                  let d1 = formatDate(d1Obj); let d2 = formatDate(d2Obj); 
+                  exportKeTelegram(d1, d2, chatId); 
+                } 
+                else { sendTextToTelegram("⚠️ *Format Rentang Salah*\nCth: `/export 01/05/2026 - 05/05/2026`", chatId); }
               }
             }
           }
-        });
-
-        $('#filterStatusStok').on('change', function() { dtStok.column(9).search(this.value).draw(); });
-        $('#filterPengadaanStok').on('change', function() { dtStok.column(10).search(this.value).draw(); });
-
-        // Event Listener Khusus untuk Dropdown Fast Moving Chart
-        $('#fmFilterPengadaan').on('change', function() { updateFastMovingChart(this.value); });
-
-        switchPage('home'); 
-        loadData();
-      } catch(e) {
-        document.getElementById('fullScreenLoader').style.display = 'none';
-        alert("Sistem mengalami kendala saat inisialisasi: " + e.message);
+        }
       }
+    }
+  } catch (error) {
+    if (chatId) { sendTextToTelegram("❌ *Terjadi Error Sistem:*\n`" + error.message + "`", chatId); }
+  }
+  return ContentService.createTextOutput("OK");
+}
+
+function formatDate(date) { return Utilities.formatDate(date, "Asia/Jakarta", "yyyy-MM-dd"); }
+function cleanTxt(str) { return String(str).replace(/[_*`\[\]]/g, ''); } 
+
+function getPeriodeTeks(startDate, endDate, numDays) {
+  const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  let d1 = startDate.getDate(), m1 = bulan[startDate.getMonth()], y1 = startDate.getFullYear(); let d2 = endDate.getDate(), m2 = bulan[endDate.getMonth()], y2 = endDate.getFullYear();
+  if (d1 === d2 && m1 === m2 && y1 === y2) { return `Tanggal ${d1} ${m1} ${y1}`; } else if (m1 === m2 && y1 === y2) { return `Periode: ${d1} - ${d2} ${m1} ${y1} (${numDays} Hari)`; } else if (y1 === y2) { return `Periode: ${d1} ${m1} - ${d2} ${m2} ${y1} (${numDays} Hari)`; } else { return `Periode: ${d1} ${m1} ${y1} - ${d2} ${m2} ${y2} (${numDays} Hari)`; }
+}
+function getTglIndoPendek(dateObj) { const blnPd = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']; return `${dateObj.getDate()} ${blnPd[dateObj.getMonth()]} ${dateObj.getFullYear()}`; }
+
+
+// === OPTIMASI GET DATA ===
+function getStokData() {
+  let data = [];
+  try {
+    let ss = SpreadsheetApp.openById(SPREADSHEET_STOK_ID);
+    let sheet = ss.getSheetByName('PENJAGAAN_STOK');
+    if (!sheet) return data;
+    
+    let raw = sheet.getDataRange().getValues();
+    raw.shift(); 
+    
+    for (let r of raw) {
+      if (!r[1]) continue; 
+      let rataVal = Number(r[7]);
+      let rataBulat = isNaN(rataVal) ? 0 : Math.ceil(rataVal);
+      data.push({ no: r[0], nama: r[1], satuan: r[2], fisik: r[3], masuk: r[4], keluar: r[5], akhir: r[6], rata: rataBulat, status: r[8], ket: r[9], pengadaan: r[10] });
+    }
+  } catch (e) { console.log("Gagal memuat data stok: " + e); }
+  return data;
+}
+
+function kirimLaporanStokTelegram(filterVal, targetChatId) {
+  let stok = getStokData();
+  let filtered;
+  let judulFilter;
+  let filterNorm = String(filterVal || "").toLowerCase().trim();
+
+  if (filterNorm === "kritis") {
+    filtered = stok.filter(s => String(s.ket).toLowerCase().includes("kritis"));
+    judulFilter = "🛑 STATUS KRITIS SAJA";
+  } else if (filterNorm === "warning") {
+    filtered = stok.filter(s => String(s.ket).toLowerCase().includes("warning"));
+    judulFilter = "⚠️ STATUS WARNING SAJA";
+  } else {
+    filtered = stok.filter(s => {
+      let st = String(s.ket).toLowerCase();
+      return st.includes("kritis") || st.includes("warning");
     });
+    judulFilter = "⚠️ KRITIS & WARNING";
+  }
 
-    function animateCounter(elementId, targetValue, duration = 1500, suffix = "") {
-      const element = document.getElementById(elementId); if(!element) return;
-      const target = parseFloat(targetValue); if(isNaN(target)) { element.innerText = targetValue + suffix; return; }
-      const isFloat = String(targetValue).includes('.'); let startTimestamp = null;
-      const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp; const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        const easeOut = 1 - Math.pow(1 - progress, 4); const current = easeOut * target;
-        if(isFloat) { element.innerText = current.toFixed(1) + suffix; } else { element.innerText = Math.floor(current) + suffix; }
-        if (progress < 1) { window.requestAnimationFrame(step); } else { element.innerText = targetValue + suffix; }
-      }; window.requestAnimationFrame(step);
-    }
+  let kritis  = filtered.filter(s => String(s.ket).toLowerCase().includes("kritis"));
+  let warning = filtered.filter(s => String(s.ket).toLowerCase().includes("warning"));
 
-    // --- FUNGSI UPDATE FAST-MOVING BERDASARKAN FILTER DROPDOWN ---
-    function updateFastMovingChart(pengadaanFilter) {
-       let candidates = [...window.rawStokData];
-       
-       if (pengadaanFilter !== "Semua") {
-           // Menggunakan includes untuk menghindari error spasi di Excel
-           candidates = candidates.filter(s => String(s.pengadaan).toLowerCase().includes(pengadaanFilter.toLowerCase()));
-       }
+  if (kritis.length === 0 && warning.length === 0) {
+    sendToTelegramChunked(
+      "✅ *LAPORAN STOK BAHAN BAKU*\n_Semua bahan baku dalam kondisi aman. Tidak ada item yang perlu segera ditindaklanjuti._\n\nTerimakasih🙏",
+      targetChatId
+    );
+    return;
+  }
 
-       candidates.sort((a,b) => (parseFloat(b.keluar) || 0) - (parseFloat(a.keluar) || 0)); 
-       let top5Fast = candidates.slice(0, 5);
-       
-       let fmLabels = top5Fast.map(x => String(x.nama).substring(0, 15) + '...'); 
-       let fmData = top5Fast.map(x => parseFloat(x.keluar) || 0);
-       
-       renderFastMovingChart(fmLabels, fmData);
-    }
+  let tglWIB = Utilities.formatDate(new Date(), "Asia/Jakarta", "dd MMMM yyyy, HH:mm");
+  let msg = `📦 *LAPORAN STOK BAHAN BAKU*\n_${judulFilter}_\n_${tglWIB} WIB_\n\n`;
 
-    function renderStokHealthChart(aman, warn, krit) {
-       const ctx = document.getElementById('stokHealthChart').getContext('2d'); if(stokHealthChartObj) stokHealthChartObj.destroy();
-       let isEmpty = (aman === 0 && warn === 0 && krit === 0);
-       let dataVals = isEmpty ? [1] : [aman, warn, krit]; let bgColors = isEmpty ? ['#e2e8f0'] : ['#10b981', '#f59e0b', '#ef4444'];
-       let labels = isEmpty ? ['Tidak Ada Data'] : ['Aman', 'Warning', 'Kritis'];
-       stokHealthChartObj = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: dataVals, backgroundColor: bgColors, borderWidth: 0 }] }, options: { cutout: '70%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: {font: {weight: 'bold'}} } } } });
-    }
+  if (kritis.length > 0) {
+    msg += `🛑 *KRITIS — Segera Order!*\n`;
+    kritis.forEach(s => {
+      let pengadaan = s.pengadaan ? ` | PIC: ${cleanTxt(String(s.pengadaan))}` : "";
+      msg += `- ${cleanTxt(s.nama)}: Sisa *${s.akhir} ${s.satuan}* (Rata-rata pakai: ${s.rata}/hari${pengadaan})\n`;
+    });
+    msg += `\n`;
+  }
 
-    // --- FUNGSI RENDER GRAFIK FAST-MOVING ---
-    function renderFastMovingChart(labels, data) {
-       const ctx = document.getElementById('fastMovingChart').getContext('2d'); 
-       
-       if(fastMovingChartObj) fastMovingChartObj.destroy();
-       
-       let zeros = data.map(() => 0);
-       fastMovingChartObj = new Chart(ctx, { 
-           type: 'bar', 
-           data: { labels: labels, datasets: [{ label: 'Total Keluar', data: zeros, backgroundColor: '#3b82f6', borderRadius: 4 }] }, 
-           options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } 
-       });
+  if (warning.length > 0) {
+    msg += `⚠️ *WARNING — Siap-siap Order*\n`;
+    warning.forEach(s => {
+      let pengadaan = s.pengadaan ? ` | PIC: ${cleanTxt(String(s.pengadaan))}` : "";
+      msg += `- ${cleanTxt(s.nama)}: Sisa *${s.akhir} ${s.satuan}* (Rata-rata pakai: ${s.rata}/hari${pengadaan})\n`;
+    });
+  }
 
-       let isVisible = document.getElementById('fastMovingChart').closest('.reveal-card').classList.contains('visible');
-       
-       if(isVisible) {
-           fastMovingChartObj.data.datasets[0].data = data;
-           fastMovingChartObj.update();
-       } else {
-           window.chartTargets['fastMovingChart'] = { chart: fastMovingChartObj, type: 'barH', data: [data] };
-       }
-    }
+  msg += `\nTotal: *${kritis.length} Kritis, ${warning.length} Warning*\nMohon tim pengadaan segera menindaklanjuti. Terimakasih🙏`;
+  sendToTelegramChunked(msg, targetChatId);
+}
 
-    // --- AGENDA TIMELINE (GABUNGAN DI HOME) ---
-    function renderAgendaTimeline(dataRombongan, dataJadwal) {
-       const el = document.getElementById('agendaTimeline');
-       if (!dataRombongan || !dataJadwal) { el.innerHTML = '<div class="text-secondary p-3 fst-italic">Data belum tersedia.</div>'; return; }
+// === PERBAIKAN: MEMBACA SHEET "JADWAL_MENU" DI SPREADSHEET INTERNAL ===
+function getJadwalMenuData() {
+  let data = [];
+  try {
+    let ss = SpreadsheetApp.getActiveSpreadsheet(); // Membaca Spreadsheet tempat script ini berada
+    let sheet = ss.getSheetByName('JADWAL_MENU'); 
+    if(!sheet) return data;
 
-       let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
-       let threeDaysLaterTime = todayTime + (3 * 24 * 60 * 60 * 1000); 
-       let todayStrIndo = getTglIndoPendek(today);
-
-       let grouped = {}; let dateArr = []; let tempAdded = new Set();
-
-       let upcomingRombongan = dataRombongan.filter(r => r[7] >= todayTime);
-       upcomingRombongan.forEach(r => {
-          let tglStr = r[2]; let tglTime = r[7];
-          if(!grouped[tglStr]) { grouped[tglStr] = { rombongan: [], luxury: '', suite: '', cm: '' }; }
-          let existingRomb = grouped[tglStr].rombongan.find(x => x.nama === r[1]);
-          if(existingRomb) { existingRomb.items.push({menu: r[4], qty: r[5]}); }
-          else { grouped[tglStr].rombongan.push({ nama: r[1], kereta: r[3], items: [{menu: r[4], qty: r[5]}] }); }
-          if(!tempAdded.has(tglStr)) { dateArr.push({ label: tglStr, time: tglTime }); tempAdded.add(tglStr); }
-       });
-
-       let validJadwal = dataJadwal.filter(j => j.time >= todayTime && j.time <= threeDaysLaterTime);
-       validJadwal.forEach(j => {
-          let tglStr = j.tglStr; let tglTime = j.time;
-          if(!grouped[tglStr]) { grouped[tglStr] = { rombongan: [], luxury: '', suite: '', cm: '' }; }
-          grouped[tglStr].luxury = j.lux; grouped[tglStr].suite = j.suite; grouped[tglStr].cm = j.cm;
-          if(!tempAdded.has(tglStr)) { dateArr.push({ label: tglStr, time: tglTime }); tempAdded.add(tglStr); }
-       });
-
-       dateArr.sort((a,b) => a.time - b.time);
-
-       let html = '';
-       if(dateArr.length === 0) {
-          html = '<div class="text-secondary p-3 fst-italic">Tidak ada agenda terdekat.</div>';
-       } else {
-          dateArr.forEach(dObj => {
-             let tgl = dObj.label; let g = grouped[tgl]; let cardsHtml = '';
-             let isToday = (tgl === todayStrIndo);
-             
-             g.rombongan.forEach(romb => {
-                 let liHtml = romb.items.map(i => `${i.menu} <b>(${i.qty})</b>`).join(', ');
-                 cardsHtml += `<div class="timeline-item item-rombongan"><div class="fw-bold" style="font-size:0.85rem; color:#1e293b;">${romb.nama}</div><div style="font-size:0.75rem; color:#10b981; font-weight:700;"><i class="fas fa-train"></i> ${romb.kereta}</div><div style="font-size:0.8rem; color:#475569;">${liHtml}</div></div>`;
-             });
-
-             if(g.luxury) { cardsHtml += `<div class="timeline-item item-luxury"><div class="fw-bold" style="font-size:0.8rem; color:#f59e0b;"><i class="fas fa-crown"></i> Luxury</div><div style="font-size:0.8rem; color:#475569;">${g.luxury}</div></div>`; }
-             if(g.suite) { cardsHtml += `<div class="timeline-item item-suite"><div class="fw-bold" style="font-size:0.8rem; color:#8b5cf6;"><i class="fas fa-gem"></i> Suite Class</div><div style="font-size:0.8rem; color:#475569;">${g.suite}</div></div>`; }
-             if(g.cm) { cardsHtml += `<div class="timeline-item item-crew"><div class="fw-bold" style="font-size:0.8rem; color:#0ea5e9;"><i class="fas fa-users"></i> Crew Meal</div><div style="font-size:0.8rem; color:#475569;">${g.cm}</div></div>`; }
-
-             let cardClass = isToday ? 'calendar-card calendar-card-today' : 'calendar-card';
-             let badgeHtml = isToday ? '<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>' : '';
-             
-             html += `<div class="${cardClass}"><h5 class="mb-3 pb-2" style="border-bottom: 2px dashed #e2e8f0; color:#334155;"><i class="far fa-calendar-alt text-success"></i> ${tgl} ${badgeHtml}</h5>${cardsHtml}</div>`;
-          });
-       }
-       el.innerHTML = html;
-    }
-
-    // --- AGENDA EKSKLUSIF ROMBONGAN (DI HALAMAN DATA ROMBONGAN) ---
-    function renderRombonganTimeline(dataRombongan) {
-       const el = document.getElementById('rombonganTimeline');
-       if (!dataRombongan) return;
-
-       let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
-       let todayStrIndo = getTglIndoPendek(today);
-
-       let grouped = {}; let dateArr = []; let tempAdded = new Set();
-       let upcomingRombongan = dataRombongan.filter(r => r[7] >= todayTime);
-       
-       upcomingRombongan.forEach(r => {
-          let tglStr = r[2]; let tglTime = r[7];
-          if(!grouped[tglStr]) { grouped[tglStr] = { rombongan: [] }; }
-          let existingRomb = grouped[tglStr].rombongan.find(x => x.nama === r[1]);
-          if(existingRomb) { existingRomb.items.push({menu: r[4], qty: r[5]}); }
-          else { grouped[tglStr].rombongan.push({ nama: r[1], kereta: r[3], items: [{menu: r[4], qty: r[5]}] }); }
-          if(!tempAdded.has(tglStr)) { dateArr.push({ label: tglStr, time: tglTime }); tempAdded.add(tglStr); }
-       });
-
-       dateArr.sort((a,b) => a.time - b.time);
-
-       let html = '';
-       if(dateArr.length === 0) {
-          html = '<div class="text-secondary p-3 fst-italic">Tidak ada jadwal rombongan terdekat.</div>';
-       } else {
-          dateArr.forEach(dObj => {
-             let tgl = dObj.label; let g = grouped[tgl]; let cardsHtml = '';
-             let isToday = (tgl === todayStrIndo);
-             
-             g.rombongan.forEach(romb => {
-                 let liHtml = romb.items.map(i => `${i.menu} <b>(${i.qty})</b>`).join(', ');
-                 cardsHtml += `<div class="timeline-item item-rombongan"><div class="fw-bold" style="font-size:0.85rem; color:#1e293b;">${romb.nama}</div><div style="font-size:0.75rem; color:#10b981; font-weight:700;"><i class="fas fa-train"></i> ${romb.kereta}</div><div style="font-size:0.8rem; color:#475569;">${liHtml}</div></div>`;
-             });
-
-             let cardClass = isToday ? 'calendar-card calendar-card-today' : 'calendar-card';
-             let badgeHtml = isToday ? '<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>' : '';
-             
-             html += `<div class="${cardClass}"><h5 class="mb-3 pb-2" style="border-bottom: 2px dashed #e2e8f0; color:#334155;"><i class="far fa-calendar-alt text-success"></i> ${tgl} ${badgeHtml}</h5>${cardsHtml}</div>`;
-          });
-       }
-       el.innerHTML = html;
-    }
-
-    // === TANGKAPAN ERROR DENGAN SISTEM AUTO-RETRY SILENT & MICROCOPY KULINER ===
-    function loadData(retryCount = 0) {
-      const start = document.getElementById('startTgl').value; 
-      const end = document.getElementById('endTgl').value;
+    let raw = sheet.getDataRange().getValues();
+    raw.shift();
+    
+    for (let r of raw) {
+      let tgl = new Date(r[0]);
+      if (isNaN(tgl.getTime())) continue;
       
-      let textIndex = retryCount % loadingTexts.length;
+      let lux = String(r[1] || '').trim();
+      let suite1 = String(r[2] || '').trim();
+      let suite2 = String(r[3] || '').trim();
+      let cm = String(r[4] || '').trim();
+      let gabunganSuite = [suite1, suite2].filter(x => x !== '').join(' & ');
       
-      if(retryCount === 0) {
-          document.getElementById('fullScreenLoader').style.display = 'flex'; 
-          document.getElementById('btnFilter').disabled = true;
+      if(lux || gabunganSuite || cm) {
+         data.push({ time: tgl.getTime(), tglStr: getTglIndoPendek(tgl), lux: lux, suite: gabunganSuite, cm: cm });
+      }
+    }
+  } catch (e) { console.log("Error getJadwalMenuData: " + e.message); }
+  return data;
+}
+
+function getRombonganData() {
+  let data = [];
+  try {
+    let ss = SpreadsheetApp.openById(SPREADSHEET_ROMBONGAN_ID);
+    let sheet = ss.getSheetByName('ORDER MENU PUSAT');
+    if (!sheet) return data;
+    
+    let raw = sheet.getDataRange().getValues(); 
+    raw.shift(); 
+    
+    let today = new Date();
+    let startOfCurrentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    startOfCurrentMonth.setHours(0,0,0,0);
+    
+    let counter = 1;
+    let lastOrder = { valid: false, area: "", nama: "", tgl: "", tglDate: null, kereta: "", status: "", no: 0 };
+    
+    for (let r of raw) {
+      let rowNama = String(r[3] || '').trim();
+      
+      if (rowNama !== "") {
+        let area = String(r[16] || '').toUpperCase(); 
+        let tgl = r[8];
+        let tglDate = new Date(tgl);
+        if (!isNaN(tglDate.getTime())) tglDate.setHours(0,0,0,0);
+        
+        if ((area.includes('SMC') || area.includes('SMT')) && !isNaN(tglDate.getTime()) && tglDate >= startOfCurrentMonth) {
+            if (lastOrder.nama !== rowNama || (lastOrder.tglDate && lastOrder.tglDate.getTime() !== tglDate.getTime())) {
+                lastOrder.no = counter++;
+            }
+            lastOrder.valid = true; lastOrder.nama = rowNama; lastOrder.area = area; lastOrder.tgl = tgl;
+            lastOrder.tglDate = tglDate; lastOrder.kereta = String(r[10] || '').trim(); lastOrder.status = String(r[18] || '').trim();
+        } else {
+            lastOrder.valid = false;
+        }
       }
       
-      document.getElementById('loaderTextInfo').innerText = loadingTexts[textIndex];
+      if (!lastOrder.valid) continue;
+      let menu = String(r[12] || '').trim(); let qty = parseInt(r[13]) || 0;               
+      if (menu === "" || qty === 0) continue;
+      
+      let displayDate = getTglIndoPendek(lastOrder.tglDate);
+      data.push([lastOrder.no, lastOrder.nama, displayDate, lastOrder.kereta, menu, qty, lastOrder.status, lastOrder.tglDate.getTime()]);
+    }
+  } catch (e) { console.log("Error getRombonganData: " + e.message); }
+  return data;
+}
 
-      fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
-        .then(response => {
-            if(!response.ok) throw new Error("Network/Timeout");
-            return response.json();
-        })
-        .then(data => {
-          if (data.error) { throw new Error(data.error); }
+// === MEGA-FUNGSI GET DASHBOARD ===
+function getDashboardData(startTgl, endTgl) {
+  try {
+    let startDate = startTgl ? new Date(startTgl) : new Date(); 
+    let endDate = endTgl ? new Date(endTgl) : new Date(startDate);
+    
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new Error("Format tanggal tidak valid");
+    }
+    if (startDate > endDate) { let temp = startDate; startDate = endDate; endDate = temp; }
+    startDate.setHours(0,0,0,0); endDate.setHours(23,59,59,999);
+    
+    let numDays = Math.max(1, Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)));
+
+    const semuaKategori = ['Fresh Food', 'RTC', 'Fit', 'Luxury', 'Suite', 'Catering', 'Lainnya', 'Crew Meal'];
+    let dataCache = {}; let amprahanDetails = [];
+    let grandTotalSrq = 0; let grandTotalReal = 0;
+    let chartKategoriObj = {}; semuaKategori.forEach(k => chartKategoriObj[k] = {s:0, r:0});
+    let trendData = { labels: [], srq: [], real: [] }; let menuDetailsObj = {}; 
+    
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      let year = d.getFullYear(); let month = d.getMonth(); let dateNum = d.getDate(); 
+      let config = getConfig(year, month); let cacheKey = `${year}_${month}`; 
+      
+      if (!dataCache[cacheKey] && SPREADSHEETS[year] && SPREADSHEETS[year][month]) {
+        try { 
+          let ss = SpreadsheetApp.openById(SPREADSHEETS[year][month]); 
+          let sheet = ss.getSheetByName('SMT');
+          if (!sheet) throw new Error("Sheet SMT tidak ditemukan.");
           
-          document.getElementById('fullScreenLoader').style.display = 'none'; 
-          document.getElementById('btnFilter').disabled = false;
-
-          document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan); 
-          document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
-          document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi); 
-          document.getElementById('avgDisplay').setAttribute('data-target-value', data.avg);
-          document.getElementById('amprahanDisplay').setAttribute('data-target-value', data.amprahan); 
-          document.getElementById('persenSrqDisplay').setAttribute('data-target-value', data.persenSrq);
-          document.getElementById('persenSpDisplay').setAttribute('data-target-value', data.persenSp);
+          let maxR = sheet.getMaxRows(); let maxC = sheet.getMaxColumns();
+          let lastR = sheet.getLastRow(); let lastC = sheet.getLastColumn();
+          let readR = Math.min(300, lastR > 0 ? lastR : maxR);
+          let readC = Math.min(80, lastC > 0 ? lastC : maxC);
           
-          document.querySelectorAll('.counter-anim').forEach(el => el.removeAttribute('data-animated')); 
-          window.chartTargets = {};
-          
-          renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); 
-          renderLineChart(data.trendData); 
-          renderBarChart(data.trendData); 
-          renderCategoryMenuCharts(data.tableMenu); 
-          renderAmprahanCharts(data.tableAmprahan);
-
-          dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw(); 
-          dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
-          
-          let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
-          window.rawStokData = []; // Simpan data utuh untuk Fast Moving Filter
-
-          let stokRows = (data.stokData || []).map(s => {
-             let st = String(s.ket).toLowerCase();
-             if(st.includes('aman')) { stAman++; } 
-             else if(st.includes('warning')) { stWarn++; restockCandidates.push(s); } 
-             else if(st.includes('kritis')) { stKrit++; restockCandidates.push(s); }
-             
-             window.rawStokData.push(s);
-             return [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket, s.pengadaan];
-          });
-
-          document.getElementById('stokTotalDisplay').setAttribute('data-target-value', (data.stokData || []).length); 
-          document.getElementById('stokAmanDisplay').setAttribute('data-target-value', stAman);
-          document.getElementById('stokWarnDisplay').setAttribute('data-target-value', stWarn); 
-          document.getElementById('stokKritDisplay').setAttribute('data-target-value', stKrit);
-          
-          renderStokHealthChart(stAman, stWarn, stKrit);
-
-          restockCandidates.sort((a, b) => { let valA = parseFloat(a.status) || 999; let valB = parseFloat(b.status) || 999; return valA - valB; });
-          let restockHtml = '';
-          if(restockCandidates.length === 0) {
-              restockHtml = '<div class="text-success text-center mt-5"><i class="fas fa-check-circle fs-1 mb-2"></i><br>Semua stok aman!</div>';
+          if (readR > 0 && readC > 0) {
+              dataCache[cacheKey] = sheet.getRange(1, 1, readR, readC).getValues(); 
           } else {
-              restockHtml = '<ul class="list-group list-group-flush mb-0">';
-              restockCandidates.forEach(r => {
-                  let isKritis = String(r.ket).toLowerCase().includes('kritis');
-                  let badgeClass = isKritis ? 'bg-danger' : 'bg-warning text-dark'; 
-                  let badgeLabel = isKritis ? 'Kritis' : 'Warning';
-                  
-                  let kekuatanStr = String(r.status).trim();
-                  if (!isNaN(parseFloat(kekuatanStr)) && !kekuatanStr.toLowerCase().includes('hari')) { kekuatanStr += " Hari"; }
-
-                  restockHtml += `
-                  <li class="list-group-item d-flex justify-content-between align-items-start px-0 border-light">
-                      <div>
-                          <div class="fw-bold" style="font-size:0.85rem; color:#1e293b; line-height:1.2;">${r.nama}</div>
-                          <div style="font-size:0.75rem; color:#64748b; margin-top:3px;">Sisa: <b>${r.akhir} ${r.satuan}</b> (${kekuatanStr})</div>
-                      </div>
-                      <span class="badge ${badgeClass} rounded-pill ms-2" style="font-size:0.7rem;">${badgeLabel}</span>
-                  </li>`;
-              });
-              restockHtml += '</ul>';
+              dataCache[cacheKey] = [];
           }
-          document.getElementById('restockList').innerHTML = restockHtml;
+        } catch (e) { 
+          console.log(`Gagal load SMT ${year}-${month+1}:`, e.message);
+          dataCache[cacheKey] = []; 
+        } 
+      }
+      
+      let raw = dataCache[cacheKey]; 
+      if (!raw || raw.length === 0) continue;
 
-          // Eksekusi Fast Moving default (Semua Area)
-          updateFastMovingChart(document.getElementById('fmFilterPengadaan').value);
+      let dSrqTotal = 0; let dRealTotal = 0;
 
-          dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
-          dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData || []).draw(); 
+      config.cats.forEach(cat => {
+        if (cat.t === 0) return; 
 
-          renderAgendaTimeline(data.rombonganData, data.jadwalData);
-          renderRombonganTimeline(data.rombonganData);
+        let isSatuKolom = config.formatLama && (cat.k !== 'Fresh Food' && cat.k !== 'RTC');
+        let targetIdx = isSatuKolom ? (1 + dateNum) : (2 + (dateNum - 1) * 2);
+        let realIdx = isSatuKolom ? (1 + dateNum) : (3 + (dateNum - 1) * 2);
 
-          setTimeout(checkVisibleElements, 100);
-        })
-        .catch(error => {
-          console.error("Fetch Error/Timeout:", error); 
-          // Auto Retry Silent tiap 3 detik dengan pergantian teks kuliner
-          setTimeout(() => loadData(retryCount + 1), 3000);
-        });
-    }
+        if (!raw[cat.t - 1]) return;
+        let srq = Math.round(Number(raw[cat.t - 1][targetIdx])) || 0; 
+        let real = Math.round(Number(raw[cat.t - 1][realIdx])) || 0;
+        
+        chartKategoriObj[cat.k].s += srq; chartKategoriObj[cat.k].r += real;
+        dSrqTotal += srq; dRealTotal += real; grandTotalSrq += srq; grandTotalReal += real;
 
-    function renderGaugeCharts(srq, real, sp) {
-      const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); 
-      let colorSrq = (real >= srq && srq > 0) ? '#0284c7' : '#f59e0b'; 
-      gaugeSrqChartObj = new Chart(ctxSrq, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, srq || 1], backgroundColor: [colorSrq, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
-      window.chartTargets['gaugeSrqChart'] = { chart: gaugeSrqChartObj, type: 'doughnut', data: [[real, Math.max(0, srq - real)]] };
+        for(let r = cat.s - 1; r <= cat.e - 1; r++) {
+          if (!raw[r]) continue;
+          let namaMenu = String(raw[r][1] || '').trim();
+          if(!namaMenu || namaMenu === '' || namaMenu.toUpperCase() === 'NAMA MENU') continue;
+          
+          let itemSrq = Math.round(Number(raw[r][targetIdx])) || 0;
+          let itemReal = Math.round(Number(raw[r][realIdx])) || 0;
+          
+          if(itemSrq === 0 && itemReal === 0 && !config.formatLama) {
+              let spColCek = 66; 
+              let itemSpCek = Math.round(Number(raw[r][spColCek])) || 0;
+              if(itemSpCek === 0) continue; 
+          }
 
-      const ctxSp = document.getElementById('gaugeSpChart').getContext('2d'); if (gaugeSpChartObj) gaugeSpChartObj.destroy(); 
-      let colorSp = (real >= sp && sp > 0) ? '#4f46e5' : '#f59e0b'; 
-      gaugeSpChartObj = new Chart(ctxSp, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, sp || 1], backgroundColor: [colorSp, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
-      window.chartTargets['gaugeSpChart'] = { chart: gaugeSpChartObj, type: 'doughnut', data: [[real, Math.max(0, sp - real)]] };
-    }
-    
-    function renderLineChart(trendData) {
-      const ctx = document.getElementById('lineChart').getContext('2d'); if (lineChartObj) lineChartObj.destroy(); 
-      let zeros = trendData.labels.map(() => 0);
-      lineChartObj = new Chart(ctx, { type: 'line', data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: zeros, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: zeros, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
-      window.chartTargets['lineChart'] = { chart: lineChartObj, type: 'line', data: [trendData.srq, trendData.real] };
-    }
-    
-    function renderBarChart(trendData) {
-      const ctx = document.getElementById('barChart').getContext('2d'); if (barChartObj) barChartObj.destroy(); 
-      let zeros = trendData.labels.map(() => 0);
-      barChartObj = new Chart(ctx, { type: 'bar', data: { labels: trendData.labels, datasets: [{ label: 'Total Volume Harian', data: zeros, backgroundColor: '#ea580c', borderRadius: 4 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
-      window.chartTargets['barChart'] = { chart: barChartObj, type: 'bar', data: [trendData.real] };
-    }
-
-    function renderCategoryMenuCharts(tableMenu) {
-      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
-      tableMenu.forEach(row => {
-        let kat = row[0]; let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let real = parseInt(row[4]) || 0; 
-        if (real > 0) { 
-          if (kat === 'Fresh Food') dataFF[menu] = (dataFF[menu] || 0) + real;
-          else if (kat === 'Luxury' || kat === 'Fit') dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
-          else if (kat === 'Suite') dataSuite[menu] = (dataSuite[menu] || 0) + real;
-          else if (kat === 'Crew Meal') dataCrew[menu] = (dataCrew[menu] || 0) + real;
+          let uniqueKey = cat.k + "_" + namaMenu; 
+          
+          if (!menuDetailsObj[uniqueKey]) { menuDetailsObj[uniqueKey] = { kat: cat.k, namaMenuAsli: namaMenu, salesPlan: 0, srq: 0, real: 0, spMonths: [] }; }
+          
+          if (!menuDetailsObj[uniqueKey].spMonths.includes(cacheKey)) {
+            let spCol = -1;
+            if (config.formatLama) { if (cat.k === 'Fresh Food') spCol = 67; else if (cat.k === 'RTC') spCol = 66; } else { spCol = 66; } 
+            if (spCol !== -1) { menuDetailsObj[uniqueKey].salesPlan += Math.round(Number(raw[r][spCol])) || 0; }
+            menuDetailsObj[uniqueKey].spMonths.push(cacheKey);
+          }
+          menuDetailsObj[uniqueKey].srq += itemSrq;
+          menuDetailsObj[uniqueKey].real += itemReal;
         }
       });
-      chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981'); chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
-      chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
+      trendData.labels.push(`${dateNum}/${month+1}/${year.toString().slice(-2)}`); trendData.srq.push(dSrqTotal); trendData.real.push(dRealTotal);
     }
 
-    function renderAmprahanCharts(tableAmprahan) {
-      let dataKA = {}; let dataMenu = {};
-      tableAmprahan.forEach(row => {
-        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); let qty = parseInt(row[3]) || 0;
-        if (qty > 0) { dataKA[kereta] = (dataKA[kereta] || 0) + qty; dataMenu[menu] = (dataMenu[menu] || 0) + qty; }
-      });
-      chartAmprahanKAObj = drawHBarChart('chartAmprahanKA', chartAmprahanKAObj, dataKA, '#ef4444'); chartAmprahanMenuObj = drawHBarChart('chartAmprahanMenu', chartAmprahanMenuObj, dataMenu, '#14b8a6');
-    }
+    let amprahanCount = 0;
+    try {
+      const ssAmprahan = SpreadsheetApp.openById(SPREADSHEET_AMPRAHAN_ID); 
+      const sheetRekapKA = ssAmprahan.getSheetByName('REKAPAN_KA'); 
+      if (sheetRekapKA) {
+        const rawKA = sheetRekapKA.getDataRange().getValues();
+        if (rawKA.length > 1) {
+          const headersMenuKA = rawKA[0]; 
+          for(let i = 1; i < rawKA.length; i++) {
+            let cellDate = rawKA[i][0]; if(!cellDate) continue; let aDate = new Date(cellDate);
+            if(!isNaN(aDate.getTime()) && aDate >= startDate && aDate <= endDate) {
+              let namaKA = String(rawKA[i][1] || '').trim(); let hasRequest = false; let displayDate = getTglIndoPendek(aDate); 
+              for(let c = 2; c < rawKA[i].length; c++) {
+                let qty = Math.round(Number(rawKA[i][c])) || 0;
+                if(qty > 0 && headersMenuKA[c]) { hasRequest = true; amprahanDetails.push([displayDate, namaKA, String(headersMenuKA[c]).trim(), qty]); }
+              } if(hasRequest) amprahanCount++;
+            }
+          }
+        }
+      }
+    } catch (e) { console.log("Amprahan Error:", e.message); }
 
-    function drawHBarChart(ctxId, chartObj, dataDict, color) {
-      const ctx = document.getElementById(ctxId).getContext('2d'); if (chartObj) chartObj.destroy();
-      let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
-      let labels = sortedArray.map(x => x[0]); let values = sortedArray.map(x => x[1]); let zeros = values.map(() => 0);
-      let newChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Porsi', data: zeros, backgroundColor: color, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
-      window.chartTargets[ctxId] = { chart: newChart, type: 'barH', data: [values] };
-      return newChart;
-    }
-
-    function aksiLaporan() { 
-      const btn = document.getElementById('btnTelegram'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengirim Laporan..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
-    }
+    let chartKategori = semuaKategori.map(k => ({ label: k, srq: chartKategoriObj[k].s, real: chartKategoriObj[k].r }));
+    let avgProduksi = Math.round(grandTotalReal / numDays);
+    let grandTotalSalesPlan = 0; let menuDetails = [];
     
-    function aksiExport() { 
-      const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengekspor Data..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
+    for (let key in menuDetailsObj) {
+      let m = menuDetailsObj[key];
+      if (m.srq > 0 || m.real > 0 || m.salesPlan > 0) {
+        grandTotalSalesPlan += m.salesPlan;
+        let pctSrq = m.srq > 0 ? ((m.real / m.srq) * 100).toFixed(1) + '%' : '0%';
+        let pctSp = m.salesPlan > 0 ? ((m.real / m.salesPlan) * 100).toFixed(1) + '%' : '0%';
+        menuDetails.push([m.kat, m.namaMenuAsli, m.salesPlan, m.srq, m.real, pctSrq, pctSp, m.real - m.salesPlan]);
+      }
     }
 
-    function aksiKirimStok() { 
-      const btn = document.getElementById('btnKirimStok'); const filterVal = document.getElementById('filterStatusStok').value;
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengecek Stok..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporanStok&filter=${filterVal}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Laporan Terkirim!'; setTimeout(() => { btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }, 3000); })
-      .catch(err => { document.getElementById('fullScreenLoader').style.display = 'none'; alert("Gagal mengirim laporan stok."); btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }); 
+    let persentaseSrq = grandTotalSrq > 0 ? ((grandTotalReal / grandTotalSrq) * 100).toFixed(1) : 0;
+    let persentaseSp = grandTotalSalesPlan > 0 ? ((grandTotalReal / grandTotalSalesPlan) * 100).toFixed(1) : 0;
+
+    return {
+      periodeTeks: getPeriodeTeks(startDate, endDate, numDays), numDays: numDays,
+      salesPlan: grandTotalSalesPlan, srq: grandTotalSrq, realisasi: grandTotalReal, 
+      persenSrq: persentaseSrq, persenSp: persentaseSp, avg: avgProduksi,
+      amprahan: amprahanCount, chartData: chartKategori, trendData: trendData,
+      tableAmprahan: amprahanDetails, tableMenu: menuDetails, 
+      stokData: getStokData(), 
+      rombonganData: getRombonganData(),
+      jadwalData: getJadwalMenuData() 
+    };
+  } catch (err) {
+    console.error("CRITICAL ERROR getDashboardData:", err);
+    throw new Error("Gagal memproses data dashboard: " + err.message);
+  }
+}
+
+function sendToTelegramChunked(fullText, targetChatId) {
+  let finalChatId = targetChatId || CHAT_ID; let chunks = []; let currentChunk = ""; let lines = fullText.split('\n');
+  for (let line of lines) { if ((currentChunk.length + line.length) > 3900) { chunks.push(currentChunk); currentChunk = line + "\n"; } else { currentChunk += line + "\n"; } }
+  if (currentChunk.trim() !== "") chunks.push(currentChunk);
+  for (let chunk of chunks) { UrlFetchApp.fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, { "method": "post", "contentType": "application/json", "payload": JSON.stringify({ "chat_id": finalChatId, "text": chunk, "parse_mode": "Markdown" }), "muteHttpExceptions": true }); Utilities.sleep(500); }
+}
+
+function kirimLaporanTelegram(startTgl, endTgl, targetChatId) {
+  const data = getDashboardData(startTgl || formatDate(new Date()), endTgl || formatDate(new Date()));
+  const getReal = (nama) => { let item = data.chartData.find(x => x.label === nama); return item ? item.real : 0; };
+  const formatPorsi = (val) => val > 0 ? `${val} porsi` : `- Porsi`;
+
+  const freshFood = getReal('Fresh Food'); const rtc = getReal('RTC'); const crewMeal = getReal('Crew Meal'); 
+  const luxury = getReal('Luxury'); const fit = getReal('Fit'); const suite = getReal('Suite');
+  const total = freshFood + rtc + crewMeal + luxury + fit + suite;
+
+  let pesan = `*Laporan Produksi Dapur SEMARANG*\n${data.periodeTeks}\n\n`;
+  if (data.numDays > 1) {
+    let teksEvaluasi = data.realisasi > data.salesPlan ? `⚠️ Over-Target (+${data.realisasi - data.salesPlan} Porsi).\nWaspada serapan stok bahan baku!` : (data.realisasi < data.salesPlan ? `📉 Di bawah target (${data.realisasi - data.salesPlan} Porsi).` : `✅ Tepat sesuai target.`);
+    pesan += `*🎯 Target Sales Plan: ${data.salesPlan} Porsi*\n*📋 Total Permintaan SRQ: ${data.srq} Porsi*\n*🍱 Total Realisasi: ${data.realisasi} Porsi*\n\n*🔍 Evaluasi Sales Plan (Forecasting):*\n${teksEvaluasi}\n\n*📊 Pencapaian vs Sales Plan: ${data.persenSp}%*\n*📊 Pemenuhan vs SRQ: ${data.persenSrq}%*\n\n*--- RINCIAN REALISASI ---*\n`;
+  }
+
+  pesan += `1. Fresh Food : ${formatPorsi(freshFood)}\n2. RTC : ${formatPorsi(rtc)}\n3. Crew Meal : ${formatPorsi(crewMeal)}\n4. Luxury: ${formatPorsi(luxury)}\n5. Fit : ${formatPorsi(fit)}\n6. Suite Class : ${formatPorsi(suite)}\n7. Hampers: - porsi\n8. Hidden Kuliner: - porsi\n9. KAIS: - Porsi\n10. Service Recovery: - Porsi\n11. Orderan Loko Cafe: - Porsi\n\n*Total : ${total} Porsi*\n*Rata-rata Produksi: ${data.avg} Porsi/Hari*\n\nTerimakasih🙏`;
+  sendToTelegramChunked(pesan, targetChatId);
+}
+
+function exportKeTelegram(startTgl, endTgl, targetChatId) {
+  const data = getDashboardData(startTgl, endTgl);
+  let maxSrq = -1, minSrq = Infinity, maxReal = -1, minReal = Infinity; let tglMaxSrq = "", tglMinSrq = "", tglMaxReal = "", tglMinReal = "";
+  for(let i=0; i<data.trendData.srq.length; i++) {
+    let valSrq = data.trendData.srq[i]; let valReal = data.trendData.real[i]; let tgl = data.trendData.labels[i];
+    if(valSrq > maxSrq) { maxSrq = valSrq; tglMaxSrq = tgl; } if(valSrq < minSrq) { minSrq = valSrq; tglMinSrq = tgl; }
+    if(valReal > maxReal) { maxReal = valReal; tglMaxReal = tgl; } if(valReal < minReal) { minReal = valReal; tglMinReal = tgl; }
+  } if (minSrq === Infinity) { minSrq = 0; minReal = 0; } 
+  
+  let teksEvaluasi = data.realisasi > data.salesPlan ? `⚠️ Over-Target (+${data.realisasi - data.salesPlan} Porsi).\nWaspada serapan berlebih stok bahan baku operasional!` : (data.realisasi < data.salesPlan ? `📉 Under-Target (${data.realisasi - data.salesPlan} Porsi).` : `✅ Tepat sesuai target.`);
+
+  let msg = `📦 *EXPORT DATA PRODUKSI SEMARANG*\n${data.periodeTeks}\n\n*📊 RINGKASAN*\n- Sales Plan: ${data.salesPlan}\n- Total SRQ: ${data.srq}\n- Total Realisasi: ${data.realisasi}\n- Rata-rata Produksi: ${data.avg} porsi/hari\n- % Capai SP: ${data.persenSp}%\n- % Capai SRQ: ${data.persenSrq}%\n\n*🔍 EVALUASI FORECASTING SP*\n${teksEvaluasi}\n\n*📈 TREN TERTINGGI & TERENDAH*\n- SRQ Tertinggi: ${maxSrq} porsi (${tglMaxSrq})\n- SRQ Terendah: ${minSrq} porsi (${tglMinSrq})\n- Realisasi Tertinggi: ${maxReal} porsi (${tglMaxReal})\n- Realisasi Terendah: ${minReal} porsi (${tglMinReal})\n\n*🍲 RINCIAN PRODUKSI PER KATEGORI*\n`;
+  let groupedMenu = {};
+  data.tableMenu.forEach(row => {
+    let kat = row[0]; let namaMenu = cleanTxt(row[1]); let sp = row[2]; let srq = row[3]; let real = row[4];
+    if(!groupedMenu[kat]) groupedMenu[kat] = { items: [], totalReal: 0, totalSrq: 0, totalSp: 0 };
+    groupedMenu[kat].items.push(`▫️ ${namaMenu}: ${real} porsi (SRQ:${srq} | SP:${sp})`); groupedMenu[kat].totalSrq += srq; groupedMenu[kat].totalReal += real; groupedMenu[kat].totalSp += sp;
+  });
+  for(let kat in groupedMenu) { msg += `\n*${kat}*\n` + groupedMenu[kat].items.join('\n') + `\n_Total ${kat} -> Real: ${groupedMenu[kat].totalReal} | SRQ: ${groupedMenu[kat].totalSrq} | SP: ${groupedMenu[kat].totalSp}_\n`; }
+
+  msg += `\n*🚂 RINCIAN AMPRAHAN KERETA*\nTotal Amprahan: ${data.amprahan} Permintaan\n\n`;
+  if(data.tableAmprahan.length === 0) { msg += `_Tidak ada data amprahan pada periode ini._\n`; } else { data.tableAmprahan.forEach(row => { msg += `- ${cleanTxt(row[0])} | ${cleanTxt(row[1])} | ${cleanTxt(row[2])} (${row[3]} porsi)\n`; }); }
+  msg += `\nTerimakasih🙏`; sendToTelegramChunked(msg, targetChatId);
+}
+
+function mandorJadwalOtomatis() {
+  var jamWIB = parseInt(Utilities.formatDate(new Date(), "Asia/Jakarta", "H"));
+  try {
+    if (jamWIB === 20) {
+      let tglHariIni = formatDate(new Date());
+      kirimLaporanTelegram(tglHariIni, tglHariIni, CHAT_ID);
     }
-  </script>
-</body>
-</html>
+    else if (jamWIB === 23) {
+      let hariIni = new Date(); 
+      let besok = new Date(hariIni); 
+      besok.setDate(hariIni.getDate() + 1); 
+      
+      if (besok.getDate() === 1) { 
+        let tglAwalBulan = formatDate(new Date(hariIni.getFullYear(), hariIni.getMonth(), 1));
+        exportKeTelegram(tglAwalBulan, formatDate(hariIni), CHAT_ID);
+      }
+    }
+  } catch (error) { console.log("Error pada Mandor Jadwal: " + error.message); }
+}
+
+function pasangSemuaTriggerOtomatis() {
+  const triggers = ScriptApp.getProjectTriggers(); 
+  for (let i = 0; i < triggers.length; i++) { ScriptApp.deleteTrigger(triggers[i]); }
+  ScriptApp.newTrigger('mandorJadwalOtomatis').timeBased().everyHours(1).create();
+}

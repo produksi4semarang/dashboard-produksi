@@ -626,39 +626,44 @@
        let candidates = [...window.rawStokData];
        
        if (pengadaanFilter !== "Semua") {
-           candidates = candidates.filter(s => String(s.pengadaan).trim().toLowerCase() === pengadaanFilter.toLowerCase());
+           // PERBAIKAN: Gunakan .includes() agar fleksibel dan persis seperti cara kerja DataTables
+           candidates = candidates.filter(s => String(s.pengadaan).toLowerCase().includes(pengadaanFilter.toLowerCase()));
        }
 
-       candidates.sort((a,b) => b.keluar - a.keluar); 
+       // PERBAIKAN: Pastikan angka di-parse (parseFloat) agar sorting tidak kacau jika format di Excel berupa String
+       candidates.sort((a,b) => (parseFloat(b.keluar) || 0) - (parseFloat(a.keluar) || 0)); 
        let top5Fast = candidates.slice(0, 5);
        
-       let fmLabels = top5Fast.map(x => x.nama.substring(0, 15) + '...'); 
-       let fmData = top5Fast.map(x => x.keluar);
+       let fmLabels = top5Fast.map(x => String(x.nama).substring(0, 15) + '...'); 
+       let fmData = top5Fast.map(x => parseFloat(x.keluar) || 0);
        
        renderFastMovingChart(fmLabels, fmData);
     }
 
-    function renderStokHealthChart(aman, warn, krit) {
-       const ctx = document.getElementById('stokHealthChart').getContext('2d'); if(stokHealthChartObj) stokHealthChartObj.destroy();
-       let isEmpty = (aman === 0 && warn === 0 && krit === 0);
-       let dataVals = isEmpty ? [1] : [aman, warn, krit]; let bgColors = isEmpty ? ['#e2e8f0'] : ['#10b981', '#f59e0b', '#ef4444'];
-       let labels = isEmpty ? ['Tidak Ada Data'] : ['Aman', 'Warning', 'Kritis'];
-       stokHealthChartObj = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: dataVals, backgroundColor: bgColors, borderWidth: 0 }] }, options: { cutout: '70%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: {font: {weight: 'bold'}} } } } });
-    }
-
+    // --- FUNGSI RENDER GRAFIK FAST-MOVING ---
     function renderFastMovingChart(labels, data) {
-       const ctx = document.getElementById('fastMovingChart').getContext('2d');
+       const ctx = document.getElementById('fastMovingChart').getContext('2d'); 
        
-       if(fastMovingChartObj) {
-           fastMovingChartObj.data.labels = labels;
+       // Hancurkan memori grafik lama jika ada
+       if(fastMovingChartObj) fastMovingChartObj.destroy();
+       
+       // Buat data kosong (0) untuk memancing efek animasi naik dari bawah
+       let zeros = data.map(() => 0);
+       fastMovingChartObj = new Chart(ctx, { 
+           type: 'bar', 
+           data: { labels: labels, datasets: [{ label: 'Total Keluar', data: zeros, backgroundColor: '#3b82f6', borderRadius: 4 }] }, 
+           options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } 
+       });
+
+       // PERBAIKAN ANIMASI: Cek apakah elemen grafik sudah tampil di layar
+       let isVisible = document.getElementById('fastMovingChart').closest('.reveal-card').classList.contains('visible');
+       
+       if(isVisible) {
+           // Jika User mengubah filter dari Dropdown (Sudah Tampil), update animasinya secara instan
            fastMovingChartObj.data.datasets[0].data = data;
            fastMovingChartObj.update();
        } else {
-           fastMovingChartObj = new Chart(ctx, { 
-               type: 'bar', 
-               data: { labels: labels, datasets: [{ label: 'Total Keluar', data: data, backgroundColor: '#3b82f6', borderRadius: 4 }] }, 
-               options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } 
-           });
+           // Jika baru pertama kali diload, masukkan ke antrean observer agar dianimasikan saat discroll
            window.chartTargets['fastMovingChart'] = { chart: fastMovingChartObj, type: 'barH', data: [data] };
        }
     }

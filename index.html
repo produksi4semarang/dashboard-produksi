@@ -70,6 +70,8 @@
     /* --- AGENDA TIMELINE CARDS --- */
     .calendar-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; }
     .calendar-card { min-width: 260px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.02); align-self: flex-start;}
+    .calendar-card-today { border: 2px solid #ef4444 !important; background-color: #fffcfc !important; } /* HIGHLIGHT HARI INI */
+    
     .timeline-item { border-left: 2px solid #cbd5e1; padding-left: 12px; margin-bottom: 12px; position: relative; }
     .timeline-item::before { content: ''; position: absolute; left: -6px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; border: 2px solid #fff; }
     .item-rombongan::before { background: #10b981; }
@@ -125,7 +127,6 @@
     <a href="#" onclick="switchPage('rombongan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-rombongan.png" class="menu-icon"> Data Rombongan</a>
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
     <a href="#" onclick="switchPage('recipe', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/13763f14a07ee9f6992e1ab10756b3147a6a8b8b/icon-recipe.png" class="menu-icon"> Standard Recipe</a>
-    <a href="#" onclick="switchPage('jadwal', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/13763f14a07ee9f6992e1ab10756b3147a6a8b8b/icon-jadwal.png" class="menu-icon"> Jadwal Menu</a>
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
     <a href="#" onclick="switchPage('kedatangan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-kedatangan.png" class="menu-icon"> Kedatangan Bahan Baku <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
     <a href="#" onclick="switchPage('pr', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-pr.png" class="menu-icon"> Nomor PR <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
@@ -252,10 +253,20 @@
              <div id="restockList" class="restock-list" style="max-height: 200px; overflow-y: auto; padding-right: 5px;"></div>
           </div>
         </div>
+        
         <div class="col-lg-4 mb-3 reveal-card">
           <div class="card-container h-100">
-             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-chart-line text-primary"></i> Fast-Moving Material</h6>
-             <div style="position: relative; height: 200px; width: 100%;"><canvas id="fastMovingChart"></canvas></div>
+             <div class="d-flex justify-content-between align-items-center mb-3">
+               <h6 class="text-secondary fw-bold m-0"><i class="fas fa-chart-line text-primary"></i> Fast-Moving</h6>
+               <select id="fmFilterPengadaan" class="form-select form-select-sm border-secondary fw-bold" style="width: auto; font-size: 0.75rem;">
+                  <option value="Semua">Semua Area</option>
+                  <option value="Pusat">Pusat</option>
+                  <option value="Wilayah">Wilayah</option>
+                  <option value="Dapsen CN">Dapsen CN</option>
+                  <option value="Dapsen YK">Dapsen YK</option>
+               </select>
+             </div>
+             <div style="position: relative; height: 185px; width: 100%;"><canvas id="fastMovingChart"></canvas></div>
           </div>
         </div>
       </div>
@@ -286,6 +297,15 @@
     </div>
 
     <div id="page-rombongan" class="page-section" style="display:none;">
+      <div class="row reveal-card mb-3">
+        <div class="col-12">
+          <div class="card-container" style="background-color: #f0fdf4; border: 1px dashed #10b981;">
+             <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-train text-success"></i> Agenda Rombongan Terdekat</h6>
+             <div class="calendar-wrapper" id="rombonganTimeline">
+                </div>
+          </div>
+        </div>
+      </div>
       <div class="row reveal-card">
         <div class="col-12">
           <div class="card-container h-100">
@@ -326,18 +346,6 @@
                 <p class="text-muted mx-auto" style="max-width:500px;">Struktur database untuk Build of Material sedang dimatangkan untuk mendukung sistem kalkulator multi-menu yang akurat.</p>
              </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-jadwal" class="page-section" style="display:none;">
-      <div class="card-container reveal-card h-100">
-        <h5 class="text-secondary fw-bold mb-4 border-bottom pb-3 text-center"><i class="fas fa-calendar-alt text-warning"></i> Jadwal Menu Produksi</h5>
-        <div class="table-responsive">
-          <table id="tabelJadwalMenu" class="table table-hover table-bordered w-100">
-            <thead><tr><th>Tanggal</th><th>Menu Luxury</th><th>Menu Suite</th><th>Crew Meal</th></tr></thead>
-            <tbody></tbody>
-          </table>
         </div>
       </div>
     </div>
@@ -401,18 +409,30 @@
   </div>
 
   <script>
+    // URL WEBAPP TERBARU
     const API_URL = "https://script.google.com/macros/s/AKfycbwrTYyO6LD2A3f5so6npwpKPHPvAq6hp1P9P4UAYJs2V8HjvCr9Mn-D5H-eAbDZKsUgVg/exec"; 
 
     window.chartTargets = {};
+    window.rawStokData = []; // Menyimpan raw data stok untuk filter fast-moving
+    
     let isAdmin = false;
 
     let gaugeSrqChartObj = null; let gaugeSpChartObj = null; let lineChartObj = null; let barChartObj = null;
     let chartFFObj = null; let chartLuxFitObj = null; let chartSuiteObj = null; let chartCrewObj = null;
     let chartAmprahanKAObj = null; let chartAmprahanMenuObj = null;
     let stokHealthChartObj = null; let fastMovingChartObj = null; 
-    let dtAmprahan = null; let dtMenu = null; let dtStok = null; let dtRombongan = null; let dtJadwalMenu = null;
+    let dtAmprahan = null; let dtMenu = null; let dtStok = null; let dtRombongan = null;
 
     const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
+    
+    // MICROCOPY KULINER UNTUK AUTO-RETRY
+    const loadingTexts = [
+        "Memasak Data...",
+        "Menambahkan bumbu rahasia...",
+        "Sedang dicicipi Koki...",
+        "Mengaduk bahan di wajan...",
+        "Merapikan meja saji..."
+    ];
 
     let today = new Date(); let y = 2026; let m = '05'; let d = '01'; 
     document.getElementById('startTgl').value = `${y}-${m}-${d}`;
@@ -482,6 +502,11 @@
        const sb = document.getElementById('mySidebar'); const hb = document.getElementById('hamburgerBtn'); const bd = document.getElementById('sidebarBackdrop');
        if(forceClose || sb.classList.contains('open')) { sb.classList.remove('open'); hb.classList.remove('open'); bd.classList.remove('show'); } 
        else { sb.classList.add('open'); hb.classList.add('open'); bd.classList.add('show'); }
+    }
+
+    function getTglIndoPendek(dateObj) { 
+        const blnPd = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']; 
+        return `${dateObj.getDate()} ${blnPd[dateObj.getMonth()]} ${dateObj.getFullYear()}`; 
     }
 
     function checkVisibleElements() {
@@ -581,11 +606,11 @@
           }
         });
 
-        // INIT JADWAL MENU TABEL
-        dtJadwalMenu = $('#tabelJadwalMenu').DataTable({ pageLength: 10, lengthMenu: [10, 25, 50] });
-
         $('#filterStatusStok').on('change', function() { dtStok.column(9).search(this.value).draw(); });
         $('#filterPengadaanStok').on('change', function() { dtStok.column(10).search(this.value).draw(); });
+
+        // Event Listener Khusus untuk Dropdown Fast Moving Chart
+        $('#fmFilterPengadaan').on('change', function() { updateFastMovingChart(this.value); });
 
         switchPage('home'); 
         loadData();
@@ -607,6 +632,23 @@
       }; window.requestAnimationFrame(step);
     }
 
+    // --- FUNGSI UPDATE FAST-MOVING BERDASARKAN FILTER DROPDOWN ---
+    function updateFastMovingChart(pengadaanFilter) {
+       let candidates = [...window.rawStokData];
+       
+       if (pengadaanFilter !== "Semua") {
+           candidates = candidates.filter(s => String(s.pengadaan).toLowerCase() === pengadaanFilter.toLowerCase());
+       }
+
+       candidates.sort((a,b) => b.keluar - a.keluar); 
+       let top5Fast = candidates.slice(0, 5);
+       
+       let fmLabels = top5Fast.map(x => x.nama.substring(0, 15) + '...'); 
+       let fmData = top5Fast.map(x => x.keluar);
+       
+       renderFastMovingChart(fmLabels, fmData);
+    }
+
     function renderStokHealthChart(aman, warn, krit) {
        const ctx = document.getElementById('stokHealthChart').getContext('2d'); if(stokHealthChartObj) stokHealthChartObj.destroy();
        let isEmpty = (aman === 0 && warn === 0 && krit === 0);
@@ -619,15 +661,22 @@
        const ctx = document.getElementById('fastMovingChart').getContext('2d'); if(fastMovingChartObj) fastMovingChartObj.destroy();
        let newChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Keluar', data: data, backgroundColor: '#3b82f6', borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
        window.chartTargets['fastMovingChart'] = { chart: newChart, type: 'barH', data: [data] };
+       
+       // Force update if container is already visible
+       if(document.getElementById('fastMovingChart').closest('.reveal-card').classList.contains('visible')) {
+           newChart.data.datasets[0].data = data;
+           newChart.update();
+       }
     }
 
-    // --- LOGIKA AGENDA TIMELINE (GABUNGAN ROMBONGAN & JADWAL PRODUKSI) ---
+    // --- AGENDA TIMELINE (GABUNGAN DI HOME) ---
     function renderAgendaTimeline(dataRombongan, dataJadwal) {
        const el = document.getElementById('agendaTimeline');
        if (!dataRombongan || !dataJadwal) { el.innerHTML = '<div class="text-secondary p-3 fst-italic">Data belum tersedia.</div>'; return; }
 
        let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
        let threeDaysLaterTime = todayTime + (3 * 24 * 60 * 60 * 1000); 
+       let todayStrIndo = getTglIndoPendek(today);
 
        let grouped = {}; let dateArr = []; let tempAdded = new Set();
 
@@ -653,10 +702,11 @@
 
        let html = '';
        if(dateArr.length === 0) {
-          html = '<div class="text-secondary p-3 fst-italic">Tidak ada agenda produksi terdekat.</div>';
+          html = '<div class="text-secondary p-3 fst-italic">Tidak ada agenda terdekat.</div>';
        } else {
           dateArr.forEach(dObj => {
              let tgl = dObj.label; let g = grouped[tgl]; let cardsHtml = '';
+             let isToday = (tgl === todayStrIndo);
              
              g.rombongan.forEach(romb => {
                  let liHtml = romb.items.map(i => `${i.menu} <b>(${i.qty})</b>`).join(', ');
@@ -667,24 +717,72 @@
              if(g.suite) { cardsHtml += `<div class="timeline-item item-suite"><div class="fw-bold" style="font-size:0.8rem; color:#8b5cf6;"><i class="fas fa-gem"></i> Suite Class</div><div style="font-size:0.8rem; color:#475569;">${g.suite}</div></div>`; }
              if(g.cm) { cardsHtml += `<div class="timeline-item item-crew"><div class="fw-bold" style="font-size:0.8rem; color:#0ea5e9;"><i class="fas fa-users"></i> Crew Meal</div><div style="font-size:0.8rem; color:#475569;">${g.cm}</div></div>`; }
 
-             html += `<div class="calendar-card"><h5 class="mb-3 pb-2" style="border-bottom: 2px dashed #e2e8f0; color:#334155;"><i class="far fa-calendar-alt text-success"></i> ${tgl}</h5>${cardsHtml}</div>`;
+             let cardClass = isToday ? 'calendar-card calendar-card-today' : 'calendar-card';
+             let badgeHtml = isToday ? '<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>' : '';
+             
+             html += `<div class="${cardClass}"><h5 class="mb-3 pb-2" style="border-bottom: 2px dashed #e2e8f0; color:#334155;"><i class="far fa-calendar-alt text-success"></i> ${tgl} ${badgeHtml}</h5>${cardsHtml}</div>`;
           });
        }
        el.innerHTML = html;
     }
 
-    // === TANGKAPAN ERROR DIPERBAIKI DENGAN SISTEM AUTO-RETRY SILENT ===
+    // --- AGENDA EKSKLUSIF ROMBONGAN (DI HALAMAN DATA ROMBONGAN) ---
+    function renderRombonganTimeline(dataRombongan) {
+       const el = document.getElementById('rombonganTimeline');
+       if (!dataRombongan) return;
+
+       let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
+       let todayStrIndo = getTglIndoPendek(today);
+
+       let grouped = {}; let dateArr = []; let tempAdded = new Set();
+       let upcomingRombongan = dataRombongan.filter(r => r[7] >= todayTime);
+       
+       upcomingRombongan.forEach(r => {
+          let tglStr = r[2]; let tglTime = r[7];
+          if(!grouped[tglStr]) { grouped[tglStr] = { rombongan: [] }; }
+          let existingRomb = grouped[tglStr].rombongan.find(x => x.nama === r[1]);
+          if(existingRomb) { existingRomb.items.push({menu: r[4], qty: r[5]}); }
+          else { grouped[tglStr].rombongan.push({ nama: r[1], kereta: r[3], items: [{menu: r[4], qty: r[5]}] }); }
+          if(!tempAdded.has(tglStr)) { dateArr.push({ label: tglStr, time: tglTime }); tempAdded.add(tglStr); }
+       });
+
+       dateArr.sort((a,b) => a.time - b.time);
+
+       let html = '';
+       if(dateArr.length === 0) {
+          html = '<div class="text-secondary p-3 fst-italic">Tidak ada jadwal rombongan terdekat.</div>';
+       } else {
+          dateArr.forEach(dObj => {
+             let tgl = dObj.label; let g = grouped[tgl]; let cardsHtml = '';
+             let isToday = (tgl === todayStrIndo);
+             
+             g.rombongan.forEach(romb => {
+                 let liHtml = romb.items.map(i => `${i.menu} <b>(${i.qty})</b>`).join(', ');
+                 cardsHtml += `<div class="timeline-item item-rombongan"><div class="fw-bold" style="font-size:0.85rem; color:#1e293b;">${romb.nama}</div><div style="font-size:0.75rem; color:#10b981; font-weight:700;"><i class="fas fa-train"></i> ${romb.kereta}</div><div style="font-size:0.8rem; color:#475569;">${liHtml}</div></div>`;
+             });
+
+             let cardClass = isToday ? 'calendar-card calendar-card-today' : 'calendar-card';
+             let badgeHtml = isToday ? '<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>' : '';
+             
+             html += `<div class="${cardClass}"><h5 class="mb-3 pb-2" style="border-bottom: 2px dashed #e2e8f0; color:#334155;"><i class="far fa-calendar-alt text-success"></i> ${tgl} ${badgeHtml}</h5>${cardsHtml}</div>`;
+          });
+       }
+       el.innerHTML = html;
+    }
+
+    // === TANGKAPAN ERROR DENGAN SISTEM AUTO-RETRY SILENT & MICROCOPY KULINER ===
     function loadData(retryCount = 0) {
       const start = document.getElementById('startTgl').value; 
       const end = document.getElementById('endTgl').value;
       
+      let textIndex = retryCount % loadingTexts.length;
+      
       if(retryCount === 0) {
           document.getElementById('fullScreenLoader').style.display = 'flex'; 
-          document.getElementById('loaderTextInfo').innerText = "Memasak Data...";
           document.getElementById('btnFilter').disabled = true;
-      } else {
-          document.getElementById('loaderTextInfo').innerText = `Memasak Data... (Mencoba ulang ${retryCount})`;
       }
+      
+      document.getElementById('loaderTextInfo').innerText = loadingTexts[textIndex];
 
       fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
         .then(response => {
@@ -697,7 +795,6 @@
           document.getElementById('fullScreenLoader').style.display = 'none'; 
           document.getElementById('btnFilter').disabled = false;
 
-          // Proses Data (Jika Sukses)
           document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan); 
           document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
           document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi); 
@@ -718,7 +815,8 @@
           dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw(); 
           dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
           
-          let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; let fastMovingCandidates = [];
+          let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
+          window.rawStokData = []; // Simpan data utuh untuk Fast Moving Filter
 
           let stokRows = (data.stokData || []).map(s => {
              let st = String(s.ket).toLowerCase();
@@ -726,7 +824,7 @@
              else if(st.includes('warning')) { stWarn++; restockCandidates.push(s); } 
              else if(st.includes('kritis')) { stKrit++; restockCandidates.push(s); }
              
-             fastMovingCandidates.push(s); 
+             window.rawStokData.push(s);
              return [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket, s.pengadaan];
           });
 
@@ -764,25 +862,20 @@
           }
           document.getElementById('restockList').innerHTML = restockHtml;
 
-          fastMovingCandidates.sort((a,b) => b.keluar - a.keluar); let top5Fast = fastMovingCandidates.slice(0, 5);
-          let fmLabels = top5Fast.map(x => x.nama.substring(0, 15) + '...'); let fmData = top5Fast.map(x => x.keluar);
-          renderFastMovingChart(fmLabels, fmData);
+          // Eksekusi Fast Moving default (Semua Area)
+          updateFastMovingChart(document.getElementById('fmFilterPengadaan').value);
 
           dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
           dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData || []).draw(); 
 
-          let startTime = new Date(start).getTime(); let endTime = new Date(end); endTime.setHours(23,59,59,999); endTime = endTime.getTime();
-          let jadwalFilterTabel = (data.jadwalData || []).filter(j => j.time >= startTime && j.time <= endTime);
-          let arrJadwal = jadwalFilterTabel.map(j => [j.tglStr, j.lux || '-', j.suite || '-', j.cm || '-']);
-          dtJadwalMenu.clear(); dtJadwalMenu.rows.add(arrJadwal).draw();
-
           renderAgendaTimeline(data.rombonganData, data.jadwalData);
+          renderRombonganTimeline(data.rombonganData);
 
           setTimeout(checkVisibleElements, 100);
         })
         .catch(error => {
           console.error("Fetch Error/Timeout:", error); 
-          // Auto Retry Silent
+          // Auto Retry Silent tiap 3 detik
           setTimeout(() => loadData(retryCount + 1), 3000);
         });
     }
@@ -848,20 +941,20 @@
 
     function aksiLaporan() { 
       const btn = document.getElementById('btnTelegram'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengirim Laporan ke Telegram..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengirim Laporan..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
     }
     
     function aksiExport() { 
       const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengekspor Data ke Telegram..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengekspor Data..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
     }
 
     function aksiKirimStok() { 
       const btn = document.getElementById('btnKirimStok'); const filterVal = document.getElementById('filterStatusStok').value;
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengecek Stok dan Mengirim ke Telegram..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporanStok&filter=${filterVal}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; document.getElementById('loaderTextInfo').innerText = "Memasak Data..."; btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Laporan Terkirim!'; setTimeout(() => { btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }, 3000); })
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengecek Stok..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=kirimLaporanStok&filter=${filterVal}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Laporan Terkirim!'; setTimeout(() => { btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }, 3000); })
       .catch(err => { document.getElementById('fullScreenLoader').style.display = 'none'; alert("Gagal mengirim laporan stok."); btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }); 
     }
   </script>

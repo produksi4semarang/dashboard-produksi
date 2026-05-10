@@ -8,18 +8,18 @@
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+  
   <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   
   <style>
     body { background-color: #f4f7fa; color: #333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; margin: 0; padding: 0; }
     
-    /* --- SIDEBAR OFFCANVAS --- */
     .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background-color: #ffffff; border-right: 1px solid #e2e8f0; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1050; padding-top: 80px; overflow-y: auto; box-shadow: none; }
     .sidebar.open { left: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.1); }
     .sidebar a { display: block; padding: 14px 25px; color: #475569; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.2s; border-left: 4px solid transparent; }
@@ -39,7 +39,6 @@
     .hamburger.open span:nth-child(2) { opacity: 0; left: -20px; }
     .hamburger.open span:nth-child(3) { top: 7px; transform: rotate(-135deg); background: #ea580c; }
 
-    /* --- HEADER & CARDS --- */
     .header-panel { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 15px; z-index: 1040; margin-bottom: 20px; }
     .card-kpi { background-color: #fff; border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); padding: 15px; display: flex; align-items: center; }
     .kpi-icon { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px; }
@@ -51,7 +50,6 @@
     .table th { background-color: #f8fafc !important; color: #475569; font-size: 0.9rem; text-align: center !important;}
     .table td { font-size: 0.9rem; vertical-align: middle; text-align: center !important; }
 
-    /* --- PROFIL CARDS & LIGHTBOX --- */
     .profile-card { background: #fff; border-radius: 15px; padding: 25px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border-bottom: 4px solid #ea580c; }
     .profile-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     .profile-card img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #1e293b; padding: 3px; cursor: zoom-in; transition: transform 0.2s;}
@@ -70,7 +68,7 @@
     /* --- AGENDA TIMELINE CARDS --- */
     .calendar-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; }
     .calendar-card { min-width: 260px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.02); align-self: flex-start;}
-    .calendar-card-today { border: 2px solid #ef4444 !important; background-color: #fffcfc !important; } /* HIGHLIGHT HARI INI */
+    .calendar-card-today { border: 2px solid #ef4444 !important; background-color: #fffcfc !important; }
     
     .timeline-item { border-left: 2px solid #cbd5e1; padding-left: 12px; margin-bottom: 12px; position: relative; }
     .timeline-item::before { content: ''; position: absolute; left: -6px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; border: 2px solid #fff; }
@@ -79,18 +77,15 @@
     .item-suite::before { background: #8b5cf6; }
     .item-crew::before { background: #0ea5e9; }
 
-    /* --- SCROLLBAR CUSTOM --- */
     .restock-list::-webkit-scrollbar { width: 6px; }
     .restock-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
     .restock-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .restock-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    /* --- UTILITIES --- */
     .reveal-card { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
     .reveal-card.visible { opacity: 1; transform: translateY(0); }
     .admin-only { display: none; } 
 
-    /* --- LOADING SCREEN --- */
     .fullscreen-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(244, 247, 250, 0.75); backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .loader-icon-container { position: relative; width: 100px; height: 100px; }
     .loader-icon { width: 100%; height: 100%; object-fit: contain; }
@@ -178,8 +173,7 @@
             <div class="col-12">
               <div class="card-container" style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
                  <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-calendar-check text-success"></i> Kalender Agenda Produksi</h6>
-                 <div class="calendar-wrapper" id="agendaTimeline">
-                    </div>
+                 <div class="calendar-wrapper" id="agendaTimeline"></div>
               </div>
             </div>
           </div>
@@ -301,8 +295,7 @@
         <div class="col-12">
           <div class="card-container" style="background-color: #f0fdf4; border: 1px dashed #10b981;">
              <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-train text-success"></i> Agenda Rombongan Terdekat</h6>
-             <div class="calendar-wrapper" id="rombonganTimeline">
-                </div>
+             <div class="calendar-wrapper" id="rombonganTimeline"></div>
           </div>
         </div>
       </div>
@@ -409,11 +402,10 @@
   </div>
 
   <script>
-    // URL WEBAPP TERBARU
-    const API_URL = "https://script.google.com/macros/s/AKfycbwrTYyO6LD2A3f5so6npwpKPHPvAq6hp1P9P4UAYJs2V8HjvCr9Mn-D5H-eAbDZKsUgVg/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyfqjGc_wpWz9E1GGs770ZxwMj7uazbz_1TrNJMpLTMbx52oNdU-TPgy-BX3M4Fi_lUxQ/exec"; 
 
     window.chartTargets = {};
-    window.rawStokData = []; // Menyimpan raw data stok untuk filter fast-moving
+    window.rawStokData = [];
     
     let isAdmin = false;
 
@@ -425,7 +417,6 @@
 
     const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
     
-    // MICROCOPY KULINER UNTUK AUTO-RETRY
     const loadingTexts = [
         "Memasak Data...",
         "Menambahkan bumbu rahasia...",
@@ -469,7 +460,6 @@
 
        document.getElementById(targetId).style.display = 'block';
 
-       // Atur Filter Display: HANYA tampil di home & laporan
        if (pageId === 'home' || pageId === 'laporan') {
           document.getElementById('filterRow').style.display = 'flex';
        } else {
@@ -609,7 +599,6 @@
         $('#filterStatusStok').on('change', function() { dtStok.column(9).search(this.value).draw(); });
         $('#filterPengadaanStok').on('change', function() { dtStok.column(10).search(this.value).draw(); });
 
-        // Event Listener Khusus untuk Dropdown Fast Moving Chart
         $('#fmFilterPengadaan').on('change', function() { updateFastMovingChart(this.value); });
 
         switchPage('home'); 
@@ -637,7 +626,7 @@
        let candidates = [...window.rawStokData];
        
        if (pengadaanFilter !== "Semua") {
-           candidates = candidates.filter(s => String(s.pengadaan).toLowerCase() === pengadaanFilter.toLowerCase());
+           candidates = candidates.filter(s => String(s.pengadaan).trim().toLowerCase() === pengadaanFilter.toLowerCase());
        }
 
        candidates.sort((a,b) => b.keluar - a.keluar); 
@@ -658,18 +647,22 @@
     }
 
     function renderFastMovingChart(labels, data) {
-       const ctx = document.getElementById('fastMovingChart').getContext('2d'); if(fastMovingChartObj) fastMovingChartObj.destroy();
-       let newChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Keluar', data: data, backgroundColor: '#3b82f6', borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
-       window.chartTargets['fastMovingChart'] = { chart: newChart, type: 'barH', data: [data] };
+       const ctx = document.getElementById('fastMovingChart').getContext('2d');
        
-       // Force update if container is already visible
-       if(document.getElementById('fastMovingChart').closest('.reveal-card').classList.contains('visible')) {
-           newChart.data.datasets[0].data = data;
-           newChart.update();
+       if(fastMovingChartObj) {
+           fastMovingChartObj.data.labels = labels;
+           fastMovingChartObj.data.datasets[0].data = data;
+           fastMovingChartObj.update();
+       } else {
+           fastMovingChartObj = new Chart(ctx, { 
+               type: 'bar', 
+               data: { labels: labels, datasets: [{ label: 'Total Keluar', data: data, backgroundColor: '#3b82f6', borderRadius: 4 }] }, 
+               options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } 
+           });
+           window.chartTargets['fastMovingChart'] = { chart: fastMovingChartObj, type: 'barH', data: [data] };
        }
     }
 
-    // --- AGENDA TIMELINE (GABUNGAN DI HOME) ---
     function renderAgendaTimeline(dataRombongan, dataJadwal) {
        const el = document.getElementById('agendaTimeline');
        if (!dataRombongan || !dataJadwal) { el.innerHTML = '<div class="text-secondary p-3 fst-italic">Data belum tersedia.</div>'; return; }
@@ -726,7 +719,6 @@
        el.innerHTML = html;
     }
 
-    // --- AGENDA EKSKLUSIF ROMBONGAN (DI HALAMAN DATA ROMBONGAN) ---
     function renderRombonganTimeline(dataRombongan) {
        const el = document.getElementById('rombonganTimeline');
        if (!dataRombongan) return;
@@ -770,7 +762,6 @@
        el.innerHTML = html;
     }
 
-    // === TANGKAPAN ERROR DENGAN SISTEM AUTO-RETRY SILENT & MICROCOPY KULINER ===
     function loadData(retryCount = 0) {
       const start = document.getElementById('startTgl').value; 
       const end = document.getElementById('endTgl').value;
@@ -816,7 +807,7 @@
           dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
           
           let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
-          window.rawStokData = []; // Simpan data utuh untuk Fast Moving Filter
+          window.rawStokData = [];
 
           let stokRows = (data.stokData || []).map(s => {
              let st = String(s.ket).toLowerCase();
@@ -862,7 +853,6 @@
           }
           document.getElementById('restockList').innerHTML = restockHtml;
 
-          // Eksekusi Fast Moving default (Semua Area)
           updateFastMovingChart(document.getElementById('fmFilterPengadaan').value);
 
           dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
@@ -875,7 +865,6 @@
         })
         .catch(error => {
           console.error("Fetch Error/Timeout:", error); 
-          // Auto Retry Silent tiap 3 detik
           setTimeout(() => loadData(retryCount + 1), 3000);
         });
     }

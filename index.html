@@ -8,7 +8,6 @@
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
   
@@ -21,7 +20,6 @@
   <style>
     body { background-color: #f4f7fa; color: #333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; margin: 0; padding: 0; }
     
-    /* --- SIDEBAR OFFCANVAS --- */
     .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background-color: #ffffff; border-right: 1px solid #e2e8f0; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1050; padding-top: 80px; overflow-y: auto; box-shadow: none; }
     .sidebar.open { left: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.1); }
     .sidebar a { display: block; padding: 14px 25px; color: #475569; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.2s; border-left: 4px solid transparent; }
@@ -41,7 +39,6 @@
     .hamburger.open span:nth-child(2) { opacity: 0; left: -20px; }
     .hamburger.open span:nth-child(3) { top: 7px; transform: rotate(-135deg); background: #ea580c; }
 
-    /* --- HEADER & CARDS --- */
     .header-panel { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 12px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 15px; z-index: 1040; margin-bottom: 20px; }
     .card-kpi { background-color: #fff; border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); padding: 15px; display: flex; align-items: center; }
     .kpi-icon { width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px; }
@@ -53,7 +50,6 @@
     .table th { background-color: #f8fafc !important; color: #475569; font-size: 0.9rem; text-align: center !important;}
     .table td { font-size: 0.9rem; vertical-align: middle; text-align: center !important; }
 
-    /* --- PROFIL CARDS & LIGHTBOX --- */
     .profile-card { background: #fff; border-radius: 15px; padding: 25px 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; border-bottom: 4px solid #ea580c; }
     .profile-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     .profile-card img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 3px solid #1e293b; padding: 3px; cursor: zoom-in; transition: transform 0.2s;}
@@ -69,10 +65,9 @@
     @keyframes fadeIn { to { opacity: 1; } }
     @keyframes popUp { to { transform: scale(1); } }
 
-    /* --- AGENDA TIMELINE CARDS --- */
     .calendar-wrapper { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: thin; }
     .calendar-card { min-width: 260px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; border-top: 4px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.02); align-self: flex-start;}
-    .calendar-card-today { border: 2px solid #ef4444 !important; background-color: #fffcfc !important; } /* HIGHLIGHT HARI INI */
+    .calendar-card-today { border: 2px solid #ef4444 !important; background-color: #fffcfc !important; }
     
     .timeline-item { border-left: 2px solid #cbd5e1; padding-left: 12px; margin-bottom: 12px; position: relative; }
     .timeline-item::before { content: ''; position: absolute; left: -6px; top: 2px; width: 10px; height: 10px; border-radius: 50%; background: #cbd5e1; border: 2px solid #fff; }
@@ -81,18 +76,15 @@
     .item-suite::before { background: #8b5cf6; }
     .item-crew::before { background: #0ea5e9; }
 
-    /* --- SCROLLBAR CUSTOM --- */
     .restock-list::-webkit-scrollbar { width: 6px; }
     .restock-list::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
     .restock-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .restock-list::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    /* --- UTILITIES --- */
     .reveal-card { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
     .reveal-card.visible { opacity: 1; transform: translateY(0); }
     .admin-only { display: none; } 
 
-    /* --- LOADING SCREEN --- */
     .fullscreen-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(244, 247, 250, 0.75); backdrop-filter: blur(8px); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .loader-icon-container { position: relative; width: 100px; height: 100px; }
     .loader-icon { width: 100%; height: 100%; object-fit: contain; }
@@ -180,8 +172,7 @@
             <div class="col-12">
               <div class="card-container" style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
                  <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-calendar-check text-success"></i> Kalender Agenda Produksi</h6>
-                 <div class="calendar-wrapper" id="agendaTimeline">
-                    </div>
+                 <div class="calendar-wrapper" id="agendaTimeline"></div>
               </div>
             </div>
           </div>
@@ -190,8 +181,7 @@
             <div class="col-12">
               <div class="card-container" style="background-color: #f0f9ff; border: 1px dashed #0ea5e9;">
                  <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-users-cog text-primary"></i> Jadwal Dinasan Dapur Semarang</h6>
-                 <div class="calendar-wrapper" id="dinasanTimeline">
-                    </div>
+                 <div class="calendar-wrapper" id="dinasanTimeline"></div>
               </div>
             </div>
           </div>
@@ -313,8 +303,7 @@
         <div class="col-12">
           <div class="card-container" style="background-color: #f0fdf4; border: 1px dashed #10b981;">
              <h6 class="text-secondary fw-bold mb-3"><i class="fas fa-train text-success"></i> Agenda Rombongan Terdekat</h6>
-             <div class="calendar-wrapper" id="rombonganTimeline">
-                </div>
+             <div class="calendar-wrapper" id="rombonganTimeline"></div>
           </div>
         </div>
       </div>
@@ -338,26 +327,29 @@
         <h5 class="fw-bold text-dark mb-4 border-bottom pb-3"><i class="fas fa-book-open text-primary"></i> Standard Recipe & BoM</h5>
         
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-          <li class="nav-item" role="presentation"><button class="nav-link active fw-bold px-4" id="pills-pdf-tab" data-bs-toggle="pill" data-bs-target="#pills-pdf" type="button" role="tab">File PDF Recipe</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link active fw-bold px-4" id="pills-pdf-tab" data-bs-toggle="pill" data-bs-target="#pills-pdf" type="button" role="tab">Cooking Method</button></li>
           <li class="nav-item" role="presentation"><button class="nav-link fw-bold px-4" id="pills-bom-tab" data-bs-toggle="pill" data-bs-target="#pills-bom" type="button" role="tab">Build of Material (BoM)</button></li>
         </ul>
         
         <div class="tab-content" id="pills-tabContent">
           <div class="tab-pane fade show active" id="pills-pdf" role="tabpanel">
             
-            <div class="d-flex flex-wrap gap-2 mb-3" id="recipe-nav">
-               <button class="btn btn-sm btn-outline-primary fw-bold active" onclick="gantiResep('https://drive.google.com/file/d/1H-XCxRJkuo2iGJx7xRXTITlXPQtyXxMU/preview', this)">Reguler Baru</button>
-               <button class="btn btn-sm btn-outline-warning fw-bold text-dark" onclick="gantiResep('https://drive.google.com/file/d/1zHtzCPXYCithV9KUWo9x7ZBWOVWf6HL9/preview', this)">Luxury</button>
-               <button class="btn btn-sm btn-outline-info fw-bold text-dark" onclick="gantiResep('https://drive.google.com/file/d/1bUa9X5Z6SHYbDTNh9rqmIFyQ8Io-n0uO/preview', this)">Compartment Suite</button>
-               <button class="btn btn-sm btn-outline-success fw-bold" onclick="gantiResep('https://drive.google.com/file/d/1Rjspdh5AMcWdQr9pHtBnfjZNX2ZuEjWA/preview', this)">Rombongan</button>
-               <button class="btn btn-sm btn-outline-secondary fw-bold text-dark" onclick="gantiResep('https://drive.google.com/file/d/1Dpp6g7A6NbzZvt22Led0KIKCq4ALZ7mE/preview', this)">Crew Meal</button>
-               <button class="btn btn-sm btn-outline-danger fw-bold" onclick="gantiResep('https://drive.google.com/file/d/1diGC2JbYg-QvXwntZGDD2S7yNbdORXex/preview', this)">Festive</button>
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+              <div class="d-flex flex-wrap gap-2" id="recipe-nav">
+                 <button class="btn btn-sm btn-outline-primary fw-bold active" onclick="gantiResep('https://drive.google.com/file/d/1H-XCxRJkuo2iGJx7xRXTITlXPQtyXxMU/preview', this)">Reguler Baru</button>
+                 <button class="btn btn-sm btn-outline-warning fw-bold text-dark" onclick="gantiResep('https://drive.google.com/file/d/1zHtzCPXYCithV9KUWo9x7ZBWOVWf6HL9/preview', this)">Luxury</button>
+                 <button class="btn btn-sm btn-outline-info fw-bold text-dark" onclick="gantiResep('https://drive.google.com/file/d/1bUa9X5Z6SHYbDTNh9rqmIFyQ8Io-n0uO/preview', this)">Compartment Suite</button>
+                 <button class="btn btn-sm btn-outline-success fw-bold" onclick="gantiResep('https://drive.google.com/file/d/1Rjspdh5AMcWdQr9pHtBnfjZNX2ZuEjWA/preview', this)">Rombongan</button>
+                 <button class="btn btn-sm btn-outline-secondary fw-bold text-dark" onclick="gantiResep('https://drive.google.com/file/d/1Dpp6g7A6NbzZvt22Led0KIKCq4ALZ7mE/preview', this)">Crew Meal</button>
+                 <button class="btn btn-sm btn-outline-danger fw-bold" onclick="gantiResep('https://drive.google.com/file/d/1diGC2JbYg-QvXwntZGDD2S7yNbdORXex/preview', this)">Festive</button>
+              </div>
+              <button class="btn btn-sm btn-dark fw-bold mt-2 mt-md-0" onclick="bukaLayarPenuh()"><i class="fas fa-expand"></i> Layar Penuh</button>
             </div>
 
-            <div style="width:100%; height:75vh; background:#f1f5f9; border-radius:10px; overflow:hidden; border:2px solid #cbd5e1;">
-                <iframe id="iframeResep" src="https://drive.google.com/file/d/1H-XCxRJkuo2iGJx7xRXTITlXPQtyXxMU/preview" width="100%" height="100%" frameborder="0" allow="autoplay"></iframe>
+            <div style="width:100%; height:85vh; min-height: 800px; background:#f1f5f9; border-radius:10px; overflow:hidden; border:2px solid #cbd5e1;">
+                <iframe id="iframeResep" src="https://drive.google.com/file/d/1H-XCxRJkuo2iGJx7xRXTITlXPQtyXxMU/preview" width="100%" height="100%" frameborder="0" allow="autoplay" allowfullscreen></iframe>
             </div>
-            
+
           </div>
           <div class="tab-pane fade" id="pills-bom" role="tabpanel">
              <div class="text-center py-5 mt-4">
@@ -432,7 +424,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbyiTKY5Bn7o2i32dAgpe9HtqjX0Fi1yUZMYXV1dKSctqlH-p9wjiTcgYn_m4ifMM11JUQ/exec"; 
 
     window.chartTargets = {};
-    window.rawStokData = []; // Menyimpan raw data stok untuk filter fast-moving
+    window.rawStokData = [];
     
     let isAdmin = false;
 
@@ -444,7 +436,6 @@
 
     const chartAnimOptions = { duration: 1500, easing: 'easeOutQuart' };
     
-    // MICROCOPY KULINER UNTUK AUTO-RETRY
     const loadingTexts = [
         "Memasak Data...",
         "Menambahkan bumbu rahasia...",
@@ -488,7 +479,6 @@
 
        document.getElementById(targetId).style.display = 'block';
 
-       // Atur Filter Display: HANYA tampil di home & laporan
        if (pageId === 'home' || pageId === 'laporan') {
           document.getElementById('filterRow').style.display = 'flex';
        } else {
@@ -531,11 +521,21 @@
         return `${dateObj.getDate()} ${blnPd[dateObj.getMonth()]} ${dateObj.getFullYear()}`; 
     }
 
-    // --- FUNGSI GANTI RESEP PDF ---
     function gantiResep(url, btnElement) {
         document.querySelectorAll('#recipe-nav .btn').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
         document.getElementById('iframeResep').src = url;
+    }
+
+    function bukaLayarPenuh() {
+        var elem = document.getElementById("iframeResep");
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
     }
 
     function checkVisibleElements() {
@@ -637,6 +637,7 @@
 
         $('#filterStatusStok').on('change', function() { dtStok.column(9).search(this.value).draw(); });
         $('#filterPengadaanStok').on('change', function() { dtStok.column(10).search(this.value).draw(); });
+
         $('#fmFilterPengadaan').on('change', function() { updateFastMovingChart(this.value); });
 
         switchPage('home'); 
@@ -659,11 +660,9 @@
       }; window.requestAnimationFrame(step);
     }
 
-    // --- FUNGSI UPDATE FAST-MOVING BERDASARKAN FILTER DROPDOWN ---
     function updateFastMovingChart(pengadaanFilter) {
        let candidates = [...window.rawStokData];
        if (pengadaanFilter !== "Semua") {
-           // Menggunakan includes untuk menghindari error spasi di Excel
            candidates = candidates.filter(s => String(s.pengadaan).toLowerCase().includes(pengadaanFilter.toLowerCase()));
        }
        candidates.sort((a,b) => (parseFloat(b.keluar) || 0) - (parseFloat(a.keluar) || 0)); 
@@ -682,7 +681,6 @@
        stokHealthChartObj = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: dataVals, backgroundColor: bgColors, borderWidth: 0 }] }, options: { cutout: '70%', responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: {font: {weight: 'bold'}} } } } });
     }
 
-    // --- FUNGSI RENDER GRAFIK FAST-MOVING ---
     function renderFastMovingChart(labels, data) {
        const ctx = document.getElementById('fastMovingChart').getContext('2d'); 
        if(fastMovingChartObj) fastMovingChartObj.destroy();
@@ -703,7 +701,6 @@
        }
     }
 
-    // --- AGENDA TIMELINE (GABUNGAN DI HOME) ---
     function renderAgendaTimeline(dataRombongan, dataJadwal) {
        const el = document.getElementById('agendaTimeline');
        if (!dataRombongan || !dataJadwal) { el.innerHTML = '<div class="text-secondary p-3 fst-italic">Data belum tersedia.</div>'; return; }
@@ -760,7 +757,6 @@
        el.innerHTML = html;
     }
 
-    // --- AGENDA EKSKLUSIF ROMBONGAN (DI HALAMAN DATA ROMBONGAN) ---
     function renderRombonganTimeline(dataRombongan) {
        const el = document.getElementById('rombonganTimeline');
        if (!dataRombongan) return;
@@ -804,7 +800,6 @@
        el.innerHTML = html;
     }
 
-    // --- AGENDA EKSKLUSIF JADWAL DINASAN (DI HALAMAN HOME) ---
     function renderDinasanTimeline(dataDinasan) {
        const el = document.getElementById('dinasanTimeline');
        if (!dataDinasan || dataDinasan.length === 0) { el.innerHTML = '<div class="text-secondary p-3 fst-italic">Data jadwal belum tersedia.</div>'; return; }
@@ -828,16 +823,19 @@
 
              const buildShiftHtml = (shiftData, shiftName, icon, color) => {
                  let totalDapur = shiftData.dapur.length; let totalPacking = shiftData.packing.length; let sum = totalDapur + totalPacking;
-                 if(sum === 0) return `<div class="flex-fill p-2 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;"><div class="fw-bold" style="font-size:0.8rem; color:${color};"><i class="${icon}"></i> ${shiftName}</div><div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">Kosong</div></div>`;
+                 if(sum === 0) return `<div class="flex-fill p-2 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;"><div class="fw-bold border-bottom pb-1 mb-1" style="font-size:0.8rem; color:${color};"><i class="${icon}"></i> ${shiftName}</div><div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">Kosong</div></div>`;
+
+                 let dapurBadge = totalDapur > 0 ? `<span class="badge bg-secondary ms-1" style="font-size:0.6rem;">${totalDapur}</span>` : '';
+                 let packingBadge = totalPacking > 0 ? `<span class="badge bg-secondary ms-1" style="font-size:0.6rem;">${totalPacking}</span>` : '';
 
                  let htmlStr = `<div class="flex-fill p-2 rounded" style="background:#f8fafc; border:1px solid #e2e8f0; min-width:140px;"><div class="fw-bold border-bottom pb-1 mb-1" style="font-size:0.8rem; color:${color};"><i class="${icon}"></i> ${shiftName}</div>`;
                  if(totalDapur > 0) {
-                     htmlStr += `<div style="font-size:0.75rem; color:#1e293b; font-weight:700; margin-top:4px;">Tim Dapur</div>`;
-                     shiftData.dapur.forEach(k => { htmlStr += `<div style="font-size:0.7rem; color:#475569; padding-left:5px; border-left:2px solid #cbd5e1; margin-bottom:2px;">${k.nama} <span class="text-muted">(${k.posisi})</span></div>`; });
+                     htmlStr += `<div style="font-size:0.75rem; color:#1e293b; font-weight:700; margin-top:4px;">Tim Dapur ${dapurBadge}</div>`;
+                     shiftData.dapur.forEach((k, index) => { htmlStr += `<div style="font-size:0.7rem; color:#475569; padding-left:5px; border-left:2px solid #cbd5e1; margin-bottom:2px;">${index + 1}. ${k.nama}</div>`; });
                  }
                  if(totalPacking > 0) {
-                     htmlStr += `<div style="font-size:0.75rem; color:#1e293b; font-weight:700; margin-top:6px;">Tim Packing</div>`;
-                     shiftData.packing.forEach(k => { htmlStr += `<div style="font-size:0.7rem; color:#475569; padding-left:5px; border-left:2px solid #cbd5e1; margin-bottom:2px;">${k.nama} <span class="text-muted">(${k.posisi})</span></div>`; });
+                     htmlStr += `<div style="font-size:0.75rem; color:#1e293b; font-weight:700; margin-top:6px;">Tim Packing ${packingBadge}</div>`;
+                     shiftData.packing.forEach((k, index) => { htmlStr += `<div style="font-size:0.7rem; color:#475569; padding-left:5px; border-left:2px solid #cbd5e1; margin-bottom:2px;">${index + 1}. ${k.nama}</div>`; });
                  }
                  htmlStr += `</div>`; return htmlStr;
              };
@@ -865,7 +863,6 @@
        el.innerHTML = html;
     }
 
-    // === TANGKAPAN ERROR DENGAN SISTEM AUTO-RETRY SILENT & MICROCOPY KULINER ===
     function loadData(retryCount = 0) {
       const start = document.getElementById('startTgl').value; 
       const end = document.getElementById('endTgl').value;
@@ -911,7 +908,7 @@
           dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
           
           let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
-          window.rawStokData = []; // Simpan data utuh untuk Fast Moving Filter
+          window.rawStokData = [];
 
           let stokRows = (data.stokData || []).map(s => {
              let st = String(s.ket).toLowerCase();
@@ -957,7 +954,6 @@
           }
           document.getElementById('restockList').innerHTML = restockHtml;
 
-          // Eksekusi Fast Moving default (Semua Area)
           updateFastMovingChart(document.getElementById('fmFilterPengadaan').value);
 
           dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
@@ -971,7 +967,6 @@
         })
         .catch(error => {
           console.error("Fetch Error/Timeout:", error); 
-          // Auto Retry Silent tiap 3 detik dengan pergantian teks kuliner
           setTimeout(() => loadData(retryCount + 1), 3000);
         });
     }

@@ -474,11 +474,11 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzn97J3OuzU4BT1mICqZBZ5QgyZ3uqnhiZoNQhw8PDFpnSQokrSjx8amylynSbrAtjeEg/execc"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzn97J3OuzU4BT1mICqZBZ5QgyZ3uqnhiZoNQhw8PDFpnSQokrSjx8amylynSbrAtjeEg/exec"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
-    window.bomData = { resep: [], master: [] }; 
+    window.bomData = { resep: [], master: [] }; // Data BoM untuk kalkulasi client-side
     
     let isAdmin = false;
 
@@ -1116,7 +1116,7 @@
     }
 
     // =========================================================================
-    // MESIN BOM (CLIENT-SIDE RECURSIVE ENGINE) - UPDATE PENYEMPURNAAN
+    // MESIN BOM (CLIENT-SIDE RECURSIVE ENGINE)
     // =========================================================================
     
     function tambahBarisBoM() {
@@ -1151,23 +1151,11 @@
         });
         
         let recipeMap = {};
-        let resepFallbackMap = {}; // Untuk fallback nama dan satuan
-        
         resRows.forEach(r => {
             let induk = String(r[0]).trim();
-            let nomat = String(r[2]).trim();
-            let namaTurunan = String(r[3]).trim();
-            let unitTurunan = String(r[5]).trim();
-            
-            if(induk) {
-                if(!recipeMap[induk]) recipeMap[induk] = { base: Number(r[1]) || 1, children: [] };
-                recipeMap[induk].children.push({ nomat: nomat, nama: namaTurunan, qty: Number(r[4]) || 0, unit: unitTurunan });
-            }
-            
-            // Simpan data turunan sebagai fallback jika tidak ada di Master
-            if(nomat && !resepFallbackMap[nomat]) {
-                resepFallbackMap[nomat] = { name: namaTurunan, unit: unitTurunan };
-            }
+            if(!induk) return;
+            if(!recipeMap[induk]) recipeMap[induk] = { base: Number(r[1]) || 1, children: [] };
+            recipeMap[induk].children.push({ nomat: String(r[2]).trim(), nama: String(r[3]).trim(), qty: Number(r[4]) || 0, unit: r[5] });
         });
         
         let finalTotals = {};
@@ -1179,7 +1167,7 @@
             } else {
                 let foundNomat = "";
                 for(let i=0; i<resRows.length; i++) {
-                    if(String(resRows[i][3]).trim().toUpperCase() === name.toUpperCase() && String(resRows[i][2]).trim() !== "") {
+                    if(String(resRows[i][3]).trim() === name && String(resRows[i][2]).trim() !== "") {
                         foundNomat = String(resRows[i][2]).trim(); break;
                     }
                 }
@@ -1193,28 +1181,16 @@
         let results = [];
         
         for(let nomat in finalTotals) {
+            let m = masterMap[nomat] || { name: 'Material Unknown', resUnit: '?', buyUnit: '?', ratio: 1 };
             let rawQtyWithMargin = finalTotals[nomat] * multiplier;
-            
-            // Cek Master Material, jika tidak ada pakai Fallback dari Resep
-            let m = masterMap[nomat];
-            let fallback = resepFallbackMap[nomat] || { name: 'Unknown', unit: '?' };
-            
-            let finalName = m ? m.name : fallback.name;
-            let finalUnit = m ? m.buyUnit : fallback.unit;
-            let convertedQty = rawQtyWithMargin;
-            let ket = '-';
-            
-            if(m && m.ratio !== 1) {
-                convertedQty = rawQtyWithMargin / m.ratio;
-                ket = `Konv. dari ${rawQtyWithMargin.toFixed(0)} ${m.resUnit}`;
-            }
+            let convertedQty = rawQtyWithMargin / m.ratio;
             
             results.push({
                 nomat: nomat,
-                nama: finalName,
+                nama: m.name,
                 qty: Number(convertedQty.toFixed(2)),
-                unit: finalUnit,
-                ket: ket
+                unit: m.buyUnit,
+                ket: m.ratio !== 1 ? `Konv. dari ${rawQtyWithMargin.toFixed(0)} ${m.resUnit}` : '-'
             });
         }
         return results;

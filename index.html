@@ -478,7 +478,7 @@
 
     window.chartTargets = {};
     window.rawStokData = [];
-    window.bomData = { resep: [], master: [] }; // Data BoM untuk kalkulasi client-side
+    window.bomData = { resep: [], master: [] }; 
     
     let isAdmin = false;
 
@@ -1151,11 +1151,23 @@
         });
         
         let recipeMap = {};
+        let resepFallbackMap = {}; // Untuk fallback nama dan satuan dari BOM_RESEP
+        
         resRows.forEach(r => {
             let induk = String(r[0]).trim();
-            if(!induk) return;
-            if(!recipeMap[induk]) recipeMap[induk] = { base: Number(r[1]) || 1, children: [] };
-            recipeMap[induk].children.push({ nomat: String(r[2]).trim(), nama: String(r[3]).trim(), qty: Number(r[4]) || 0, unit: r[5] });
+            let nomat = String(r[2]).trim();
+            let namaTurunan = String(r[3]).trim();
+            let unitTurunan = String(r[5]).trim();
+            
+            if(induk) {
+                if(!recipeMap[induk]) recipeMap[induk] = { base: Number(r[1]) || 1, children: [] };
+                recipeMap[induk].children.push({ nomat: nomat, nama: namaTurunan, qty: Number(r[4]) || 0, unit: unitTurunan });
+            }
+            
+            // Simpan data turunan sebagai fallback jika tidak ada di Master
+            if(nomat && !resepFallbackMap[nomat]) {
+                resepFallbackMap[nomat] = { name: namaTurunan, unit: unitTurunan };
+            }
         });
         
         let finalTotals = {};
@@ -1166,12 +1178,18 @@
                 rec.children.forEach(child => explode(child.nama, child.qty * factor));
             } else {
                 let foundNomat = "";
+                let foundUnit = "";
                 for(let i=0; i<resRows.length; i++) {
-                    if(String(resRows[i][3]).trim() === name && String(resRows[i][2]).trim() !== "") {
-                        foundNomat = String(resRows[i][2]).trim(); break;
+                    if(String(resRows[i][3]).trim().toUpperCase() === name.toUpperCase() && String(resRows[i][2]).trim() !== "") {
+                        foundNomat = String(resRows[i][2]).trim();
+                        foundUnit = String(resRows[i][5]).trim();
+                        break;
                     }
                 }
-                if(foundNomat) finalTotals[foundNomat] = (finalTotals[foundNomat] || 0) + qty;
+                if(foundNomat) {
+                    if(!finalTotals[foundNomat]) finalTotals[foundNomat] = { qty: 0, name: name, unit: foundUnit };
+                    finalTotals[foundNomat].qty += qty;
+                }
             }
         }
         
@@ -1181,16 +1199,28 @@
         let results = [];
         
         for(let nomat in finalTotals) {
-            let m = masterMap[nomat] || { name: 'Material Unknown', resUnit: '?', buyUnit: '?', ratio: 1 };
-            let rawQtyWithMargin = finalTotals[nomat] * multiplier;
-            let convertedQty = rawQtyWithMargin / m.ratio;
+            let item = finalTotals[nomat];
+            let rawQtyWithMargin = item.qty * multiplier;
+            
+            let m = masterMap[nomat];
+            let fallback = resepFallbackMap[nomat] || { name: item.name, unit: item.unit };
+            
+            let finalName = m ? m.name : fallback.name;
+            let finalUnit = m ? m.buyUnit : fallback.unit;
+            let convertedQty = rawQtyWithMargin;
+            let ket = '-';
+            
+            if(m && m.ratio !== 1) {
+                convertedQty = rawQtyWithMargin / m.ratio;
+                ket = `Konv. dari ${rawQtyWithMargin.toFixed(0)} ${m.resUnit}`;
+            }
             
             results.push({
                 nomat: nomat,
-                nama: m.name,
+                nama: finalName,
                 qty: Number(convertedQty.toFixed(2)),
-                unit: m.buyUnit,
-                ket: m.ratio !== 1 ? `Konv. dari ${rawQtyWithMargin.toFixed(0)} ${m.resUnit}` : '-'
+                unit: finalUnit,
+                ket: ket
             });
         }
         return results;

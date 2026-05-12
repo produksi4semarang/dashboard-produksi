@@ -478,7 +478,7 @@
 
     window.chartTargets = {};
     window.rawStokData = [];
-    window.bomData = { resep: [], master: [] }; // Data BoM untuk kalkulasi client-side
+    window.bomData = { resep: [], master: [] }; 
     
     let isAdmin = false;
 
@@ -963,7 +963,6 @@
           let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
           window.rawStokData = [];
           
-          // Simpan data BoM untuk kalkulasi client-side
           if(data.bomData) {
               window.bomData = data.bomData;
               let induks = [...new Set((data.bomData.resep || []).map(r => String(r[0]).trim()).filter(Boolean))].sort();
@@ -1024,7 +1023,6 @@
           renderRombonganTimeline(data.rombonganData);
           renderDinasanTimeline(data.jadwalDinasan);
 
-          // Reset BoM Input setelah datalist terisi
           if(window.bomData && window.bomData.resep && window.bomData.resep.length > 0) {
               resetBoMInput();
           }
@@ -1037,86 +1035,8 @@
         });
     }
 
-    function renderGaugeCharts(srq, real, sp) {
-      const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); 
-      let colorSrq = (real >= srq && srq > 0) ? '#0284c7' : '#f59e0b'; 
-      gaugeSrqChartObj = new Chart(ctxSrq, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, srq || 1], backgroundColor: [colorSrq, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
-      window.chartTargets['gaugeSrqChart'] = { chart: gaugeSrqChartObj, type: 'doughnut', data: [[real, Math.max(0, srq - real)]] };
-
-      const ctxSp = document.getElementById('gaugeSpChart').getContext('2d'); if (gaugeSpChartObj) gaugeSpChartObj.destroy(); 
-      let colorSp = (real >= sp && sp > 0) ? '#4f46e5' : '#f59e0b'; 
-      gaugeSpChartObj = new Chart(ctxSp, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, sp || 1], backgroundColor: [colorSp, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
-      window.chartTargets['gaugeSpChart'] = { chart: gaugeSpChartObj, type: 'doughnut', data: [[real, Math.max(0, sp - real)]] };
-    }
-    
-    function renderLineChart(trendData) {
-      const ctx = document.getElementById('lineChart').getContext('2d'); if (lineChartObj) lineChartObj.destroy(); 
-      let zeros = trendData.labels.map(() => 0);
-      lineChartObj = new Chart(ctx, { type: 'line', data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: zeros, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: zeros, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
-      window.chartTargets['lineChart'] = { chart: lineChartObj, type: 'line', data: [trendData.srq, trendData.real] };
-    }
-    
-    function renderBarChart(trendData) {
-      const ctx = document.getElementById('barChart').getContext('2d'); if (barChartObj) barChartObj.destroy(); 
-      let zeros = trendData.labels.map(() => 0);
-      barChartObj = new Chart(ctx, { type: 'bar', data: { labels: trendData.labels, datasets: [{ label: 'Total Volume Harian', data: zeros, backgroundColor: '#ea580c', borderRadius: 4 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
-      window.chartTargets['barChart'] = { chart: barChartObj, type: 'bar', data: [trendData.real] };
-    }
-
-    function renderCategoryMenuCharts(tableMenu) {
-      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
-      tableMenu.forEach(row => {
-        let kat = row[0]; let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let real = parseInt(row[4]) || 0; 
-        if (real > 0) { 
-          if (kat === 'Fresh Food') dataFF[menu] = (dataFF[menu] || 0) + real;
-          else if (kat === 'Luxury' || kat === 'Fit') dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
-          else if (kat === 'Suite') dataSuite[menu] = (dataSuite[menu] || 0) + real;
-          else if (kat === 'Crew Meal') dataCrew[menu] = (dataCrew[menu] || 0) + real;
-        }
-      });
-      chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981'); chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
-      chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
-    }
-
-    function renderAmprahanCharts(tableAmprahan) {
-      let dataKA = {}; let dataMenu = {};
-      tableAmprahan.forEach(row => {
-        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); let qty = parseInt(row[3]) || 0;
-        if (qty > 0) { dataKA[kereta] = (dataKA[kereta] || 0) + qty; dataMenu[menu] = (dataMenu[menu] || 0) + qty; }
-      });
-      chartAmprahanKAObj = drawHBarChart('chartAmprahanKA', chartAmprahanKAObj, dataKA, '#ef4444'); chartAmprahanMenuObj = drawHBarChart('chartAmprahanMenu', chartAmprahanMenuObj, dataMenu, '#14b8a6');
-    }
-
-    function drawHBarChart(ctxId, chartObj, dataDict, color) {
-      const ctx = document.getElementById(ctxId).getContext('2d'); if (chartObj) chartObj.destroy();
-      let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
-      let labels = sortedArray.map(x => x[0]); let values = sortedArray.map(x => x[1]); let zeros = values.map(() => 0);
-      let newChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Porsi', data: zeros, backgroundColor: color, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
-      window.chartTargets[ctxId] = { chart: newChart, type: 'barH', data: [values] };
-      return newChart;
-    }
-
-    function aksiLaporan() { 
-      const btn = document.getElementById('btnTelegram'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengirim Laporan..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
-    }
-    
-    function aksiExport() { 
-      const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengekspor Data..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
-    }
-
-    function aksiKirimStok() { 
-      const btn = document.getElementById('btnKirimStok'); const filterVal = document.getElementById('filterStatusStok').value;
-      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengecek Stok..."; btn.disabled = true; 
-      fetch(`${API_URL}?action=kirimLaporanStok&filter=${filterVal}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Laporan Terkirim!'; setTimeout(() => { btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }, 3000); })
-      .catch(err => { document.getElementById('fullScreenLoader').style.display = 'none'; alert("Gagal mengirim laporan stok."); btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }); 
-    }
-
     // =========================================================================
-    // MESIN BOM (CLIENT-SIDE RECURSIVE ENGINE)
+    // MESIN BOM (CLIENT-SIDE RECURSIVE ENGINE) - UPDATE PENYEMPURNAAN
     // =========================================================================
     
     function tambahBarisBoM() {
@@ -1158,7 +1078,8 @@
             recipeMap[induk].children.push({ nomat: String(r[2]).trim(), nama: String(r[3]).trim(), qty: Number(r[4]) || 0, unit: r[5] });
         });
         
-        let finalTotals = {};
+        let finalTotals = {}; // key: nomat -> value: {qty, name, unit}
+        
         function explode(name, qty) {
             let rec = recipeMap[name];
             if(rec) {
@@ -1166,12 +1087,20 @@
                 rec.children.forEach(child => explode(child.nama, child.qty * factor));
             } else {
                 let foundNomat = "";
+                let foundUnit = "";
+                // Cari di resep sebagai bahan turunan
                 for(let i=0; i<resRows.length; i++) {
-                    if(String(resRows[i][3]).trim() === name && String(resRows[i][2]).trim() !== "") {
-                        foundNomat = String(resRows[i][2]).trim(); break;
+                    if(String(resRows[i][3]).trim().toUpperCase() === name.toUpperCase() && String(resRows[i][2]).trim() !== "") {
+                        foundNomat = String(resRows[i][2]).trim();
+                        foundUnit = String(resRows[i][5]).trim();
+                        break;
                     }
                 }
-                if(foundNomat) finalTotals[foundNomat] = (finalTotals[foundNomat] || 0) + qty;
+                
+                if(foundNomat) {
+                    if(!finalTotals[foundNomat]) finalTotals[foundNomat] = { qty: 0, name: name, unit: foundUnit };
+                    finalTotals[foundNomat].qty += qty;
+                }
             }
         }
         
@@ -1181,16 +1110,30 @@
         let results = [];
         
         for(let nomat in finalTotals) {
-            let m = masterMap[nomat] || { name: 'Material Unknown', resUnit: '?', buyUnit: '?', ratio: 1 };
-            let rawQtyWithMargin = finalTotals[nomat] * multiplier;
-            let convertedQty = rawQtyWithMargin / m.ratio;
+            let item = finalTotals[nomat];
+            let rawQtyWithMargin = item.qty * multiplier;
+            
+            let m = masterMap[nomat];
+            let stockMatch = window.rawStokData ? window.rawStokData.find(s => String(s.no).trim() === nomat) : null;
+            
+            // Logika Fallback Cerdas (Jika tidak ada di Master, pinjam nama dan satuan dari Stok/Resep)
+            let finalName = m ? m.name : (stockMatch ? stockMatch.nama : item.name);
+            let finalBuyUnit = m ? m.buyUnit : (stockMatch ? stockMatch.satuan : item.unit);
+            let convertedQty = rawQtyWithMargin;
+            let ket = "-";
+            
+            // Konversi berlaku HANYA jika ada di Master Material dan ratio bukan 1
+            if (m && m.ratio !== 1) {
+                convertedQty = rawQtyWithMargin / m.ratio;
+                ket = `Konv. dari ${rawQtyWithMargin.toFixed(0)} ${m.resUnit}`;
+            }
             
             results.push({
                 nomat: nomat,
-                nama: m.name,
+                nama: finalName,
                 qty: Number(convertedQty.toFixed(2)),
-                unit: m.buyUnit,
-                ket: m.ratio !== 1 ? `Konv. dari ${rawQtyWithMargin.toFixed(0)} ${m.resUnit}` : '-'
+                unit: finalBuyUnit,
+                ket: ket
             });
         }
         return results;

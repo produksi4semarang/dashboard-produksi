@@ -102,9 +102,10 @@
     @media print {
       body * { visibility: hidden; }
       #modalBoM, #modalBoM * { visibility: visible; }
-      #modalBoM { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; background: white; }
-      .modal-dialog { max-width: 100%; margin: 0; }
-      .modal-content { border: none; box-shadow: none; }
+      #modalBoM { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; overflow: visible !important; background: white; }
+      .modal-dialog { max-width: 100%; margin: 0; width: 100%; }
+      .modal-content, .modal-body { border: none; box-shadow: none; overflow: visible !important; max-height: none !important; height: auto !important; }
+      .table-responsive { overflow: visible !important; }
       .btn-close, .modal-footer { display: none !important; }
       #tableBoMResult th { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; }
     }
@@ -408,7 +409,7 @@
             </div>
           </div>
           <div class="modal-footer bg-light">
-             <button class="btn btn-outline-primary fw-bold" onclick="alert('Fitur segera hadir dengan icon terbaru!')"><i class="fab fa-telegram-plane"></i> Kirim List Order</button>
+             <button class="btn btn-outline-primary fw-bold" onclick="aksiKirimBoM(this)"><i class="fab fa-telegram-plane"></i> Kirim List Order</button>
              <button class="btn btn-outline-danger fw-bold" onclick="window.print()"><i class="fas fa-print"></i> Cetak PDF</button>
           </div>
         </div>
@@ -474,7 +475,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzn97J3OuzU4BT1mICqZBZ5QgyZ3uqnhiZoNQhw8PDFpnSQokrSjx8amylynSbrAtjeEg/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzKOtCQDEvgnzBjNbaYVlipR95eNM2CnR0iN7myBvCud98IPnpO4SPSvCt861Y0EKob_g/execc"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
@@ -1277,7 +1278,70 @@
           alert("Gagal memproses perhitungan BoM: " + e.message);
       }
     }
+function aksiKirimBoM(btnElement) {
+        let originalText = btnElement.innerHTML;
+        btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+        btnElement.disabled = true;
 
+        // 1. Ambil Rangkuman Pesanan
+        let summaryText = "";
+        $("#bomSummary li").each(function() {
+            summaryText += "- " + $(this).text() + "\n";
+        });
+        let marginText = $("#bomSummary .text-danger").text();
+
+        // 2. Ambil Data dari Tabel Breakdown
+        let orderList = "";
+        $("#tableBoMResult tbody tr").each(function() {
+            let cols = $(this).find("td");
+            if (cols.length > 1) {
+                let nama = $(cols[1]).text().trim();
+                let qty = $(cols[2]).text().trim();
+                let sisa = $(cols[3]).text().trim().replace("Order!", "").trim();
+                let unit = $(cols[4]).text().trim();
+                let isKurang = $(cols[3]).find(".bg-danger").length > 0;
+                
+                // Tambahkan tanda merah jika stok kurang
+                let mark = isKurang ? " 🔴 [ORDER]" : "";
+                orderList += `▫️ ${nama}\n   Butuh: ${qty} ${unit} | Sisa Stok: ${sisa}${mark}\n`;
+            }
+        });
+
+        if (orderList === "") {
+            alert("Tidak ada data untuk dikirim.");
+            btnElement.innerHTML = originalText;
+            btnElement.disabled = false;
+            return;
+        }
+
+        // 3. Rangkai Pesan Telegram
+        let tglWIB = new Date().toLocaleString("id-ID", {timeZone: "Asia/Jakarta"});
+        let pesan = `📝 *LIST ORDER KEBUTUHAN BoM*\n_${tglWIB} WIB_\n\n*Rencana Produksi:*\n${summaryText}_${marginText}_\n\n*Rincian Bahan Baku:*\n${orderList}\nMohon tim pengadaan segera menindaklanjuti. Terimakasih🙏`;
+
+        // 4. Kirim ke Endpoint Code.gs via POST
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' }, // Pakai text/plain agar tidak kena error CORS di Apps Script
+            body: JSON.stringify({
+                action: "kirimBoMTelegram",
+                pesan: pesan
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btnElement.innerHTML = '<i class="fas fa-check"></i> Terkirim!';
+            setTimeout(() => {
+                btnElement.innerHTML = originalText;
+                btnElement.disabled = false;
+            }, 3000);
+        })
+        .catch(err => {
+            alert("Gagal mengirim list order: " + err.message);
+            btnElement.innerHTML = originalText;
+            btnElement.disabled = false;
+        });
+    }
+    
   </script>
 </body>
 </html>

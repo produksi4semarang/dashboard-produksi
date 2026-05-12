@@ -97,6 +97,17 @@
     
     .dashboard-footer { text-align: center; padding: 20px 0 10px 0; color: #64748b; font-size: 0.9rem; }
     .footer-names { font-weight: 800; color: #ea580c; letter-spacing: 1px; margin-top: 5px; }
+
+    /* --- PRINT CSS UNTUK CETAK PDF BoM --- */
+    @media print {
+      body * { visibility: hidden; }
+      #modalBoM, #modalBoM * { visibility: visible; }
+      #modalBoM { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; background: white; }
+      .modal-dialog { max-width: 100%; margin: 0; }
+      .modal-content { border: none; box-shadow: none; }
+      .btn-close, .modal-footer { display: none !important; }
+      #tableBoMResult th { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; }
+    }
   </style>
 </head>
 <body>
@@ -120,7 +131,7 @@
     <a href="#" onclick="switchPage('stok', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-stok.png" class="menu-icon"> Penjagaan Stok</a>
     <a href="#" onclick="switchPage('rombongan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-rombongan.png" class="menu-icon"> Data Rombongan</a>
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
-    <a href="#" onclick="switchPage('recipe', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/13763f14a07ee9f6992e1ab10756b3147a6a8b8b/icon-recipe.png" class="menu-icon"> Standard Recipe</a>
+    <a href="#" onclick="switchPage('recipe', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/13763f14a07ee9f6992e1ab10756b3147a6a8b8b/icon-recipe.png" class="menu-icon"> Standard Recipe & BoM</a>
     <hr style="border-color: #cbd5e1; margin: 15px 25px;">
     <a href="#" onclick="switchPage('kedatangan', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-kedatangan.png" class="menu-icon"> Kedatangan Bahan Baku <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
     <a href="#" onclick="switchPage('pr', this)"><img src="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/e67e597a2dc5a0c93475d20324d111ee1e61459b/icon-pr.png" class="menu-icon"> Nomor PR <span class="badge bg-secondary ms-1" style="font-size:0.65rem;">Soon</span></a>
@@ -255,7 +266,6 @@
              <div id="restockList" class="restock-list" style="max-height: 200px; overflow-y: auto; padding-right: 5px;"></div>
           </div>
         </div>
-        
         <div class="col-lg-4 mb-3 reveal-card">
           <div class="card-container h-100">
              <div class="d-flex justify-content-between align-items-center mb-3">
@@ -333,7 +343,6 @@
         
         <div class="tab-content" id="pills-tabContent">
           <div class="tab-pane fade show active" id="pills-pdf" role="tabpanel">
-            
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
               <div class="d-flex flex-wrap gap-2" id="recipe-nav">
                  <button class="btn btn-sm btn-outline-primary fw-bold active" onclick="gantiResep('https://drive.google.com/file/d/1H-XCxRJkuo2iGJx7xRXTITlXPQtyXxMU/preview', this)">Reguler Baru</button>
@@ -349,14 +358,58 @@
             <div style="width:100%; height:85vh; min-height: 800px; background:#f1f5f9; border-radius:10px; overflow:hidden; border:2px solid #cbd5e1;">
                 <iframe id="iframeResep" src="https://drive.google.com/file/d/1H-XCxRJkuo2iGJx7xRXTITlXPQtyXxMU/preview" width="100%" height="100%" frameborder="0" allow="autoplay" allowfullscreen></iframe>
             </div>
-
           </div>
+          
           <div class="tab-pane fade" id="pills-bom" role="tabpanel">
-             <div class="text-center py-5 mt-4">
-                <i class="fas fa-tools fa-4x text-secondary mb-3"></i>
-                <h4 class="fw-bold text-dark">Fitur BoM Sedang Dipersiapkan</h4>
-                <p class="text-muted mx-auto" style="max-width:500px;">Struktur database untuk Build of Material sedang dimatangkan untuk mendukung sistem kalkulator multi-menu yang akurat.</p>
-             </div>
+            <datalist id="bomMenuOptions"></datalist>
+            <div class="row">
+              <div class="col-md-7">
+                <div class="card-container border shadow-none">
+                  <h6 class="fw-bold mb-3">Perencanaan Produksi</h6>
+                  <table class="table table-sm" id="tableBoMInput">
+                    <thead><tr><th width="70%">Pilih Menu / Sub-Resep</th><th>Jumlah Porsi</th><th width="50px"></th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                  <button class="btn btn-sm btn-outline-secondary mb-3 fw-bold" onclick="tambahBarisBoM()">+ Tambah Menu</button>
+                  <div class="row align-items-center border-top pt-3">
+                    <div class="col-md-6"><label class="small fw-bold text-muted">Extra Margin / Antisipasi Susut (%)</label><input type="number" id="bomMargin" class="form-control form-control-sm border-secondary" value="5"></div>
+                    <div class="col-md-6 text-end"><button class="btn btn-success fw-bold px-4" onclick="hitungBoM()"><i class="fas fa-calculator"></i> Hitung Kebutuhan</button></div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="alert alert-info border-0 shadow-sm">
+                  <h6 class="fw-bold"><i class="fas fa-info-circle"></i> Cara Menggunakan:</h6>
+                  <ol class="small m-0 ps-3">
+                    <li>Ketik dan pilih menu yang akan dimasak dari kolom di sebelah kiri.</li>
+                    <li>Tentukan target porsi produksi.</li>
+                    <li>Isi persentase margin (rekomendasi 5% untuk antisipasi bahan rusak).</li>
+                    <li>Klik tombol hijau untuk menghasilkan breakdown daftar belanja instan.</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalBoM" tabindex="-1">
+      <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
+          <div class="modal-header bg-success text-white"> <h5 class="modal-title fw-bold"><i class="fas fa-clipboard-check"></i> Hasil Breakdown Bahan Baku</h5> <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button> </div>
+          <div class="modal-body p-4">
+            <div id="bomSummary" class="mb-4 p-3 rounded" style="background-color: #f0fdf4; border-left: 4px solid #16a34a;"></div>
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered w-100" id="tableBoMResult">
+                <thead class="table-light"><tr><th>Nomat</th><th>Nama Material</th><th>Total Kebutuhan</th><th>Sisa Stok</th><th>Satuan Belanja</th><th>Keterangan</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+             <button class="btn btn-outline-primary fw-bold" onclick="alert('Fitur segera hadir dengan icon terbaru!')"><i class="fab fa-telegram-plane"></i> Kirim List Order</button>
+             <button class="btn btn-outline-danger fw-bold" onclick="window.print()"><i class="fas fa-print"></i> Cetak PDF</button>
           </div>
         </div>
       </div>
@@ -421,10 +474,11 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbykM6VLU_4eLFOjBJpZsxFyCujSnXq4U_700NSeovumyL6qfWxANgNAuc5A_JeAYfzi9w/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzn97J3OuzU4BT1mICqZBZ5QgyZ3uqnhiZoNQhw8PDFpnSQokrSjx8amylynSbrAtjeEg/exec"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
+    window.bomData = { resep: [], master: [] }; // Data BoM untuk kalkulasi client-side
     
     let isAdmin = false;
 
@@ -637,7 +691,6 @@
 
         $('#filterStatusStok').on('change', function() { dtStok.column(9).search(this.value).draw(); });
         $('#filterPengadaanStok').on('change', function() { dtStok.column(10).search(this.value).draw(); });
-
         $('#fmFilterPengadaan').on('change', function() { updateFastMovingChart(this.value); });
 
         switchPage('home'); 
@@ -909,6 +962,14 @@
           
           let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
           window.rawStokData = [];
+          
+          // Simpan data BoM untuk kalkulasi client-side
+          if(data.bomData) {
+              window.bomData = data.bomData;
+              let induks = [...new Set((data.bomData.resep || []).map(r => String(r[0]).trim()).filter(Boolean))].sort();
+              let dl = document.getElementById('bomMenuOptions');
+              if(dl) dl.innerHTML = induks.map(m => `<option value="${m}">`).join('');
+          }
 
           let stokRows = (data.stokData || []).map(s => {
              let st = String(s.ket).toLowerCase();
@@ -962,6 +1023,11 @@
           renderAgendaTimeline(data.rombonganData, data.jadwalData);
           renderRombonganTimeline(data.rombonganData);
           renderDinasanTimeline(data.jadwalDinasan);
+
+          // Reset BoM Input setelah datalist terisi
+          if(window.bomData && window.bomData.resep && window.bomData.resep.length > 0) {
+              resetBoMInput();
+          }
 
           setTimeout(checkVisibleElements, 100);
         })
@@ -1048,6 +1114,140 @@
       fetch(`${API_URL}?action=kirimLaporanStok&filter=${filterVal}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Laporan Terkirim!'; setTimeout(() => { btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }, 3000); })
       .catch(err => { document.getElementById('fullScreenLoader').style.display = 'none'; alert("Gagal mengirim laporan stok."); btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }); 
     }
+
+    // =========================================================================
+    // MESIN BOM (CLIENT-SIDE RECURSIVE ENGINE)
+    // =========================================================================
+    
+    function tambahBarisBoM() {
+      let row = `<tr>
+        <td><input class="form-control form-control-sm bom-menu-input border-secondary fw-bold" list="bomMenuOptions" placeholder="Ketik atau pilih menu..."></td>
+        <td><input type="number" class="form-control form-control-sm bom-qty-input border-secondary fw-bold text-center" value="100"></td>
+        <td><button class="btn btn-sm btn-outline-danger border-0" onclick="$(this).closest('tr').remove()"><i class="fas fa-trash"></i></button></td>
+      </tr>`;
+      $("#tableBoMInput tbody").append(row);
+    }
+
+    function resetBoMInput() { 
+        $("#tableBoMInput tbody").empty(); 
+        tambahBarisBoM(); 
+    }
+
+    function getSisaStok(nomat) {
+        if(!window.rawStokData) return null;
+        let s = window.rawStokData.find(x => String(x.no).trim() === String(nomat).trim());
+        if(s && !isNaN(parseFloat(s.akhir))) return parseFloat(s.akhir);
+        return null;
+    }
+
+    function processRecursiveBoM(plan, margin) {
+        let resRows = window.bomData.resep || [];
+        let matRows = window.bomData.master || [];
+        
+        let masterMap = {};
+        matRows.forEach(r => {
+            let nomat = String(r[0]).trim();
+            if(nomat) masterMap[nomat] = { name: r[1], resUnit: r[2], buyUnit: r[3], ratio: Number(r[4]) || 1 };
+        });
+        
+        let recipeMap = {};
+        resRows.forEach(r => {
+            let induk = String(r[0]).trim();
+            if(!induk) return;
+            if(!recipeMap[induk]) recipeMap[induk] = { base: Number(r[1]) || 1, children: [] };
+            recipeMap[induk].children.push({ nomat: String(r[2]).trim(), nama: String(r[3]).trim(), qty: Number(r[4]) || 0, unit: r[5] });
+        });
+        
+        let finalTotals = {};
+        function explode(name, qty) {
+            let rec = recipeMap[name];
+            if(rec) {
+                let factor = qty / rec.base;
+                rec.children.forEach(child => explode(child.nama, child.qty * factor));
+            } else {
+                let foundNomat = "";
+                for(let i=0; i<resRows.length; i++) {
+                    if(String(resRows[i][3]).trim() === name && String(resRows[i][2]).trim() !== "") {
+                        foundNomat = String(resRows[i][2]).trim(); break;
+                    }
+                }
+                if(foundNomat) finalTotals[foundNomat] = (finalTotals[foundNomat] || 0) + qty;
+            }
+        }
+        
+        plan.forEach(p => explode(p.menu, p.qty));
+        
+        let multiplier = 1 + (Number(margin) / 100);
+        let results = [];
+        
+        for(let nomat in finalTotals) {
+            let m = masterMap[nomat] || { name: 'Material Unknown', resUnit: '?', buyUnit: '?', ratio: 1 };
+            let rawQtyWithMargin = finalTotals[nomat] * multiplier;
+            let convertedQty = rawQtyWithMargin / m.ratio;
+            
+            results.push({
+                nomat: nomat,
+                nama: m.name,
+                qty: Number(convertedQty.toFixed(2)),
+                unit: m.buyUnit,
+                ket: m.ratio !== 1 ? `Konv. dari ${rawQtyWithMargin.toFixed(0)} ${m.resUnit}` : '-'
+            });
+        }
+        return results;
+    }
+
+    function hitungBoM() {
+      let plan = []; 
+      let summaryHtml = `<div class="fw-bold mb-2 text-dark"><i class="fas fa-tasks text-success"></i> Rencana Produksi:</div><ul class='mb-0 small' style='color:#475569;'>`;
+      
+      $(".bom-menu-input").each(function(i, el) {
+        let m = String($(el).val()).trim(); 
+        let q = $(el).closest('tr').find('.bom-qty-input').val();
+        if(m && q) { 
+            plan.push({menu: m, qty: Number(q)}); 
+            summaryHtml += `<li>${m} : <b>${q}</b> Porsi / Takaran</li>`; 
+        }
+      });
+      
+      if(plan.length === 0) return alert("Pilih atau ketik minimal satu menu untuk dihitung!");
+      
+      let margin = Number($("#bomMargin").val()) || 0;
+      summaryHtml += `</ul><hr class="my-2"><div class='small fw-bold text-danger'><i class="fas fa-shield-alt"></i> Safety Margin Aktif: ${margin}%</div>`;
+      
+      try {
+          let results = processRecursiveBoM(plan, margin);
+          
+          let bRows = "";
+          results.forEach(r => {
+             let stokSisa = getSisaStok(r.nomat);
+             let stokText = stokSisa !== null ? stokSisa : '-';
+             let isKurang = (stokSisa !== null && r.qty > stokSisa);
+             let warningBadge = isKurang ? `<span class="badge bg-danger ms-2">Order!</span>` : '';
+             let qtyColor = isKurang ? 'text-danger' : 'text-primary';
+
+             bRows += `<tr>
+                <td class="text-secondary">${r.nomat}</td>
+                <td class="fw-bold text-dark">${r.nama}</td>
+                <td class="fw-bold text-success fs-6">${r.qty}</td>
+                <td class="fw-bold ${qtyColor}">${stokText} ${warningBadge}</td>
+                <td><span class="badge bg-secondary">${r.unit}</span></td>
+                <td class="small text-muted fst-italic">${r.ket}</td>
+             </tr>`;
+          });
+          
+          if(results.length === 0) {
+              bRows = `<tr><td colspan="6" class="text-center text-muted py-4">Data material tidak ditemukan atau rincian resep belum lengkap di Spreadsheet.</td></tr>`;
+          }
+          
+          $("#bomSummary").html(summaryHtml);
+          $("#tableBoMResult tbody").html(bRows);
+          new bootstrap.Modal('#modalBoM').show();
+          
+      } catch (e) {
+          alert("Gagal memproses perhitungan BoM: " + e.message);
+      }
+    }
+
   </script>
 </body>
 </html>

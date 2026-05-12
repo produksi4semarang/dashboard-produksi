@@ -20,7 +20,7 @@
   <style>
     body { background-color: #f4f7fa; color: #333; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; margin: 0; padding: 0; }
     
-    .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background-color: #ffffff; border-right: 1px solid #e2e8f0; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1050; padding-top: 80px; overflow-y: auto; }
+    .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background-color: #ffffff; border-right: 1px solid #e2e8f0; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1050; padding-top: 80px; overflow-y: auto; box-shadow: none; }
     .sidebar.open { left: 0; box-shadow: 5px 0 25px rgba(0,0,0,0.1); }
     .sidebar a { display: block; padding: 14px 25px; color: #475569; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.2s; border-left: 4px solid transparent; }
     .sidebar a:hover, .sidebar a.active { color: #ea580c; background-color: #f8fafc; border-left: 4px solid #ea580c; }
@@ -130,6 +130,7 @@
   </div>
 
   <div class="container-fluid py-3 px-3 px-md-4">
+    
     <div class="header-panel d-flex justify-content-between align-items-center">
       <a href="#" onclick="switchPage('home', document.querySelector('.sidebar a')); return false;" class="d-flex align-items-center gap-3 text-decoration-none">
         <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar(false); event.stopPropagation();">
@@ -254,6 +255,7 @@
              <div id="restockList" class="restock-list" style="max-height: 200px; overflow-y: auto; padding-right: 5px;"></div>
           </div>
         </div>
+        
         <div class="col-lg-4 mb-3 reveal-card">
           <div class="card-container h-100">
              <div class="d-flex justify-content-between align-items-center mb-3">
@@ -331,6 +333,7 @@
         
         <div class="tab-content" id="pills-tabContent">
           <div class="tab-pane fade show active" id="pills-pdf" role="tabpanel">
+            
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
               <div class="d-flex flex-wrap gap-2" id="recipe-nav">
                  <button class="btn btn-sm btn-outline-primary fw-bold active" onclick="gantiResep('https://drive.google.com/file/d/1H-XCxRJkuo2iGJx7xRXTITlXPQtyXxMU/preview', this)">Reguler Baru</button>
@@ -342,60 +345,18 @@
               </div>
               <button class="btn btn-sm btn-dark fw-bold mt-2 mt-md-0" onclick="bukaLayarPenuh()"><i class="fas fa-expand"></i> Layar Penuh</button>
             </div>
+
             <div style="width:100%; height:85vh; min-height: 800px; background:#f1f5f9; border-radius:10px; overflow:hidden; border:2px solid #cbd5e1;">
                 <iframe id="iframeResep" src="https://drive.google.com/file/d/1H-XCxRJkuo2iGJx7xRXTITlXPQtyXxMU/preview" width="100%" height="100%" frameborder="0" allow="autoplay" allowfullscreen></iframe>
             </div>
-          </div>
-          
-          <div class="tab-pane fade" id="pills-bom" role="tabpanel">
-            <div class="row">
-              <div class="col-md-7">
-                <div class="card-container border shadow-none">
-                  <h6 class="fw-bold mb-3">Perencanaan Produksi</h6>
-                  <table class="table table-sm" id="tableBoMInput">
-                    <thead><tr><th width="70%">Pilih Menu</th><th>Jumlah Porsi</th><th width="50px"></th></tr></thead>
-                    <tbody></tbody>
-                  </table>
-                  <button class="btn btn-sm btn-outline-secondary mb-3 fw-bold" onclick="tambahBarisBoM()">+ Tambah Menu</button>
-                  <div class="row align-items-center border-top pt-3">
-                    <div class="col-md-6"><label class="small fw-bold text-muted">Extra Margin / Antisipasi Susut (%)</label><input type="number" id="bomMargin" class="form-control form-control-sm border-secondary" value="5"></div>
-                    <div class="col-md-6 text-end"><button class="btn btn-success fw-bold px-4" onclick="hitungBoM()"><i class="fas fa-calculator"></i> Hitung Kebutuhan</button></div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="alert alert-info border-0 shadow-sm">
-                  <h6 class="fw-bold"><i class="fas fa-info-circle"></i> Cara Menggunakan:</h6>
-                  <ol class="small m-0 ps-3">
-                    <li>Pilih menu yang akan dimasak dari kolom di sebelah kiri.</li>
-                    <li>Tentukan target porsi produksi.</li>
-                    <li>Isi persentase margin (rekomendasi 5% untuk antisipasi bahan rusak).</li>
-                    <li>Klik tombol hijau untuk menghasilkan breakdown daftar belanja mentah.</li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="modal fade" id="modalBoM" tabindex="-1">
-      <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header bg-success text-white"> <h5 class="modal-title fw-bold"><i class="fas fa-clipboard-check"></i> Hasil Breakdown Bahan Baku</h5> <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button> </div>
-          <div class="modal-body p-4">
-            <div id="bomSummary" class="mb-4 p-3 rounded" style="background-color: #f0fdf4; border-left: 4px solid #16a34a;"></div>
-            <div class="table-responsive">
-              <table class="table table-hover table-bordered w-100" id="tableBoMResult">
-                <thead class="table-light"><tr><th>Nomat</th><th>Nama Material</th><th>Total Kebutuhan</th><th>Satuan Belanja</th><th>Keterangan</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
           </div>
-          <div class="modal-footer bg-light">
-             <button class="btn btn-outline-primary fw-bold" onclick="alert('Fitur segera hadir dengan icon terbaru!')"><i class="fab fa-telegram-plane"></i> Kirim List Order</button>
-             <button class="btn btn-outline-danger fw-bold" onclick="window.print()"><i class="fas fa-print"></i> Cetak PDF</button>
+          <div class="tab-pane fade" id="pills-bom" role="tabpanel">
+             <div class="text-center py-5 mt-4">
+                <i class="fas fa-tools fa-4x text-secondary mb-3"></i>
+                <h4 class="fw-bold text-dark">Fitur BoM Sedang Dipersiapkan</h4>
+                <p class="text-muted mx-auto" style="max-width:500px;">Struktur database untuk Build of Material sedang dimatangkan untuk mendukung sistem kalkulator multi-menu yang akurat.</p>
+             </div>
           </div>
         </div>
       </div>
@@ -460,11 +421,10 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzOkVNbiOMvFYMFGio7e7DBGcFBJs5pqqcT9mqZKYpWEwcZLJuuMGDdgLDSAclcLEMxcA/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyiTKY5Bn7o2i32dAgpe9HtqjX0Fi1yUZMYXV1dKSctqlH-p9wjiTcgYn_m4ifMM11JUQ/exec"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
-    window.bomMenus = [];
     
     let isAdmin = false;
 
@@ -741,7 +701,6 @@
        }
     }
 
-    // --- RENDER AGENDA PRODUKSI & ROMBONGAN ---
     function renderAgendaTimeline(dataRombongan, dataJadwal) {
        const el = document.getElementById('agendaTimeline');
        if (!dataRombongan || !dataJadwal) { el.innerHTML = '<div class="text-secondary p-3 fst-italic">Data belum tersedia.</div>'; return; }
@@ -841,7 +800,6 @@
        el.innerHTML = html;
     }
 
-    // --- RENDER DINASAN TIMELINE (DAPUR & PACKING BADGE) ---
     function renderDinasanTimeline(dataDinasan) {
        const el = document.getElementById('dinasanTimeline');
        if (!dataDinasan || dataDinasan.length === 0) { el.innerHTML = '<div class="text-secondary p-3 fst-italic">Data jadwal belum tersedia.</div>'; return; }
@@ -905,7 +863,6 @@
        el.innerHTML = html;
     }
 
-    // --- FUNGSI PROSES BOM ---
     function loadData(retryCount = 0) {
       const start = document.getElementById('startTgl').value; 
       const end = document.getElementById('endTgl').value;
@@ -952,7 +909,6 @@
           
           let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
           window.rawStokData = [];
-          window.bomMenus = data.bomMenus || [];
 
           let stokRows = (data.stokData || []).map(s => {
              let st = String(s.ket).toLowerCase();
@@ -1007,8 +963,6 @@
           renderRombonganTimeline(data.rombonganData);
           renderDinasanTimeline(data.jadwalDinasan);
 
-          if(window.bomMenus.length > 0) resetBoMInput();
-
           setTimeout(checkVisibleElements, 100);
         })
         .catch(error => {
@@ -1017,70 +971,83 @@
         });
     }
 
-    function tambahBarisBoM() {
-      let opt = window.bomMenus.map(m => `<option value="${m}">${m}</option>`).join('');
-      let row = `<tr>
-        <td><select class="form-select form-select-sm bom-menu-select border-secondary fw-bold"><option value="">-- Pilih Menu / Sub-Resep --</option>${opt}</select></td>
-        <td><input type="number" class="form-control form-control-sm bom-qty-input border-secondary fw-bold text-center" value="100"></td>
-        <td><button class="btn btn-sm btn-outline-danger border-0" onclick="$(this).closest('tr').remove()"><i class="fas fa-trash"></i></button></td>
-      </tr>`;
-      $("#tableBoMInput tbody").append(row);
+    function renderGaugeCharts(srq, real, sp) {
+      const ctxSrq = document.getElementById('gaugeSrqChart').getContext('2d'); if (gaugeSrqChartObj) gaugeSrqChartObj.destroy(); 
+      let colorSrq = (real >= srq && srq > 0) ? '#0284c7' : '#f59e0b'; 
+      gaugeSrqChartObj = new Chart(ctxSrq, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, srq || 1], backgroundColor: [colorSrq, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
+      window.chartTargets['gaugeSrqChart'] = { chart: gaugeSrqChartObj, type: 'doughnut', data: [[real, Math.max(0, srq - real)]] };
+
+      const ctxSp = document.getElementById('gaugeSpChart').getContext('2d'); if (gaugeSpChartObj) gaugeSpChartObj.destroy(); 
+      let colorSp = (real >= sp && sp > 0) ? '#4f46e5' : '#f59e0b'; 
+      gaugeSpChartObj = new Chart(ctxSp, { type: 'doughnut', data: { labels: ['Realisasi', 'Kekurangan'], datasets: [{ data: [0, sp || 1], backgroundColor: [colorSp, '#e2e8f0'], borderWidth: 0 }] }, options: { animation: chartAnimOptions, rotation: -90, circumference: 180, cutout: '75%', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
+      window.chartTargets['gaugeSpChart'] = { chart: gaugeSpChartObj, type: 'doughnut', data: [[real, Math.max(0, sp - real)]] };
+    }
+    
+    function renderLineChart(trendData) {
+      const ctx = document.getElementById('lineChart').getContext('2d'); if (lineChartObj) lineChartObj.destroy(); 
+      let zeros = trendData.labels.map(() => 0);
+      lineChartObj = new Chart(ctx, { type: 'line', data: { labels: trendData.labels, datasets: [{ label: 'SRQ', data: zeros, borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.3 }, { label: 'Realisasi', data: zeros, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } } });
+      window.chartTargets['lineChart'] = { chart: lineChartObj, type: 'line', data: [trendData.srq, trendData.real] };
+    }
+    
+    function renderBarChart(trendData) {
+      const ctx = document.getElementById('barChart').getContext('2d'); if (barChartObj) barChartObj.destroy(); 
+      let zeros = trendData.labels.map(() => 0);
+      barChartObj = new Chart(ctx, { type: 'bar', data: { labels: trendData.labels, datasets: [{ label: 'Total Volume Harian', data: zeros, backgroundColor: '#ea580c', borderRadius: 4 }] }, options: { animation: chartAnimOptions, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+      window.chartTargets['barChart'] = { chart: barChartObj, type: 'bar', data: [trendData.real] };
     }
 
-    function resetBoMInput() { 
-        $("#tableBoMInput tbody").empty(); 
-        tambahBarisBoM(); 
-    }
-
-    function hitungBoM() {
-      let plan = []; 
-      let summaryHtml = `<div class="fw-bold mb-2 text-dark"><i class="fas fa-tasks text-success"></i> Rencana Produksi:</div><ul class='mb-0 small' style='color:#475569;'>`;
-      
-      $(".bom-menu-select").each(function(i, el) {
-        let m = $(el).val(); let q = $(el).closest('tr').find('.bom-qty-input').val();
-        if(m && q) { 
-            plan.push({menu: m, qty: Number(q)}); 
-            summaryHtml += `<li>${m} : <b>${q}</b> Porsi / Takaran</li>`; 
+    function renderCategoryMenuCharts(tableMenu) {
+      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
+      tableMenu.forEach(row => {
+        let kat = row[0]; let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let real = parseInt(row[4]) || 0; 
+        if (real > 0) { 
+          if (kat === 'Fresh Food') dataFF[menu] = (dataFF[menu] || 0) + real;
+          else if (kat === 'Luxury' || kat === 'Fit') dataLuxFit[menu] = (dataLuxFit[menu] || 0) + real; 
+          else if (kat === 'Suite') dataSuite[menu] = (dataSuite[menu] || 0) + real;
+          else if (kat === 'Crew Meal') dataCrew[menu] = (dataCrew[menu] || 0) + real;
         }
       });
-      
-      if(plan.length === 0) return alert("Pilih minimal satu menu atau sub-resep untuk dihitung!");
-      
-      let margin = $("#bomMargin").val();
-      summaryHtml += `</ul><hr class="my-2"><div class='small fw-bold text-danger'><i class="fas fa-shield-alt"></i> Safety Margin Aktif: ${margin}%</div>`;
-      
-      $("#fullScreenLoader").css("display","flex"); 
-      $("#loaderTextInfo").text("Menghitung rekursif bahan baku...");
-
-      fetch(`${API_URL}?action=calculateBoM&plan=${JSON.stringify(plan)}&margin=${margin}`)
-        .then(res => res.json())
-        .then(data => {
-           $("#fullScreenLoader").hide(); 
-           $("#bomSummary").html(summaryHtml);
-           
-           let bRows = "";
-           data.forEach(r => {
-             bRows += `<tr>
-                <td class="text-secondary">${r.nomat}</td>
-                <td class="fw-bold text-dark">${r.nama}</td>
-                <td class="fw-bold text-success fs-6">${r.qty}</td>
-                <td><span class="badge bg-secondary">${r.unit}</span></td>
-                <td class="small text-muted fst-italic">${r.ket}</td>
-             </tr>`;
-           });
-           
-           if(data.length === 0) {
-               bRows = `<tr><td colspan="5" class="text-center text-muted py-4">Data material tidak ditemukan atau rincian resep belum lengkap.</td></tr>`;
-           }
-           
-           $("#tableBoMResult tbody").html(bRows);
-           new bootstrap.Modal('#modalBoM').show();
-        }).catch(e => { 
-           $("#fullScreenLoader").hide(); 
-           alert("Gagal menghitung BoM. Pastikan format resep di Google Sheets benar. Error: " + e.message); 
-        });
+      chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981'); chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
+      chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
     }
 
+    function renderAmprahanCharts(tableAmprahan) {
+      let dataKA = {}; let dataMenu = {};
+      tableAmprahan.forEach(row => {
+        let kereta = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); let menu = String(row[2]).replace(/[_*`\[\]]/g, '').trim(); let qty = parseInt(row[3]) || 0;
+        if (qty > 0) { dataKA[kereta] = (dataKA[kereta] || 0) + qty; dataMenu[menu] = (dataMenu[menu] || 0) + qty; }
+      });
+      chartAmprahanKAObj = drawHBarChart('chartAmprahanKA', chartAmprahanKAObj, dataKA, '#ef4444'); chartAmprahanMenuObj = drawHBarChart('chartAmprahanMenu', chartAmprahanMenuObj, dataMenu, '#14b8a6');
+    }
+
+    function drawHBarChart(ctxId, chartObj, dataDict, color) {
+      const ctx = document.getElementById(ctxId).getContext('2d'); if (chartObj) chartObj.destroy();
+      let sortedArray = Object.keys(dataDict).map(k => [k, dataDict[k]]).sort((a,b) => b[1] - a[1]);
+      let labels = sortedArray.map(x => x[0]); let values = sortedArray.map(x => x[1]); let zeros = values.map(() => 0);
+      let newChart = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Total Porsi', data: zeros, backgroundColor: color, borderRadius: 4 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: chartAnimOptions, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
+      window.chartTargets[ctxId] = { chart: newChart, type: 'barH', data: [values] };
+      return newChart;
+    }
+
+    function aksiLaporan() { 
+      const btn = document.getElementById('btnTelegram'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengirim Laporan..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=kirimLaporan&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerText = "Terkirim"; setTimeout(() => { btn.innerText = "Buat Laporan"; btn.disabled = false; }, 3000); }); 
+    }
+    
+    function aksiExport() { 
+      const btn = document.getElementById('btnExport'); const start = document.getElementById('startTgl').value; const end = document.getElementById('endTgl').value; 
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengekspor Data..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=exportData&start=${start}&end=${end}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerText = "Terekspor"; setTimeout(() => { btn.innerText = "Export Data"; btn.disabled = false; }, 3000); }); 
+    }
+
+    function aksiKirimStok() { 
+      const btn = document.getElementById('btnKirimStok'); const filterVal = document.getElementById('filterStatusStok').value;
+      document.getElementById('fullScreenLoader').style.display = 'flex'; document.getElementById('loaderTextInfo').innerText = "Mengecek Stok..."; btn.disabled = true; 
+      fetch(`${API_URL}?action=kirimLaporanStok&filter=${filterVal}`).then(res => res.json()).then(() => { document.getElementById('fullScreenLoader').style.display = 'none'; btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Laporan Terkirim!'; setTimeout(() => { btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }, 3000); })
+      .catch(err => { document.getElementById('fullScreenLoader').style.display = 'none'; alert("Gagal mengirim laporan stok."); btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }); 
+    }
   </script>
 </body>
 </html>

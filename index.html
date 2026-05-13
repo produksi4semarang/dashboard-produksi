@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Produksi Semarang</title>
+  <title>Produksi Regional 4 Semarang</title>
   
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
   
@@ -98,16 +98,65 @@
     .dashboard-footer { text-align: center; padding: 20px 0 10px 0; color: #64748b; font-size: 0.9rem; }
     .footer-names { font-weight: 800; color: #ea580c; letter-spacing: 1px; margin-top: 5px; }
 
-    /* --- PRINT CSS UNTUK CETAK PDF BoM --- */
+    /* ========================================================================= */
+    /* --- CSS PERBAIKAN UNTUK CETAK PDF BoM (100% Anti Terpotong) --- */
+    /* ========================================================================= */
     @media print {
-      body * { visibility: hidden; }
-      #modalBoM, #modalBoM * { visibility: visible; }
-      #modalBoM { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; overflow: visible !important; background: white; }
-      .modal-dialog { max-width: 100%; margin: 0; width: 100%; }
-      .modal-content, .modal-body { border: none; box-shadow: none; overflow: visible !important; max-height: none !important; height: auto !important; }
-      .table-responsive { overflow: visible !important; }
-      .btn-close, .modal-footer { display: none !important; }
-      #tableBoMResult th { background-color: #f8fafc !important; -webkit-print-color-adjust: exact; }
+        /* Sembunyikan elemen dashboard utama secara total */
+        .sidebar, .sidebar-backdrop, .header-panel, .container-fluid, #fullScreenLoader {
+            display: none !important;
+        }
+        
+        /* Set body jadi putih bersih tanpa batas scroll */
+        body { 
+            background: white !important; 
+            overflow: visible !important; 
+            padding: 10px !important;
+        }
+
+        /* Normalkan Modal agar merespon selayaknya div HTML biasa */
+        #modalBoM {
+            display: block !important;
+            position: relative !important;
+            opacity: 1 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: visible !important;
+        }
+        
+        /* Matikan Flexbox / Center Align Bootstrap yang menyebabkan crash di Chrome */
+        .modal-dialog {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            transform: none !important;
+            display: block !important;
+        }
+        
+        .modal-content, .modal-body {
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            overflow: visible !important;
+            max-height: none !important;
+            height: auto !important;
+        }
+        
+        /* Styling tambahan agar tabel rapi saat dicetak */
+        .modal-header {
+            background-color: transparent !important;
+            color: black !important;
+            border-bottom: 2px solid #ccc !important;
+            padding-bottom: 15px !important;
+        }
+        .modal-header h5, .modal-header i { color: black !important; }
+        .btn-close, .modal-footer { display: none !important; }
+        .table-responsive { overflow: visible !important; }
+        #tableBoMResult th { 
+            background-color: #f8fafc !important; 
+            -webkit-print-color-adjust: exact; 
+            color: black !important;
+        }
     }
   </style>
 </head>
@@ -395,27 +444,6 @@
       </div>
     </div>
 
-    <div class="modal fade" id="modalBoM" tabindex="-1">
-      <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg">
-          <div class="modal-header bg-success text-white"> <h5 class="modal-title fw-bold"><i class="fas fa-clipboard-check"></i> Hasil Breakdown Bahan Baku</h5> <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button> </div>
-          <div class="modal-body p-4">
-            <div id="bomSummary" class="mb-4 p-3 rounded" style="background-color: #f0fdf4; border-left: 4px solid #16a34a;"></div>
-            <div class="table-responsive">
-              <table class="table table-hover table-bordered w-100" id="tableBoMResult">
-                <thead class="table-light"><tr><th>Nomat</th><th>Nama Material</th><th>Total Kebutuhan</th><th>Sisa Stok</th><th>Satuan Belanja</th><th>Keterangan</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="modal-footer bg-light">
-             <button class="btn btn-outline-primary fw-bold" onclick="aksiKirimBoM(this)"><i class="fab fa-telegram-plane"></i> Kirim List Order</button>
-             <button class="btn btn-outline-danger fw-bold" onclick="window.print()"><i class="fas fa-print"></i> Cetak PDF</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div id="page-profil" class="page-section" style="display:none;">
       <div class="card-container reveal-card bg-transparent shadow-none" style="padding-top: 10px;">
         <h4 class="fw-bold text-center mb-5" style="color: #1e293b; letter-spacing: -0.5px;">Tim Admin Produksi Semarang</h4>
@@ -472,6 +500,26 @@
     </div>
 
     <div class="row"><div class="col-12"><div class="dashboard-footer"><p class="mb-0">🍳 Diracik dengan penuh ❤️ oleh Tim Admin Produksi Semarang</p><p class="footer-names">Romi &bull; Fandi &bull; Milano</p><p class="mt-2 text-muted" style="font-size: 0.75rem;">&copy; 2026 Dapur Produksi Semarang. All rights reserved.</p></div></div></div>
+  </div>
+  <div class="modal fade" id="modalBoM" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content border-0 shadow-lg">
+       <div class="modal-header bg-success text-white"> <h5 class="modal-title fw-bold"><i class="fas fa-clipboard-check"></i> Hasil Breakdown Bahan Baku</h5> <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button> </div>
+         <div class="modal-body p-4">
+           <div id="bomSummary" class="mb-4 p-3 rounded" style="background-color: #f0fdf4; border-left: 4px solid #16a34a;"></div>
+           <div class="table-responsive">
+             <table class="table table-hover table-bordered w-100" id="tableBoMResult">
+              <thead class="table-light"><tr><th>Nomat</th><th>Nama Material</th><th>Total Kebutuhan</th><th>Sisa Stok</th><th>Satuan Belanja</th><th>Keterangan</th></tr></thead>
+               <tbody></tbody>
+            </table>
+           </div>
+         </div>
+         <div class="modal-footer bg-light">
+           <button class="btn btn-outline-primary fw-bold" onclick="aksiKirimBoM(this)"><i class="fab fa-telegram-plane"></i> Kirim List Order</button>
+            <button class="btn btn-outline-danger fw-bold" onclick="cetakPDFBoM()"><i class="fas fa-print"></i> Cetak PDF</button>
+        </div>
+       </div>
+     </div>
   </div>
 
   <script>
@@ -1341,7 +1389,14 @@
             btnElement.disabled = false;
         });
     }
-    
+    // Fungsi Pembungkus Cetak (Untuk Menghindari Silent Abort Browser)
+    function cetakPDFBoM() {
+        // Beri jeda 300ms agar engine cetak Chrome bersiap 
+        // dan menyelesaikan render CSS sebelum dialog print muncul
+        setTimeout(function() {
+            window.print();
+        }, 300);
+    }
   </script>
 </body>
 </html>

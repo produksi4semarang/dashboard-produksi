@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Produksi Semarang</title>
+  <title>Produksi Regional 4 Semarang</title>
   
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
   
@@ -1526,7 +1526,7 @@
         }
 
         let tglWIB = new Date().toLocaleString("id-ID", {timeZone: "Asia/Jakarta"});
-        let pesan = `📝 *LIST ORDER KEBUTUHAN BoM*\n_${tglWIB} WIB_\n\n*Rencana Produksi:*\n${summaryText}_${marginText}_\n\n*Rincian Bahan Baku:*\n${orderList}\nMohon tim pengadaan segera menindaklanjuti. Terimakasih🙏`;
+        let pesan = `📝 *LIST ORDER KEBUTUHAN BoM*\n_${tglWIB} WIB_\n\n*Rencana Produksi:*\n${summaryText}_${marginText}_\n\n*Rincian Bahan Baku:*\n${orderList}\nMohon tim purchase segera menindaklanjuti. Terimakasih🙏`;
 
         fetch(API_URL, {
             method: 'POST',

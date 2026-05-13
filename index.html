@@ -253,42 +253,49 @@
             <div class="col-lg-6 col-md-12 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
           </div>
           
-          <!-- KOMPARASI REALISASI MENU (BULLET CHARTS) - FULL WIDTH -->
           <div class="row mt-2 reveal-card">
             <div class="col-12 mb-3">
               <div class="card-container">
                 <h6 class="text-secondary fw-bold mb-4 text-center"><i class="fas fa-chart-bar"></i> Komparasi Realisasi Menu Harian vs Target</h6>
                 <div class="row">
-                  <!-- Fresh Food -->
+                  
                   <div class="col-12 mb-5">
-                    <!-- TAMBAHKAN text-center DI SINI -->
-                    <h6 class="fw-bold mb-2 text-center" style="color: #10b981; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">Fresh Food</h6>
+                    <div class="d-flex justify-content-center align-items-center mb-2" style="border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
+                      <h6 class="fw-bold m-0 text-center" style="color: #10b981;">Fresh Food</h6>
+                      <span id="pctFF" class="badge bg-light text-secondary ms-3" style="font-size: 0.75rem; border: 1px solid #cbd5e1;">-</span>
+                    </div>
                     <div style="position: relative; width: 100%;"><canvas id="chartFF"></canvas></div>
                   </div>
-                  <!-- Luxury & Fit -->
+                  
                   <div class="col-12 mb-5">
-                    <!-- TAMBAHKAN text-center DI SINI -->
-                    <h6 class="fw-bold mb-2 text-center" style="color: #8b5cf6; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">Luxury & Fit</h6>
+                    <div class="d-flex justify-content-center align-items-center mb-2" style="border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
+                      <h6 class="fw-bold m-0 text-center" style="color: #8b5cf6;">Luxury & Fit</h6>
+                      <span id="pctLuxFit" class="badge bg-light text-secondary ms-3" style="font-size: 0.75rem; border: 1px solid #cbd5e1;">-</span>
+                    </div>
                     <div style="position: relative; width: 100%;"><canvas id="chartLuxFit"></canvas></div>
                   </div>
-                  <!-- Suite Class -->
+                  
                   <div class="col-12 mb-5">
-                    <!-- TAMBAHKAN text-center DI SINI -->
-                    <h6 class="fw-bold mb-2 text-center" style="color: #f59e0b; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">Suite Class</h6>
+                    <div class="d-flex justify-content-center align-items-center mb-2" style="border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
+                      <h6 class="fw-bold m-0 text-center" style="color: #f59e0b;">Suite Class</h6>
+                      <span id="pctSuite" class="badge bg-light text-secondary ms-3" style="font-size: 0.75rem; border: 1px solid #cbd5e1;">-</span>
+                    </div>
                     <div style="position: relative; width: 100%;"><canvas id="chartSuite"></canvas></div>
                   </div>
-                  <!-- Crew Meal -->
+                  
                   <div class="col-12 mb-2">
-                    <!-- TAMBAHKAN text-center DI SINI -->
-                    <h6 class="fw-bold mb-2 text-center" style="color: #0284c7; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">Crew Meal</h6>
+                    <div class="d-flex justify-content-center align-items-center mb-2" style="border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
+                      <h6 class="fw-bold m-0 text-center" style="color: #0284c7;">Crew Meal</h6>
+                      <span id="pctCrew" class="badge bg-light text-secondary ms-3" style="font-size: 0.75rem; border: 1px solid #cbd5e1;">-</span>
+                    </div>
                     <div style="position: relative; width: 100%;"><canvas id="chartCrew"></canvas></div>
                   </div>
+
                 </div>
               </div>
             </div>
           </div>
           
-          <!-- ANALISIS AMPRAHAN -->
           <div class="row mt-2 reveal-card">
             <div class="col-12 mb-3">
               <div class="card-container">
@@ -301,6 +308,7 @@
             </div>
           </div>
       </div>
+
       <div id="laporan-beban-dw" class="row mt-2 reveal-card" style="display:none;">
         <div class="col-12 mb-3">
           <div class="card-container h-100">
@@ -309,6 +317,7 @@
           </div>
         </div>
       </div>
+
       <div id="laporan-tables" class="row mt-2" style="display:none;">
         <div class="col-lg-4 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Detail Amprahan Kereta</h6><div class="table-responsive"><table id="tabelAmprahan" class="table table-hover table-bordered w-100"><thead><tr><th>Tanggal</th><th>Kereta</th><th>Menu</th><th>Qty</th></tr></thead><tbody></tbody></table></div></div></div>
         <div class="col-lg-8 mb-3 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Rincian Produksi Per Menu</h6><div class="table-responsive"><table id="tabelMenu" class="table table-hover table-bordered w-100"><thead><tr><th>Kategori</th><th>Nama Menu</th><th>Sales Plan</th><th>SRQ</th><th>Real</th><th>% SRQ</th><th>% SP</th><th>Evaluasi SP</th></tr></thead><tbody></tbody></table></div></div></div>
@@ -524,9 +533,8 @@
     </div>
 
     <div class="row"><div class="col-12"><div class="dashboard-footer"><p class="mb-0">🍳 Diracik dengan penuh ❤️ oleh Tim Admin Produksi Semarang</p><p class="footer-names">Romi &bull; Fandi &bull; Milano</p><p class="mt-2 text-muted" style="font-size: 0.75rem;">&copy; 2026 Dapur Produksi Semarang. All rights reserved.</p></div></div></div>
-  </div> <!-- PENUTUP CONTAINER FLUID -->
+  </div>
 
-  <!-- MODAL DIPINDAHKAN KESINI AGAR BEBAS DARI KONFLIK PRINT LAYOUT -->
   <div class="modal fade" id="modalBoM" tabindex="-1">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content border-0 shadow-lg">
@@ -549,7 +557,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzZRx43uY8bZgQEUDrH6Rv8J8j-7RCPMDqIwz1rnavA9xcs5J5QW8vMNoAS-jnO1THM5A/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzctqO3UUwsE1ZICoJf_JRBZr2cl8yCxDZxe42bF97K1AwtMTJFk8zidiQu28KavjLSwg/exec"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
@@ -667,7 +675,6 @@
         }
     }
 
-    // FUNGSI ANIMASI YANG SUDAH DIPERBARUI UNTUK MENDUKUNG BULLET CHART
     function checkVisibleElements() {
       document.querySelectorAll('.reveal-card.visible').forEach(card => {
         card.querySelectorAll('.counter-anim').forEach(counter => {
@@ -1146,7 +1153,38 @@
       window.chartTargets['barChart'] = { chart: barChartObj, type: 'bar', data: [trendData.real] };
     }
 
-    // FUNGSI BARU UNTUK BULLET CHART
+    // Fungsi pembantu untuk menghitung dan mewarnai badge persentase
+    function updateCategoryBadge(badgeId, dataDict) {
+        let totalSp = 0; 
+        let totalReal = 0;
+        
+        for (let key in dataDict) {
+            totalSp += dataDict[key].sp;
+            totalReal += dataDict[key].real;
+        }
+        
+        let el = document.getElementById(badgeId);
+        
+        if (totalSp === 0 && totalReal === 0) {
+            el.innerText = "Tidak ada data";
+            el.className = "badge bg-light text-secondary ms-3";
+            el.style.border = "1px solid #cbd5e1";
+            return;
+        }
+        
+        let pct = totalSp > 0 ? ((totalReal / totalSp) * 100).toFixed(1) : 100;
+        el.innerText = pct + "% Capai SP";
+        el.style.border = "none";
+        
+        if (pct >= 100) {
+            el.className = "badge bg-success ms-3"; 
+        } else if (pct >= 85) {
+            el.className = "badge bg-warning text-dark ms-3"; 
+        } else {
+            el.className = "badge bg-danger ms-3"; 
+        }
+    }
+
     function renderCategoryMenuCharts(tableMenu) {
       let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
       tableMenu.forEach(row => {
@@ -1173,6 +1211,11 @@
         }
       });
       
+      updateCategoryBadge('pctFF', dataFF);
+      updateCategoryBadge('pctLuxFit', dataLuxFit);
+      updateCategoryBadge('pctSuite', dataSuite);
+      updateCategoryBadge('pctCrew', dataCrew);
+
       chartFFObj = drawBulletChart('chartFF', chartFFObj, dataFF, '#10b981'); 
       chartLuxFitObj = drawBulletChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
       chartSuiteObj = drawBulletChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); 
@@ -1184,13 +1227,10 @@
       const ctx = canvas.getContext('2d'); 
       if (chartObj) chartObj.destroy();
       
-      // Urutkan berdasarkan realisasi tertinggi
       let sortedArray = Object.keys(dataDict).map(k => {
           return { menu: k, real: dataDict[k].real, sp: dataDict[k].sp, srq: dataDict[k].srq };
       }).sort((a,b) => b.real - a.real);
 
-      // --- LOGIKA TINGGI DINAMIS (AUTO-HEIGHT) ---
-      // 38px untuk setiap 1 baris menu. Minimal tinggi 120px.
       let calculatedHeight = Math.max(120, sortedArray.length * 38);
       canvas.parentElement.style.height = calculatedHeight + 'px';
 
@@ -1211,7 +1251,7 @@
               data: zeros, 
               backgroundColor: barColor, 
               borderRadius: 3,
-              barPercentage: 0.65, // Batang direnggangkan sedikit
+              barPercentage: 0.65,
               categoryPercentage: 0.8,
               order: 3
             },
@@ -1221,8 +1261,8 @@
               data: spData.map((val, i) => ({ x: 0, y: labels[i] })), 
               pointStyle: 'line', 
               rotation: 90, 
-              pointRadius: 15, // Panjang garis marker disesuaikan
-              pointBorderWidth: 4, // Ketebalan garis marker
+              pointRadius: 15, 
+              pointBorderWidth: 4, 
               borderColor: '#ef4444', 
               backgroundColor: '#ef4444',
               order: 1
@@ -1247,12 +1287,12 @@
           maintainAspectRatio: false, 
           animation: chartAnimOptions, 
           layout: {
-            padding: { right: 25 } // Mencegah garis marker mentok di batas kanan layar
+            padding: { right: 25 }
           },
           plugins: { 
             legend: { 
               display: true, 
-              position: 'top', // Legend dipindah ke atas grafik
+              position: 'top',
               align: 'end',
               labels: { usePointStyle: true, boxWidth: 10, font: { size: 11, weight: 'bold' } }
             },
@@ -1273,7 +1313,7 @@
               },
               y: { 
                   grid: { display: false },
-                  ticks: { font: { size: 10 } } // Ukuran font Y-axis sedikit dihaluskan
+                  ticks: { font: { size: 10 } }
               } 
           } 
         } 
@@ -1292,7 +1332,6 @@
       return newChart;
     }
 
-    // FUNGSI LAMA DIPERTAHANKAN UNTUK GRAFIK AMPRAHAN BAWAH
     function renderAmprahanCharts(tableAmprahan) {
       let dataKA = {}; let dataMenu = {};
       tableAmprahan.forEach(row => {
@@ -1330,10 +1369,6 @@
       .catch(err => { document.getElementById('fullScreenLoader').style.display = 'none'; alert("Gagal mengirim laporan stok."); btn.innerHTML = '<i class="fab fa-telegram-plane"></i> Kirim Laporan Stok'; btn.disabled = false; }); 
     }
 
-    // =========================================================================
-    // MESIN BOM (CLIENT-SIDE RECURSIVE ENGINE)
-    // =========================================================================
-    
     function tambahBarisBoM() {
       let row = `<tr>
         <td><input class="form-control form-control-sm bom-menu-input border-secondary fw-bold" list="bomMenuOptions" placeholder="Ketik atau pilih menu..."></td>

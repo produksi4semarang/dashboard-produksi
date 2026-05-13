@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Produksi Regional 4 Semarang</title>
+  <title>Dashboard Produksi Semarang</title>
   
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/produksi4semarang/dashboard-produksi/2804b5dc70e41522a731a0e9683a1d5764342ba9/favicon.png">
   
@@ -252,10 +252,12 @@
             <div class="col-lg-3 col-md-6 reveal-card"><div class="card-container h-100 d-flex flex-column justify-content-center"><h6 class="text-secondary fw-bold mb-3 text-center">Pemenuhan SRQ</h6><div style="position: relative; height: 150px; width: 100%; display: flex; justify-content: center;"><canvas id="gaugeSrqChart"></canvas><div class="gauge-text counter-anim" id="persenSrqDisplay" data-suffix="%" style="color: #0284c7;">0%</div></div></div></div>
             <div class="col-lg-6 col-md-12 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
           </div>
+          
+          <!-- KOMPARASI REALISASI MENU (BULLET CHARTS) -->
           <div class="row mt-2 reveal-card">
             <div class="col-12 mb-3">
               <div class="card-container">
-                <h6 class="text-secondary fw-bold mb-3 text-center">Komparasi Realisasi Menu Harian</h6>
+                <h6 class="text-secondary fw-bold mb-3 text-center">Komparasi Realisasi Menu Harian (Bullet Chart)</h6>
                 <div class="row">
                   <div class="col-md-6 mb-4"><h6 class="text-success fw-bold text-center mb-2">Fresh Food</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartFF"></canvas></div></div>
                   <div class="col-md-6 mb-4"><h6 class="fw-bold text-center mb-2" style="color: #8b5cf6;">Luxury & Fit</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartLuxFit"></canvas></div></div>
@@ -265,6 +267,8 @@
               </div>
             </div>
           </div>
+          
+          <!-- ANALISIS AMPRAHAN -->
           <div class="row mt-2 reveal-card">
             <div class="col-12 mb-3">
               <div class="card-container">
@@ -500,7 +504,9 @@
     </div>
 
     <div class="row"><div class="col-12"><div class="dashboard-footer"><p class="mb-0">🍳 Diracik dengan penuh ❤️ oleh Tim Admin Produksi Semarang</p><p class="footer-names">Romi &bull; Fandi &bull; Milano</p><p class="mt-2 text-muted" style="font-size: 0.75rem;">&copy; 2026 Dapur Produksi Semarang. All rights reserved.</p></div></div></div>
-  </div>
+  </div> <!-- PENUTUP CONTAINER FLUID -->
+
+  <!-- MODAL DIPINDAHKAN KESINI AGAR BEBAS DARI KONFLIK PRINT LAYOUT -->
   <div class="modal fade" id="modalBoM" tabindex="-1">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content border-0 shadow-lg">
@@ -523,7 +529,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzctqO3UUwsE1ZICoJf_JRBZr2cl8yCxDZxe42bF97K1AwtMTJFk8zidiQu28KavjLSwg/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzZRx43uY8bZgQEUDrH6Rv8J8j-7RCPMDqIwz1rnavA9xcs5J5QW8vMNoAS-jnO1THM5A/exec"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
@@ -641,6 +647,7 @@
         }
     }
 
+    // FUNGSI ANIMASI YANG SUDAH DIPERBARUI UNTUK MENDUKUNG BULLET CHART
     function checkVisibleElements() {
       document.querySelectorAll('.reveal-card.visible').forEach(card => {
         card.querySelectorAll('.counter-anim').forEach(counter => {
@@ -651,8 +658,17 @@
           let chartId = canvas.id;
           if (window.chartTargets && window.chartTargets[chartId]) {
             let info = window.chartTargets[chartId];
-            if (info.type === 'doughnut' || info.type === 'barH') { info.chart.data.datasets[0].data = info.data[0]; } 
-            else if (info.type === 'line' || info.type === 'bar') { info.chart.data.datasets.forEach((ds, i) => ds.data = info.data[i]); }
+            if (info.type === 'doughnut' || info.type === 'barH') { 
+                info.chart.data.datasets[0].data = info.data[0]; 
+            } 
+            else if (info.type === 'line' || info.type === 'bar') { 
+                info.chart.data.datasets.forEach((ds, i) => ds.data = info.data[i]); 
+            }
+            else if (info.type === 'bullet') {
+                info.chart.data.datasets[0].data = info.data[0]; // Realisasi Bar
+                info.chart.data.datasets[1].data = info.data[1]; // Sales Plan Scatter Line
+                info.chart.data.datasets[2].data = info.data[2]; // SRQ Scatter Line
+            }
             info.chart.update(); delete window.chartTargets[chartId]; 
           }
         });
@@ -1012,7 +1028,6 @@
           let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
           window.rawStokData = [];
           
-          // Simpan data BoM untuk kalkulasi client-side
           if(data.bomData) {
               window.bomData = data.bomData;
               let induks = [...new Set((data.bomData.resep || []).map(r => String(r[0]).trim()).filter(Boolean))].sort();
@@ -1073,7 +1088,6 @@
           renderRombonganTimeline(data.rombonganData);
           renderDinasanTimeline(data.jadwalDinasan);
 
-          // Reset BoM Input setelah datalist terisi
           if(window.bomData && window.bomData.resep && window.bomData.resep.length > 0) {
               resetBoMInput();
           }
@@ -1112,142 +1126,135 @@
       window.chartTargets['barChart'] = { chart: barChartObj, type: 'bar', data: [trendData.real] };
     }
 
-        function renderCategoryMenuCharts(tableMenu) {
-          let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
-         tableMenu.forEach(row => {
-            let kat = row[0]; 
-            let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); 
+    // FUNGSI BARU UNTUK BULLET CHART
+    function renderCategoryMenuCharts(tableMenu) {
+      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
+      tableMenu.forEach(row => {
+        let kat = row[0]; 
+        let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); 
         
-            // Ambil ketiga parameter penting: Sales Plan, SRQ, dan Realisasi
-            let sp = parseInt(row[2]) || 0; 
-            let srq = parseInt(row[3]) || 0;
-            let real = parseInt(row[4]) || 0; 
+        let sp = parseInt(row[2]) || 0; 
+        let srq = parseInt(row[3]) || 0;
+        let real = parseInt(row[4]) || 0; 
         
-            if (real > 0 || sp > 0 || srq > 0) { 
-              let targetObj = null;
-              if (kat === 'Fresh Food') targetObj = dataFF;
-              else if (kat === 'Luxury' || kat === 'Fit') targetObj = dataLuxFit; 
-              else if (kat === 'Suite') targetObj = dataSuite;
-              else if (kat === 'Crew Meal') targetObj = dataCrew;
+        if (real > 0 || sp > 0 || srq > 0) { 
+          let targetObj = null;
+          if (kat === 'Fresh Food') targetObj = dataFF;
+          else if (kat === 'Luxury' || kat === 'Fit') targetObj = dataLuxFit; 
+          else if (kat === 'Suite') targetObj = dataSuite;
+          else if (kat === 'Crew Meal') targetObj = dataCrew;
 
-              if (targetObj) {
-                  if (!targetObj[menu]) targetObj[menu] = { real: 0, sp: 0, srq: 0 };
-                  targetObj[menu].real += real;
-                  targetObj[menu].sp += sp;
-                  targetObj[menu].srq += srq;
-              }
-            }
-          });
-      
-          // Panggil fungsi Bullet Chart yang baru
-          chartFFObj = drawBulletChart('chartFF', chartFFObj, dataFF, '#10b981'); 
-          chartLuxFitObj = drawBulletChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
-          chartSuiteObj = drawBulletChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); 
-          chartCrewObj = drawBulletChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
-        }
-
-        function drawBulletChart(ctxId, chartObj, dataDict, barColor) {
-          const ctx = document.getElementById(ctxId).getContext('2d'); 
-          if (chartObj) chartObj.destroy();
-      
-          // Urutkan berdasarkan realisasi tertinggi
-          let sortedArray = Object.keys(dataDict).map(k => {
-              return { menu: k, real: dataDict[k].real, sp: dataDict[k].sp, srq: dataDict[k].srq };
-          }).sort((a,b) => b.real - a.real);
-
-          let labels = sortedArray.map(x => x.menu); 
-          let realData = sortedArray.map(x => x.real);
-          let spData = sortedArray.map(x => x.sp);
-          let srqData = sortedArray.map(x => x.srq);
-          let zeros = realData.map(() => 0); // Untuk efek animasi mulai dari 0
-
-          let newChart = new Chart(ctx, { 
-            type: 'bar', 
-            data: { 
-              labels: labels, 
-              datasets: [
-                { 
-                  type: 'bar',
-                  label: 'Realisasi', 
-                  data: zeros, 
-                  backgroundColor: barColor, 
-                  borderRadius: 4,
-                  barPercentage: 0.55, // Batang solid diperkecil agar marker terlihat menonjol
-                  order: 3
-                },
-                {
-                  type: 'scatter',
-                  label: 'Sales Plan',
-                  data: spData.map((val, i) => ({ x: 0, y: labels[i] })), // Animasi dr 0
-                  pointStyle: 'line', 
-                  rotation: 90, // Diputar agar menjadi garis vertikal (|)
-                  pointRadius: 14, // Panjang garis
-                  pointBorderWidth: 3, // Ketebalan garis
-                  borderColor: '#ef4444', // Merah
-                  backgroundColor: '#ef4444',
-                  order: 1
-                },
-                {
-                  type: 'scatter',
-                  label: 'SRQ',
-                  data: srqData.map((val, i) => ({ x: 0, y: labels[i] })),
-                  pointStyle: 'line',
-                  rotation: 90,
-                  pointRadius: 14,
-                  pointBorderWidth: 3,
-                  borderColor: '#facc15', // Kuning
-                  backgroundColor: '#facc15',
-                  order: 2
-                }
-              ] 
-            }, 
-            options: { 
-              indexAxis: 'y', 
-              responsive: true, 
-              maintainAspectRatio: false, 
-              animation: chartAnimOptions, 
-              plugins: { 
-                legend: { 
-                  display: true, // Tampilkan legend agar user tahu arti garis Merah & Kuning
-                  position: 'bottom',
-                  labels: { usePointStyle: true, boxWidth: 10, font: { size: 10 } }
-                },
-                tooltip: {
-                    callbacks: {
-                        // Custom tooltip agar membaca data scatter dengan benar
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            let val = context.dataset.type === 'scatter' ? context.raw.x : context.raw;
-                            return label + ': ' + val + ' Porsi';
-                        }
-                    }
-                }
-              }, 
-              scales: { 
-                  x: { beginAtZero: true },
-                  y: { grid: { display: false } } // Hilangkan grid horizontal agar lebih bersih
-              } 
-            } 
-          });
-      
-          // Daftarkan ke mesin animasi dashboard
-          window.chartTargets[ctxId] = { 
-              chart: newChart, 
-              type: 'bar', 
-              data: [
-                  realData, 
-                  spData.map((val, i) => ({ x: val, y: labels[i] })), 
-                  srqData.map((val, i) => ({ x: val, y: labels[i] }))
-              ] 
-          };
-      
-          return newChart;
+          if (targetObj) {
+              if (!targetObj[menu]) targetObj[menu] = { real: 0, sp: 0, srq: 0 };
+              targetObj[menu].real += real;
+              targetObj[menu].sp += sp;
+              targetObj[menu].srq += srq;
+          }
         }
       });
-      chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981'); chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
-      chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
+      
+      chartFFObj = drawBulletChart('chartFF', chartFFObj, dataFF, '#10b981'); 
+      chartLuxFitObj = drawBulletChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
+      chartSuiteObj = drawBulletChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); 
+      chartCrewObj = drawBulletChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
     }
 
+    function drawBulletChart(ctxId, chartObj, dataDict, barColor) {
+      const ctx = document.getElementById(ctxId).getContext('2d'); 
+      if (chartObj) chartObj.destroy();
+      
+      let sortedArray = Object.keys(dataDict).map(k => {
+          return { menu: k, real: dataDict[k].real, sp: dataDict[k].sp, srq: dataDict[k].srq };
+      }).sort((a,b) => b.real - a.real);
+
+      let labels = sortedArray.map(x => x.menu); 
+      let realData = sortedArray.map(x => x.real);
+      let spData = sortedArray.map(x => x.sp);
+      let srqData = sortedArray.map(x => x.srq);
+      let zeros = realData.map(() => 0); 
+
+      let newChart = new Chart(ctx, { 
+        type: 'bar', 
+        data: { 
+          labels: labels, 
+          datasets: [
+            { 
+              type: 'bar',
+              label: 'Realisasi', 
+              data: zeros, 
+              backgroundColor: barColor, 
+              borderRadius: 4,
+              barPercentage: 0.6,
+              order: 3
+            },
+            {
+              type: 'scatter',
+              label: 'Sales Plan',
+              data: spData.map((val, i) => ({ x: 0, y: labels[i] })), 
+              pointStyle: 'line', 
+              rotation: 90, 
+              pointRadius: 14, 
+              pointBorderWidth: 3, 
+              borderColor: '#ef4444', 
+              backgroundColor: '#ef4444',
+              order: 1
+            },
+            {
+              type: 'scatter',
+              label: 'SRQ',
+              data: srqData.map((val, i) => ({ x: 0, y: labels[i] })),
+              pointStyle: 'line',
+              rotation: 90,
+              pointRadius: 14,
+              pointBorderWidth: 3,
+              borderColor: '#facc15', 
+              backgroundColor: '#facc15',
+              order: 2
+            }
+          ] 
+        }, 
+        options: { 
+          indexAxis: 'y', 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          animation: chartAnimOptions, 
+          plugins: { 
+            legend: { 
+              display: true, 
+              position: 'bottom',
+              labels: { usePointStyle: true, boxWidth: 10, font: { size: 10 } }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        let val = context.dataset.type === 'scatter' ? context.raw.x : context.raw;
+                        return label + ': ' + val + ' Porsi';
+                    }
+                }
+            }
+          }, 
+          scales: { 
+              x: { beginAtZero: true },
+              y: { grid: { display: false } } 
+          } 
+        } 
+      });
+      
+      window.chartTargets[ctxId] = { 
+          chart: newChart, 
+          type: 'bullet', 
+          data: [
+              realData, 
+              spData.map((val, i) => ({ x: val, y: labels[i] })), 
+              srqData.map((val, i) => ({ x: val, y: labels[i] }))
+          ] 
+      };
+      
+      return newChart;
+    }
+
+    // FUNGSI LAMA DIPERTAHANKAN UNTUK GRAFIK AMPRAHAN BAWAH
     function renderAmprahanCharts(tableAmprahan) {
       let dataKA = {}; let dataMenu = {};
       tableAmprahan.forEach(row => {
@@ -1321,7 +1328,7 @@
         });
         
         let recipeMap = {};
-        let resepFallbackMap = {}; // Untuk fallback nama dan satuan dari BOM_RESEP
+        let resepFallbackMap = {}; 
         
         resRows.forEach(r => {
             let induk = String(r[0]).trim();
@@ -1334,7 +1341,6 @@
                 recipeMap[induk].children.push({ nomat: nomat, nama: namaTurunan, qty: Number(r[4]) || 0, unit: unitTurunan });
             }
             
-            // Simpan data turunan sebagai fallback jika tidak ada di Master
             if(nomat && !resepFallbackMap[nomat]) {
                 resepFallbackMap[nomat] = { name: namaTurunan, unit: unitTurunan };
             }
@@ -1447,19 +1453,18 @@
           alert("Gagal memproses perhitungan BoM: " + e.message);
       }
     }
+
     function aksiKirimBoM(btnElement) {
         let originalText = btnElement.innerHTML;
         btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
         btnElement.disabled = true;
 
-        // 1. Ambil Rangkuman Pesanan
         let summaryText = "";
         $("#bomSummary li").each(function() {
             summaryText += "- " + $(this).text() + "\n";
         });
         let marginText = $("#bomSummary .text-danger").text();
 
-        // 2. Ambil Data dari Tabel Breakdown
         let orderList = "";
         $("#tableBoMResult tbody tr").each(function() {
             let cols = $(this).find("td");
@@ -1470,7 +1475,6 @@
                 let unit = $(cols[4]).text().trim();
                 let isKurang = $(cols[3]).find(".bg-danger").length > 0;
                 
-                // Tambahkan tanda merah jika stok kurang
                 let mark = isKurang ? " 🔴 [ORDER]" : "";
                 orderList += `▫️ ${nama}\n   Butuh: ${qty} ${unit} | Sisa Stok: ${sisa}${mark}\n`;
             }
@@ -1483,18 +1487,13 @@
             return;
         }
 
-        // 3. Rangkai Pesan Telegram
         let tglWIB = new Date().toLocaleString("id-ID", {timeZone: "Asia/Jakarta"});
         let pesan = `📝 *LIST ORDER KEBUTUHAN BoM*\n_${tglWIB} WIB_\n\n*Rencana Produksi:*\n${summaryText}_${marginText}_\n\n*Rincian Bahan Baku:*\n${orderList}\nMohon tim pengadaan segera menindaklanjuti. Terimakasih🙏`;
 
-        // 4. Kirim ke Endpoint Code.gs via POST
         fetch(API_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'text/plain' }, // Pakai text/plain agar tidak kena error CORS di Apps Script
-            body: JSON.stringify({
-                action: "kirimBoMTelegram",
-                pesan: pesan
-            })
+            headers: { 'Content-Type': 'text/plain' }, 
+            body: JSON.stringify({ action: "kirimBoMTelegram", pesan: pesan })
         })
         .then(res => res.json())
         .then(data => {
@@ -1510,10 +1509,8 @@
             btnElement.disabled = false;
         });
     }
-    // Fungsi Pembungkus Cetak (Untuk Menghindari Silent Abort Browser)
+
     function cetakPDFBoM() {
-        // Beri jeda 300ms agar engine cetak Chrome bersiap 
-        // dan menyelesaikan render CSS sebelum dialog print muncul
         setTimeout(function() {
             window.print();
         }, 300);

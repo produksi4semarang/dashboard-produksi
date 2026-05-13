@@ -1112,137 +1112,137 @@
       window.chartTargets['barChart'] = { chart: barChartObj, type: 'bar', data: [trendData.real] };
     }
 
-    function renderCategoryMenuCharts(tableMenu) {
-      let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
-      tableMenu.forEach(row => {
-        let kat = row[0]; 
-        let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); 
+        function renderCategoryMenuCharts(tableMenu) {
+          let dataFF = {}; let dataLuxFit = {}; let dataSuite = {}; let dataCrew = {};
+         tableMenu.forEach(row => {
+            let kat = row[0]; 
+            let menu = String(row[1]).replace(/[_*`\[\]]/g, '').trim(); 
         
-        // Ambil ketiga parameter penting: Sales Plan, SRQ, dan Realisasi
-        let sp = parseInt(row[2]) || 0; 
-        let srq = parseInt(row[3]) || 0;
-        let real = parseInt(row[4]) || 0; 
+            // Ambil ketiga parameter penting: Sales Plan, SRQ, dan Realisasi
+            let sp = parseInt(row[2]) || 0; 
+            let srq = parseInt(row[3]) || 0;
+            let real = parseInt(row[4]) || 0; 
         
-        if (real > 0 || sp > 0 || srq > 0) { 
-          let targetObj = null;
-          if (kat === 'Fresh Food') targetObj = dataFF;
-          else if (kat === 'Luxury' || kat === 'Fit') targetObj = dataLuxFit; 
-          else if (kat === 'Suite') targetObj = dataSuite;
-          else if (kat === 'Crew Meal') targetObj = dataCrew;
+            if (real > 0 || sp > 0 || srq > 0) { 
+              let targetObj = null;
+              if (kat === 'Fresh Food') targetObj = dataFF;
+              else if (kat === 'Luxury' || kat === 'Fit') targetObj = dataLuxFit; 
+              else if (kat === 'Suite') targetObj = dataSuite;
+              else if (kat === 'Crew Meal') targetObj = dataCrew;
 
-          if (targetObj) {
-              if (!targetObj[menu]) targetObj[menu] = { real: 0, sp: 0, srq: 0 };
-              targetObj[menu].real += real;
-              targetObj[menu].sp += sp;
-              targetObj[menu].srq += srq;
-          }
-        }
-      });
-      
-      // Panggil fungsi Bullet Chart yang baru
-      chartFFObj = drawBulletChart('chartFF', chartFFObj, dataFF, '#10b981'); 
-      chartLuxFitObj = drawBulletChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
-      chartSuiteObj = drawBulletChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); 
-      chartCrewObj = drawBulletChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
-    }
-
-    function drawBulletChart(ctxId, chartObj, dataDict, barColor) {
-      const ctx = document.getElementById(ctxId).getContext('2d'); 
-      if (chartObj) chartObj.destroy();
-      
-      // Urutkan berdasarkan realisasi tertinggi
-      let sortedArray = Object.keys(dataDict).map(k => {
-          return { menu: k, real: dataDict[k].real, sp: dataDict[k].sp, srq: dataDict[k].srq };
-      }).sort((a,b) => b.real - a.real);
-
-      let labels = sortedArray.map(x => x.menu); 
-      let realData = sortedArray.map(x => x.real);
-      let spData = sortedArray.map(x => x.sp);
-      let srqData = sortedArray.map(x => x.srq);
-      let zeros = realData.map(() => 0); // Untuk efek animasi mulai dari 0
-
-      let newChart = new Chart(ctx, { 
-        type: 'bar', 
-        data: { 
-          labels: labels, 
-          datasets: [
-            { 
-              type: 'bar',
-              label: 'Realisasi', 
-              data: zeros, 
-              backgroundColor: barColor, 
-              borderRadius: 4,
-              barPercentage: 0.55, // Batang solid diperkecil agar marker terlihat menonjol
-              order: 3
-            },
-            {
-              type: 'scatter',
-              label: 'Sales Plan',
-              data: spData.map((val, i) => ({ x: 0, y: labels[i] })), // Animasi dr 0
-              pointStyle: 'line', 
-              rotation: 90, // Diputar agar menjadi garis vertikal (|)
-              pointRadius: 14, // Panjang garis
-              pointBorderWidth: 3, // Ketebalan garis
-              borderColor: '#ef4444', // Merah
-              backgroundColor: '#ef4444',
-              order: 1
-            },
-            {
-              type: 'scatter',
-              label: 'SRQ',
-              data: srqData.map((val, i) => ({ x: 0, y: labels[i] })),
-              pointStyle: 'line',
-              rotation: 90,
-              pointRadius: 14,
-              pointBorderWidth: 3,
-              borderColor: '#facc15', // Kuning
-              backgroundColor: '#facc15',
-              order: 2
+              if (targetObj) {
+                  if (!targetObj[menu]) targetObj[menu] = { real: 0, sp: 0, srq: 0 };
+                  targetObj[menu].real += real;
+                  targetObj[menu].sp += sp;
+                  targetObj[menu].srq += srq;
+              }
             }
-          ] 
-        }, 
-        options: { 
-          indexAxis: 'y', 
-          responsive: true, 
-          maintainAspectRatio: false, 
-          animation: chartAnimOptions, 
-          plugins: { 
-            legend: { 
-              display: true, // Tampilkan legend agar user tahu arti garis Merah & Kuning
-              position: 'bottom',
-              labels: { usePointStyle: true, boxWidth: 10, font: { size: 10 } }
-            },
-            tooltip: {
-                callbacks: {
-                    // Custom tooltip agar membaca data scatter dengan benar
-                    label: function(context) {
-                        let label = context.dataset.label || '';
-                        let val = context.dataset.type === 'scatter' ? context.raw.x : context.raw;
-                        return label + ': ' + val + ' Porsi';
+          });
+      
+          // Panggil fungsi Bullet Chart yang baru
+          chartFFObj = drawBulletChart('chartFF', chartFFObj, dataFF, '#10b981'); 
+          chartLuxFitObj = drawBulletChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
+          chartSuiteObj = drawBulletChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); 
+          chartCrewObj = drawBulletChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');
+        }
+
+        function drawBulletChart(ctxId, chartObj, dataDict, barColor) {
+          const ctx = document.getElementById(ctxId).getContext('2d'); 
+          if (chartObj) chartObj.destroy();
+      
+          // Urutkan berdasarkan realisasi tertinggi
+          let sortedArray = Object.keys(dataDict).map(k => {
+              return { menu: k, real: dataDict[k].real, sp: dataDict[k].sp, srq: dataDict[k].srq };
+          }).sort((a,b) => b.real - a.real);
+
+          let labels = sortedArray.map(x => x.menu); 
+          let realData = sortedArray.map(x => x.real);
+          let spData = sortedArray.map(x => x.sp);
+          let srqData = sortedArray.map(x => x.srq);
+          let zeros = realData.map(() => 0); // Untuk efek animasi mulai dari 0
+
+          let newChart = new Chart(ctx, { 
+            type: 'bar', 
+            data: { 
+              labels: labels, 
+              datasets: [
+                { 
+                  type: 'bar',
+                  label: 'Realisasi', 
+                  data: zeros, 
+                  backgroundColor: barColor, 
+                  borderRadius: 4,
+                  barPercentage: 0.55, // Batang solid diperkecil agar marker terlihat menonjol
+                  order: 3
+                },
+                {
+                  type: 'scatter',
+                  label: 'Sales Plan',
+                  data: spData.map((val, i) => ({ x: 0, y: labels[i] })), // Animasi dr 0
+                  pointStyle: 'line', 
+                  rotation: 90, // Diputar agar menjadi garis vertikal (|)
+                  pointRadius: 14, // Panjang garis
+                  pointBorderWidth: 3, // Ketebalan garis
+                  borderColor: '#ef4444', // Merah
+                  backgroundColor: '#ef4444',
+                  order: 1
+                },
+                {
+                  type: 'scatter',
+                  label: 'SRQ',
+                  data: srqData.map((val, i) => ({ x: 0, y: labels[i] })),
+                  pointStyle: 'line',
+                  rotation: 90,
+                  pointRadius: 14,
+                  pointBorderWidth: 3,
+                  borderColor: '#facc15', // Kuning
+                  backgroundColor: '#facc15',
+                  order: 2
+                }
+              ] 
+            }, 
+            options: { 
+              indexAxis: 'y', 
+              responsive: true, 
+              maintainAspectRatio: false, 
+              animation: chartAnimOptions, 
+              plugins: { 
+                legend: { 
+                  display: true, // Tampilkan legend agar user tahu arti garis Merah & Kuning
+                  position: 'bottom',
+                  labels: { usePointStyle: true, boxWidth: 10, font: { size: 10 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        // Custom tooltip agar membaca data scatter dengan benar
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            let val = context.dataset.type === 'scatter' ? context.raw.x : context.raw;
+                            return label + ': ' + val + ' Porsi';
+                        }
                     }
                 }
-            }
-          }, 
-          scales: { 
-              x: { beginAtZero: true },
-              y: { grid: { display: false } } // Hilangkan grid horizontal agar lebih bersih
-          } 
-        } 
-      });
+              }, 
+              scales: { 
+                  x: { beginAtZero: true },
+                  y: { grid: { display: false } } // Hilangkan grid horizontal agar lebih bersih
+              } 
+            } 
+          });
       
-      // Daftarkan ke mesin animasi dashboard
-      window.chartTargets[ctxId] = { 
-          chart: newChart, 
-          type: 'bar', 
-          data: [
-              realData, 
-              spData.map((val, i) => ({ x: val, y: labels[i] })), 
-              srqData.map((val, i) => ({ x: val, y: labels[i] }))
-          ] 
-      };
+          // Daftarkan ke mesin animasi dashboard
+          window.chartTargets[ctxId] = { 
+              chart: newChart, 
+              type: 'bar', 
+              data: [
+                  realData, 
+                  spData.map((val, i) => ({ x: val, y: labels[i] })), 
+                  srqData.map((val, i) => ({ x: val, y: labels[i] }))
+              ] 
+          };
       
-      return newChart;
-    }
+          return newChart;
+        }
       });
       chartFFObj = drawHBarChart('chartFF', chartFFObj, dataFF, '#10b981'); chartLuxFitObj = drawHBarChart('chartLuxFit', chartLuxFitObj, dataLuxFit, '#8b5cf6');
       chartSuiteObj = drawHBarChart('chartSuite', chartSuiteObj, dataSuite, '#f59e0b'); chartCrewObj = drawHBarChart('chartCrew', chartCrewObj, dataCrew, '#0284c7');

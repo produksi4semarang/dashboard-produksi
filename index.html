@@ -253,16 +253,32 @@
             <div class="col-lg-6 col-md-12 reveal-card"><div class="card-container h-100"><h6 class="text-secondary fw-bold mb-3 text-center">Tren Produksi</h6><div style="position: relative; height: 230px; width: 100%;"><canvas id="lineChart"></canvas></div></div></div>
           </div>
           
-          <!-- KOMPARASI REALISASI MENU (BULLET CHARTS) -->
+          <!-- KOMPARASI REALISASI MENU (BULLET CHARTS) - FULL WIDTH -->
           <div class="row mt-2 reveal-card">
             <div class="col-12 mb-3">
               <div class="card-container">
-                <h6 class="text-secondary fw-bold mb-3 text-center">Komparasi Realisasi Menu Harian (Bullet Chart)</h6>
+                <h6 class="text-secondary fw-bold mb-4 text-center"><i class="fas fa-chart-bar"></i> Komparasi Realisasi Menu Harian vs Target</h6>
                 <div class="row">
-                  <div class="col-md-6 mb-4"><h6 class="text-success fw-bold text-center mb-2">Fresh Food</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartFF"></canvas></div></div>
-                  <div class="col-md-6 mb-4"><h6 class="fw-bold text-center mb-2" style="color: #8b5cf6;">Luxury & Fit</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartLuxFit"></canvas></div></div>
-                  <div class="col-md-6 mb-2"><h6 class="fw-bold text-center mb-2" style="color: #f59e0b;">Suite Class</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartSuite"></canvas></div></div>
-                  <div class="col-md-6 mb-2"><h6 class="fw-bold text-center mb-2" style="color: #0284c7;">Crew Meal</h6><div style="position: relative; height: 250px; width: 100%;"><canvas id="chartCrew"></canvas></div></div>
+                  <!-- Fresh Food -->
+                  <div class="col-12 mb-5">
+                    <h6 class="fw-bold mb-2" style="color: #10b981; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">Fresh Food</h6>
+                    <div style="position: relative; width: 100%;"><canvas id="chartFF"></canvas></div>
+                  </div>
+                  <!-- Luxury & Fit -->
+                  <div class="col-12 mb-5">
+                    <h6 class="fw-bold mb-2" style="color: #8b5cf6; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">Luxury & Fit</h6>
+                    <div style="position: relative; width: 100%;"><canvas id="chartLuxFit"></canvas></div>
+                  </div>
+                  <!-- Suite Class -->
+                  <div class="col-12 mb-5">
+                    <h6 class="fw-bold mb-2" style="color: #f59e0b; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">Suite Class</h6>
+                    <div style="position: relative; width: 100%;"><canvas id="chartSuite"></canvas></div>
+                  </div>
+                  <!-- Crew Meal -->
+                  <div class="col-12 mb-2">
+                    <h6 class="fw-bold mb-2" style="color: #0284c7; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">Crew Meal</h6>
+                    <div style="position: relative; width: 100%;"><canvas id="chartCrew"></canvas></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1160,12 +1176,19 @@
     }
 
     function drawBulletChart(ctxId, chartObj, dataDict, barColor) {
-      const ctx = document.getElementById(ctxId).getContext('2d'); 
+      const canvas = document.getElementById(ctxId);
+      const ctx = canvas.getContext('2d'); 
       if (chartObj) chartObj.destroy();
       
+      // Urutkan berdasarkan realisasi tertinggi
       let sortedArray = Object.keys(dataDict).map(k => {
           return { menu: k, real: dataDict[k].real, sp: dataDict[k].sp, srq: dataDict[k].srq };
       }).sort((a,b) => b.real - a.real);
+
+      // --- LOGIKA TINGGI DINAMIS (AUTO-HEIGHT) ---
+      // 38px untuk setiap 1 baris menu. Minimal tinggi 120px.
+      let calculatedHeight = Math.max(120, sortedArray.length * 38);
+      canvas.parentElement.style.height = calculatedHeight + 'px';
 
       let labels = sortedArray.map(x => x.menu); 
       let realData = sortedArray.map(x => x.real);
@@ -1183,8 +1206,9 @@
               label: 'Realisasi', 
               data: zeros, 
               backgroundColor: barColor, 
-              borderRadius: 4,
-              barPercentage: 0.6,
+              borderRadius: 3,
+              barPercentage: 0.65, // Batang direnggangkan sedikit
+              categoryPercentage: 0.8,
               order: 3
             },
             {
@@ -1193,8 +1217,8 @@
               data: spData.map((val, i) => ({ x: 0, y: labels[i] })), 
               pointStyle: 'line', 
               rotation: 90, 
-              pointRadius: 14, 
-              pointBorderWidth: 3, 
+              pointRadius: 15, // Panjang garis marker disesuaikan
+              pointBorderWidth: 4, // Ketebalan garis marker
               borderColor: '#ef4444', 
               backgroundColor: '#ef4444',
               order: 1
@@ -1205,8 +1229,8 @@
               data: srqData.map((val, i) => ({ x: 0, y: labels[i] })),
               pointStyle: 'line',
               rotation: 90,
-              pointRadius: 14,
-              pointBorderWidth: 3,
+              pointRadius: 15,
+              pointBorderWidth: 4,
               borderColor: '#facc15', 
               backgroundColor: '#facc15',
               order: 2
@@ -1218,11 +1242,15 @@
           responsive: true, 
           maintainAspectRatio: false, 
           animation: chartAnimOptions, 
+          layout: {
+            padding: { right: 25 } // Mencegah garis marker mentok di batas kanan layar
+          },
           plugins: { 
             legend: { 
               display: true, 
-              position: 'bottom',
-              labels: { usePointStyle: true, boxWidth: 10, font: { size: 10 } }
+              position: 'top', // Legend dipindah ke atas grafik
+              align: 'end',
+              labels: { usePointStyle: true, boxWidth: 10, font: { size: 11, weight: 'bold' } }
             },
             tooltip: {
                 callbacks: {
@@ -1235,8 +1263,14 @@
             }
           }, 
           scales: { 
-              x: { beginAtZero: true },
-              y: { grid: { display: false } } 
+              x: { 
+                  beginAtZero: true,
+                  grid: { color: '#f1f5f9', drawBorder: false } 
+              },
+              y: { 
+                  grid: { display: false },
+                  ticks: { font: { size: 10 } } // Ukuran font Y-axis sedikit dihaluskan
+              } 
           } 
         } 
       });

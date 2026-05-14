@@ -569,7 +569,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyqjYFpApcaZa7FwBIE6qZETxXIeODi2w18Y-WoJWDdIRMstnnZZmvOrbLuVdBuTGHVbA/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyYa4YIsjKUM2cWbJIVG84a7UoEeb0nQs6NMWM7TNz7eXEma-7QeFdf-bx8S6B86svljA/exec"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
@@ -1058,54 +1058,55 @@
           document.getElementById('btnFilter').disabled = true;
       }
       
-      document.getElementById('loaderTextInfo').innerText = loadingTexts[textIndex];
+      document.getElementById('loaderTextInfo').innerText = "Mengambil Data Paralel...";
 
-      fetch(`${API_URL}?action=getDashboardData&start=${start}&end=${end}`)
-        .then(response => {
-            if(!response.ok) throw new Error("Network/Timeout");
-            return response.json();
-        })
-        .then(data => {
-          if (data.error) { throw new Error(data.error); }
+      // EKSEKUSI 4 JALUR REQUEST SECARA BERSAMAAN (Memangkas Waktu > 60%)
+      Promise.all([
+        fetch(`${API_URL}?action=getUtama&start=${start}&end=${end}`).then(r => r.json()),
+        fetch(`${API_URL}?action=getStok`).then(r => r.json()),
+        fetch(`${API_URL}?action=getAgenda`).then(r => r.json()),
+        fetch(`${API_URL}?action=getBom`).then(r => r.json())
+      ])
+      .then(([dataUtama, dataStok, dataAgenda, dataBom]) => {
+          if (dataUtama.error) { throw new Error(dataUtama.error); }
           
           document.getElementById('fullScreenLoader').style.display = 'none'; 
           document.getElementById('btnFilter').disabled = false;
 
-          document.getElementById('spDisplay').setAttribute('data-target-value', data.salesPlan); 
-          document.getElementById('srqDisplay').setAttribute('data-target-value', data.srq);
-          document.getElementById('realDisplay').setAttribute('data-target-value', data.realisasi); 
-          document.getElementById('avgDisplay').setAttribute('data-target-value', data.avg);
-          document.getElementById('amprahanDisplay').setAttribute('data-target-value', data.amprahan); 
-          document.getElementById('persenSrqDisplay').setAttribute('data-target-value', data.persenSrq);
-          document.getElementById('persenSpDisplay').setAttribute('data-target-value', data.persenSp);
+          document.getElementById('spDisplay').setAttribute('data-target-value', dataUtama.salesPlan); 
+          document.getElementById('srqDisplay').setAttribute('data-target-value', dataUtama.srq);
+          document.getElementById('realDisplay').setAttribute('data-target-value', dataUtama.realisasi); 
+          document.getElementById('avgDisplay').setAttribute('data-target-value', dataUtama.avg);
+          document.getElementById('amprahanDisplay').setAttribute('data-target-value', dataUtama.amprahan); 
+          document.getElementById('persenSrqDisplay').setAttribute('data-target-value', dataUtama.persenSrq);
+          document.getElementById('persenSpDisplay').setAttribute('data-target-value', dataUtama.persenSp);
           
           document.querySelectorAll('.counter-anim').forEach(el => el.removeAttribute('data-animated')); 
           window.chartTargets = {};
           
-          renderGaugeCharts(data.srq, data.realisasi, data.salesPlan); 
-          renderLineChart(data.trendData); 
-          renderBarChart(data.trendData); 
-          renderCategoryMenuCharts(data.tableMenu); 
-          renderAmprahanCharts(data.tableAmprahan);
+          renderGaugeCharts(dataUtama.srq, dataUtama.realisasi, dataUtama.salesPlan); 
+          renderLineChart(dataUtama.trendData); 
+          renderBarChart(dataUtama.trendData); 
+          renderCategoryMenuCharts(dataUtama.tableMenu); 
+          renderAmprahanCharts(dataUtama.tableAmprahan);
 
-          dtAmprahan.clear(); dtAmprahan.rows.add(data.tableAmprahan).draw(); 
-          dtMenu.clear(); dtMenu.rows.add(data.tableMenu).draw();
+          dtAmprahan.clear(); dtAmprahan.rows.add(dataUtama.tableAmprahan).draw(); 
+          dtMenu.clear(); dtMenu.rows.add(dataUtama.tableMenu).draw();
           
           let stAman=0, stWarn=0, stKrit=0; let restockCandidates = []; 
           window.rawStokData = [];
           
-          if(data.bomData) {
-              window.bomData = data.bomData;
-              let induks = [...new Set((data.bomData.resep || []).map(r => String(r[0]).trim()).filter(Boolean))].sort();
+          if(dataBom) {
+              window.bomData = dataBom;
+              let induks = [...new Set((dataBom.resep || []).map(r => String(r[0]).trim()).filter(Boolean))].sort();
               let dl = document.getElementById('bomMenuOptions');
               if(dl) dl.innerHTML = induks.map(m => `<option value="${m}">`).join('');
           }
-          // Simpan data Hari Libur
-          if(data.liburData) {
-              window.liburData = data.liburData;
+          if(dataAgenda.libur) {
+              window.liburData = dataAgenda.libur;
           }
 
-          let stokRows = (data.stokData || []).map(s => {
+          let stokRows = (dataStok || []).map(s => {
              let st = String(s.ket).toLowerCase();
              if(st.includes('aman')) { stAman++; } 
              else if(st.includes('warning')) { stWarn++; restockCandidates.push(s); } 
@@ -1115,7 +1116,7 @@
              return [s.no, s.nama, s.satuan, s.fisik, s.masuk, s.keluar, s.akhir, s.rata, s.status, s.ket, s.pengadaan];
           });
 
-          document.getElementById('stokTotalDisplay').setAttribute('data-target-value', (data.stokData || []).length); 
+          document.getElementById('stokTotalDisplay').setAttribute('data-target-value', (dataStok || []).length); 
           document.getElementById('stokAmanDisplay').setAttribute('data-target-value', stAman);
           document.getElementById('stokWarnDisplay').setAttribute('data-target-value', stWarn); 
           document.getElementById('stokKritDisplay').setAttribute('data-target-value', stKrit);
@@ -1152,22 +1153,23 @@
           updateFastMovingChart(document.getElementById('fmFilterPengadaan').value);
 
           dtStok.clear(); dtStok.rows.add(stokRows).draw(); 
-          dtRombongan.clear(); dtRombongan.rows.add(data.rombonganData || []).draw(); 
+          dtRombongan.clear(); dtRombongan.rows.add(dataAgenda.rombongan || []).draw(); 
 
-          renderAgendaTimeline(data.rombonganData, data.jadwalData);
-          renderRombonganTimeline(data.rombonganData);
-          renderDinasanTimeline(data.jadwalDinasan);
+          renderAgendaTimeline(dataAgenda.rombongan, dataAgenda.jadwal);
+          renderRombonganTimeline(dataAgenda.rombongan);
+          renderDinasanTimeline(dataAgenda.dinasan);
+          if (typeof renderLiburTimeline === "function") renderLiburTimeline(dataAgenda.libur);
 
           if(window.bomData && window.bomData.resep && window.bomData.resep.length > 0) {
               resetBoMInput();
           }
 
           setTimeout(checkVisibleElements, 100);
-        })
-        .catch(error => {
+      })
+      .catch(error => {
           console.error("Fetch Error/Timeout:", error); 
           setTimeout(() => loadData(retryCount + 1), 3000);
-        });
+      });
     }
 
     function renderGaugeCharts(srq, real, sp) {

@@ -557,11 +557,12 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzctqO3UUwsE1ZICoJf_JRBZr2cl8yCxDZxe42bF97K1AwtMTJFk8zidiQu28KavjLSwg/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyqjYFpApcaZa7FwBIE6qZETxXIeODi2w18Y-WoJWDdIRMstnnZZmvOrbLuVdBuTGHVbA/exec"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
     window.bomData = { resep: [], master: [] }; 
+    window.liburData = []; 
     
     let isAdmin = false;
 
@@ -853,7 +854,6 @@
        let today = new Date(); today.setHours(0,0,0,0); let todayTime = today.getTime();
        let threeDaysLaterTime = todayTime + (3 * 24 * 60 * 60 * 1000); 
        let todayStrIndo = getTglIndoPendek(today);
-
        let grouped = {}; let dateArr = []; let tempAdded = new Set();
 
        let upcomingRombongan = dataRombongan.filter(r => r[7] >= todayTime);
@@ -873,7 +873,6 @@
           grouped[tglStr].luxury = j.lux; grouped[tglStr].suite = j.suite; grouped[tglStr].cm = j.cm;
           if(!tempAdded.has(tglStr)) { dateArr.push({ label: tglStr, time: tglTime }); tempAdded.add(tglStr); }
        });
-
        dateArr.sort((a,b) => a.time - b.time);
 
        let html = '';
@@ -881,8 +880,27 @@
           html = '<div class="text-secondary p-3 fst-italic">Tidak ada agenda terdekat.</div>';
        } else {
           dateArr.forEach(dObj => {
-             let tgl = dObj.label; let g = grouped[tgl]; let cardsHtml = '';
+             let tglTime = dObj.time; let tgl = dObj.label; let g = grouped[tgl]; let cardsHtml = '';
              let isToday = (tgl === todayStrIndo);
+             
+             // --- LOGIKA WARNING LIBUR ---
+             let dateObj = new Date(tglTime); let dayOfWeek = dateObj.getDay(); 
+             let infoLibur = window.liburData ? window.liburData.find(l => l.time === tglTime) : null;
+             let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+             
+             let cardStyle = "background: #fff; border: 1px solid #e2e8f0; border-top: 4px solid #10b981;";
+             let warningBadge = "";
+             if (infoLibur) {
+                 cardStyle = "background-color: #fff7ed; border: 2px solid #fb923c !important; border-top: 4px solid #ea580c !important;";
+                 warningBadge = `<span class="badge bg-warning text-dark ms-2 align-text-top" style="font-size:0.65rem;"><i class="fas fa-fire text-danger"></i> ${infoLibur.nama}</span>`;
+             } else if (isWeekend) {
+                 cardStyle = "background-color: #fefce8; border: 1px solid #fde047 !important; border-top: 4px solid #eab308 !important;";
+                 warningBadge = `<span class="badge bg-secondary ms-2 align-text-top" style="font-size:0.65rem;">Weekend</span>`;
+             }
+             if(isToday) {
+                 cardStyle += " border: 2px solid #ef4444 !important;";
+                 warningBadge += `<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>`;
+             }
              
              g.rombongan.forEach(romb => {
                  let liHtml = romb.items.map(i => `${i.menu} <b>(${i.qty})</b>`).join(', ');
@@ -892,11 +910,8 @@
              if(g.luxury) { cardsHtml += `<div class="timeline-item item-luxury"><div class="fw-bold" style="font-size:0.8rem; color:#f59e0b;"><i class="fas fa-crown"></i> Luxury</div><div style="font-size:0.8rem; color:#475569;">${g.luxury}</div></div>`; }
              if(g.suite) { cardsHtml += `<div class="timeline-item item-suite"><div class="fw-bold" style="font-size:0.8rem; color:#8b5cf6;"><i class="fas fa-gem"></i> Suite Class</div><div style="font-size:0.8rem; color:#475569;">${g.suite}</div></div>`; }
              if(g.cm) { cardsHtml += `<div class="timeline-item item-crew"><div class="fw-bold" style="font-size:0.8rem; color:#0ea5e9;"><i class="fas fa-users"></i> Crew Meal</div><div style="font-size:0.8rem; color:#475569;">${g.cm}</div></div>`; }
-
-             let cardClass = isToday ? 'calendar-card calendar-card-today' : 'calendar-card';
-             let badgeHtml = isToday ? '<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>' : '';
              
-             html += `<div class="${cardClass}"><h5 class="mb-3 pb-2" style="border-bottom: 2px dashed #e2e8f0; color:#334155;"><i class="far fa-calendar-alt text-success"></i> ${tgl} ${badgeHtml}</h5>${cardsHtml}</div>`;
+             html += `<div class="calendar-card" style="${cardStyle}"><h5 class="mb-3 pb-2" style="border-bottom: 2px dashed #cbd5e1; color:#334155;"><i class="far fa-calendar-alt text-success"></i> ${tgl} ${warningBadge}</h5>${cardsHtml}</div>`;
           });
        }
        el.innerHTML = html;
@@ -961,25 +976,39 @@
           html = '<div class="text-secondary p-3 fst-italic">Tidak ada jadwal dinasan terdekat.</div>';
        } else {
           validData.forEach(dObj => {
-             let tgl = dObj.tglStr;
+             let tgl = dObj.tglStr; let tglTime = dObj.time;
              let isToday = (tgl === todayStrIndo);
-             let cardClass = isToday ? 'calendar-card calendar-card-today' : 'calendar-card';
-             let badgeHtml = isToday ? '<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>' : '';
+             
+             // --- LOGIKA WARNING LIBUR ---
+             let dateObj = new Date(tglTime); let dayOfWeek = dateObj.getDay(); 
+             let infoLibur = window.liburData ? window.liburData.find(l => l.time === tglTime) : null;
+             let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+             
+             let cardStyle = "background: #fff; border: 1px solid #e2e8f0; border-top: 4px solid #10b981;";
+             let warningBadge = "";
+             if (infoLibur) {
+                 cardStyle = "background-color: #fff7ed; border: 2px solid #fb923c !important; border-top: 4px solid #ea580c !important;";
+                 warningBadge = `<span class="badge bg-warning text-dark ms-2 align-text-top" style="font-size:0.65rem;"><i class="fas fa-fire text-danger"></i> ${infoLibur.nama}</span>`;
+             } else if (isWeekend) {
+                 cardStyle = "background-color: #fefce8; border: 1px solid #fde047 !important; border-top: 4px solid #eab308 !important;";
+                 warningBadge = `<span class="badge bg-secondary ms-2 align-text-top" style="font-size:0.65rem;">Weekend</span>`;
+             }
+             if(isToday) {
+                 cardStyle += " border: 2px solid #ef4444 !important;";
+                 warningBadge += `<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>`;
+             }
 
              const buildShiftHtml = (shiftData, shiftName, icon, color) => {
                  let totalDapur = shiftData.dapur.length; let totalPacking = shiftData.packing.length; let sum = totalDapur + totalPacking;
                  if(sum === 0) return `<div class="flex-fill p-2 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;"><div class="fw-bold border-bottom pb-1 mb-1" style="font-size:0.8rem; color:${color};"><i class="${icon}"></i> ${shiftName}</div><div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">Kosong</div></div>`;
 
-                 let dapurBadge = totalDapur > 0 ? `<span class="badge bg-secondary ms-1" style="font-size:0.6rem;">${totalDapur}</span>` : '';
-                 let packingBadge = totalPacking > 0 ? `<span class="badge bg-secondary ms-1" style="font-size:0.6rem;">${totalPacking}</span>` : '';
-
                  let htmlStr = `<div class="flex-fill p-2 rounded" style="background:#f8fafc; border:1px solid #e2e8f0; min-width:140px;"><div class="fw-bold border-bottom pb-1 mb-1" style="font-size:0.8rem; color:${color};"><i class="${icon}"></i> ${shiftName}</div>`;
                  if(totalDapur > 0) {
-                     htmlStr += `<div style="font-size:0.75rem; color:#1e293b; font-weight:700; margin-top:4px;">Tim Dapur ${dapurBadge}</div>`;
+                     htmlStr += `<div style="font-size:0.75rem; color:#1e293b; font-weight:700; margin-top:4px;">Tim Dapur <span class="badge bg-secondary ms-1" style="font-size:0.6rem;">${totalDapur}</span></div>`;
                      shiftData.dapur.forEach((k, index) => { htmlStr += `<div style="font-size:0.7rem; color:#475569; padding-left:5px; border-left:2px solid #cbd5e1; margin-bottom:2px;">${index + 1}. ${k.nama}</div>`; });
                  }
                  if(totalPacking > 0) {
-                     htmlStr += `<div style="font-size:0.75rem; color:#1e293b; font-weight:700; margin-top:6px;">Tim Packing ${packingBadge}</div>`;
+                     htmlStr += `<div style="font-size:0.75rem; color:#1e293b; font-weight:700; margin-top:6px;">Tim Packing <span class="badge bg-secondary ms-1" style="font-size:0.6rem;">${totalPacking}</span></div>`;
                      shiftData.packing.forEach((k, index) => { htmlStr += `<div style="font-size:0.7rem; color:#475569; padding-left:5px; border-left:2px solid #cbd5e1; margin-bottom:2px;">${index + 1}. ${k.nama}</div>`; });
                  }
                  htmlStr += `</div>`; return htmlStr;
@@ -988,14 +1017,12 @@
              let shift1Html = buildShiftHtml(dObj.shift1, "Shift 1 Pagi", "fas fa-sun", "#f59e0b");
              let shift2Html = buildShiftHtml(dObj.shift2, "Shift 2 Sore", "fas fa-cloud-sun", "#f97316");
              let shift3Html = buildShiftHtml(dObj.shift3, "Shift 3 Malam", "fas fa-moon", "#6366f1");
+             let sumKekuatan = dObj.shift1.dapur.length + dObj.shift2.dapur.length + dObj.shift3.dapur.length + dObj.shift1.packing.length + dObj.shift2.packing.length + dObj.shift3.packing.length;
 
-             let totalDapur = dObj.shift1.dapur.length + dObj.shift2.dapur.length + dObj.shift3.dapur.length;
-             let totalPacking = dObj.shift1.packing.length + dObj.shift2.packing.length + dObj.shift3.packing.length;
-
-             html += `<div class="${cardClass}" style="min-width: 480px;">
-                 <div class="d-flex justify-content-between align-items-center mb-3 pb-2" style="border-bottom: 2px dashed #e2e8f0;">
-                    <h5 class="m-0" style="color:#334155;"><i class="far fa-calendar-alt text-primary"></i> ${tgl} ${badgeHtml}</h5>
-                    <span style="font-size:0.7rem; color:#64748b; background:#f1f5f9; padding:2px 6px; border-radius:4px; border:1px solid #e2e8f0;">Total Kekuatan: ${totalDapur} Dapur, ${totalPacking} Packing</span>
+             html += `<div class="calendar-card" style="min-width: 480px; ${cardStyle}">
+                 <div class="d-flex justify-content-between align-items-center mb-3 pb-2" style="border-bottom: 2px dashed #cbd5e1;">
+                    <h5 class="m-0" style="color:#334155;"><i class="far fa-calendar-alt text-primary"></i> ${tgl} ${warningBadge}</h5>
+                    <span style="font-size:0.7rem; color:#64748b; background:#f1f5f9; padding:2px 6px; border-radius:4px; border:1px solid #e2e8f0;">Total Pasukan: ${sumKekuatan} Personel</span>
                  </div>
                  <div class="d-flex gap-2 w-100">
                     ${shift1Html}
@@ -1060,6 +1087,10 @@
               let induks = [...new Set((data.bomData.resep || []).map(r => String(r[0]).trim()).filter(Boolean))].sort();
               let dl = document.getElementById('bomMenuOptions');
               if(dl) dl.innerHTML = induks.map(m => `<option value="${m}">`).join('');
+          }
+          // Simpan data Hari Libur
+          if(data.liburData) {
+              window.liburData = data.liburData;
           }
 
           let stokRows = (data.stokData || []).map(s => {

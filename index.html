@@ -567,7 +567,29 @@
        </div>
      </div>
   </div>
-
+  
+  <div class="modal fade" id="modalPin" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white border-0 py-2">
+          <h6 class="modal-title fw-bold"><i class="fas fa-user-shield me-2"></i> Otorisasi Admin</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <p class="text-secondary mb-3 small">Masukkan PIN untuk mengakses fitur khusus.</p>
+          
+          <input type="password" inputmode="numeric" id="pinInput" class="form-control form-control-lg text-center fw-bold mb-2 border-dark" placeholder="****" maxlength="4" style="letter-spacing: 8px; font-size: 1.5rem;" onkeypress="if(event.key === 'Enter') verifyPin()">
+          
+          <div id="pinError" class="text-danger small fw-bold mb-3" style="display: none;">
+            <i class="fas fa-exclamation-circle"></i> PIN Salah! Coba lagi.
+          </div>
+          
+          <button class="btn btn-dark w-100 fw-bold mt-2" onclick="verifyPin()">Buka Akses</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzsCwFYdGBBWBEcT3zDMIG0xzK5Zm7EPGdlgznYDxzy5UgCAkInd9V0kxP2aRyu4wT5ag/exec"; 
 
@@ -599,22 +621,51 @@
     let nowStr = today.toISOString().split('T')[0];
     document.getElementById('endTgl').value = nowStr > '2026-05-31' ? '2026-05-31' : nowStr;
     
+    // Variabel untuk menyimpan objek Modal Login
+    let pinModalObj = null;
+
     function promptPin() {
       if(isAdmin) {
+         // Proses Logout
          isAdmin = false;
          alert("Sesi Admin telah ditutup. Mode pantau diaktifkan.");
          document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
          document.getElementById('lockIcon').innerHTML = '<i class="fas fa-lock me-1"></i> Login Admin';
          document.getElementById('lockIcon').classList.replace('btn-danger', 'btn-outline-dark');
       } else {
-         let pin = prompt("Masukkan PIN Keamanan Admin:");
-         if(pin === "0000") {
+         // Proses Login (Tampilkan Custom Popup)
+         if(!pinModalObj) {
+             pinModalObj = new bootstrap.Modal(document.getElementById('modalPin'));
+         }
+         // Bersihkan inputan dan error sebelumnya
+         document.getElementById('pinInput').value = '';
+         document.getElementById('pinError').style.display = 'none';
+         
+         pinModalObj.show();
+         
+         // Auto-focus ke kotak input agar user bisa langsung mengetik tanpa klik lagi
+         setTimeout(() => {
+             document.getElementById('pinInput').focus();
+         }, 500);
+      }
+    }
+
+    // Fungsi baru untuk mengecek PIN dari Modal
+    function verifyPin() {
+        let pin = document.getElementById('pinInput').value;
+        if(pin === "0000") {
+            // Jika PIN Benar
             isAdmin = true;
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'inline-block');
             document.getElementById('lockIcon').innerHTML = '<i class="fas fa-unlock me-1"></i> Logout Admin';
             document.getElementById('lockIcon').classList.replace('btn-outline-dark', 'btn-danger');
-         } else if(pin !== null) { alert("PIN Salah! Akses Ditolak."); }
-      }
+            pinModalObj.hide(); // Tutup popup
+        } else {
+            // Jika PIN Salah
+            document.getElementById('pinError').style.display = 'block';
+            document.getElementById('pinInput').value = ''; // Kosongkan input
+            document.getElementById('pinInput').focus(); // Kembalikan kursor
+        }
     }
 
     function switchPage(pageId, element = null) {

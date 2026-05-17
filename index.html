@@ -569,7 +569,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwmiecI7UQYK4v9t392hv2WwXpMXpIYIy4iMNX9VgvIulFOr_GbNS95jAZZwHklUByLZg/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyGFmyNr7CJ_y-ecpawDn14VhZWfe7kczqxpuChRFl0eIO9GSIwfTmn4hoS8HpylUS0CA/exec"; 
 
     window.chartTargets = {};
     window.rawStokData = [];
@@ -895,22 +895,26 @@
              let tglTime = dObj.time; let tgl = dObj.label; let g = grouped[tgl]; let cardsHtml = '';
              let isToday = (tgl === todayStrIndo);
              
-             // --- LOGIKA WARNING LIBUR ---
+             // --- LOGIKA WARNING LIBUR & WEEKEND ---
              let dateObj = new Date(tglTime); let dayOfWeek = dateObj.getDay(); 
-             let infoLibur = window.liburData ? window.liburData.find(l => l.time === tglTime) : null;
+             // Perbaikan: Pencocokan menggunakan teks tanggal agar aman dari bug perbedaan Zona Waktu
+             let infoLibur = window.liburData ? window.liburData.find(l => getTglIndoPendek(new Date(l.time)) === tgl) : null;
              let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
              
              let cardStyle = "background: #fff; border: 1px solid #e2e8f0; border-top: 4px solid #10b981;";
              let warningBadge = "";
-             if (infoLibur) {
+             
+             // Pastikan infoLibur benar-benar ada dan memiliki nama acara
+             if (infoLibur && infoLibur.nama && infoLibur.nama.trim() !== "") {
                  cardStyle = "background-color: #fef2f2; border: 2px solid #ef4444 !important; border-top: 4px solid #dc2626 !important;";
                  warningBadge = `<span class="badge bg-danger text-white ms-2 align-text-top" style="font-size:0.65rem;"><i class="fas fa-exclamation-triangle text-white"></i> ${infoLibur.nama}</span>`;
              } else if (isWeekend) {
                  cardStyle = "background-color: #fefce8; border: 1px solid #fde047 !important; border-top: 4px solid #eab308 !important;";
-                 warningBadge = `<span class="badge bg-secondary ms-2 align-text-top" style="font-size:0.65rem;">Weekend</span>`;
+                 warningBadge = `<span class="badge bg-warning text-dark ms-2 align-text-top" style="font-size:0.65rem;">Weekend</span>`;
              }
+             
              if(isToday) {
-                 cardStyle += " border: 2px solid #ef4444 !important;";
+                 cardStyle += " border: 2px solid #ef4444 !important; box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);";
                  warningBadge += `<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>`;
              }
              
@@ -988,27 +992,12 @@
           html = '<div class="text-secondary p-3 fst-italic">Tidak ada jadwal dinasan terdekat.</div>';
        } else {
           validData.forEach(dObj => {
-             let tgl = dObj.tglStr; let tglTime = dObj.time;
+             let tgl = dObj.tglStr;
              let isToday = (tgl === todayStrIndo);
              
-             // --- LOGIKA WARNING LIBUR ---
-             let dateObj = new Date(tglTime); let dayOfWeek = dateObj.getDay(); 
-             let infoLibur = window.liburData ? window.liburData.find(l => l.time === tglTime) : null;
-             let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-             
-             let cardStyle = "background: #fff; border: 1px solid #e2e8f0; border-top: 4px solid #10b981;";
-             let warningBadge = "";
-             if (infoLibur) {
-                 cardStyle = "background-color: #fef2f2; border: 2px solid #ef4444 !important; border-top: 4px solid #dc2626 !important;";
-                 warningBadge = `<span class="badge bg-danger text-white ms-2 align-text-top" style="font-size:0.65rem;"><i class="fas fa-exclamation-triangle text-white"></i> ${infoLibur.nama}</span>`;
-             } else if (isWeekend) {
-                 cardStyle = "background-color: #fefce8; border: 1px solid #fde047 !important; border-top: 4px solid #eab308 !important;";
-                 warningBadge = `<span class="badge bg-secondary ms-2 align-text-top" style="font-size:0.65rem;">Weekend</span>`;
-             }
-             if(isToday) {
-                 cardStyle += " border: 2px solid #ef4444 !important;";
-                 warningBadge += `<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>`;
-             }
+             // Dihapus total logika hari libur agar Kalender Dinasan tetap putih/bersih
+             let cardClass = isToday ? 'calendar-card calendar-card-today' : 'calendar-card';
+             let badgeHtml = isToday ? '<span class="badge bg-danger ms-2 align-text-top" style="font-size:0.65rem;">HARI INI</span>' : '';
 
              const buildShiftHtml = (shiftData, shiftName, icon, color) => {
                  let totalDapur = shiftData.dapur.length; let totalPacking = shiftData.packing.length; let sum = totalDapur + totalPacking;
@@ -1031,9 +1020,9 @@
              let shift3Html = buildShiftHtml(dObj.shift3, "Shift 3 Malam", "fas fa-moon", "#6366f1");
              let sumKekuatan = dObj.shift1.dapur.length + dObj.shift2.dapur.length + dObj.shift3.dapur.length + dObj.shift1.packing.length + dObj.shift2.packing.length + dObj.shift3.packing.length;
 
-             html += `<div class="calendar-card" style="min-width: 480px; ${cardStyle}">
+             html += `<div class="${cardClass}" style="min-width: 480px;">
                  <div class="d-flex justify-content-between align-items-center mb-3 pb-2" style="border-bottom: 2px dashed #cbd5e1;">
-                    <h5 class="m-0" style="color:#334155;"><i class="far fa-calendar-alt text-primary"></i> ${tgl} ${warningBadge}</h5>
+                    <h5 class="m-0" style="color:#334155;"><i class="far fa-calendar-alt text-primary"></i> ${tgl} ${badgeHtml}</h5>
                     <span style="font-size:0.7rem; color:#64748b; background:#f1f5f9; padding:2px 6px; border-radius:4px; border:1px solid #e2e8f0;">Total Pasukan: ${sumKekuatan} Personel</span>
                  </div>
                  <div class="d-flex gap-2 w-100">
